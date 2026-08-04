@@ -1,0 +1,15 @@
+FROM python:3.12-slim
+
+WORKDIR /app
+
+# requirements primero: la capa de dependencias se cachea entre builds
+COPY requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt
+
+COPY kriterius_mx.py server_http.py ./
+
+# Render inyecta PORT; 8000 es solo el valor por defecto para correr en local
+ENV PORT=8000
+EXPOSE 8000
+
+CMD ["python", "server_http.py"]
