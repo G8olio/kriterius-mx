@@ -18,6 +18,7 @@ import re
 
 import httpx
 from mcp.server.fastmcp import FastMCP
+from mcp.server.transport_security import TransportSecuritySettings
 
 BASE = "https://sjf2.scjn.gob.mx/services/sjftesismicroservice/api/public"
 HOST = "https://sjf2.scjn.gob.mx"
@@ -39,8 +40,28 @@ HEADERS = {
                    "Chrome/126.0.0.0 Safari/537.36"),
 }
 
+# El SDK trae protección contra DNS rebinding y la aplica al transporte HTTP:
+# si el header Host de la petición no está en esta lista, responde 421 y el
+# cliente no logra ni el handshake. Sin declarar el dominio, Claude reporta un
+# fallo de "sign-in service" que despista, porque el 421 ocurre antes de todo.
+SEGURIDAD_TRANSPORTE = TransportSecuritySettings(
+    enable_dns_rebinding_protection=True,
+    allowed_hosts=[
+        "mcp.kriterius.mx", "mcp.kriterius.mx:*",
+        "kriterius.mx", "kriterius.mx:*",
+        "kriterius-mx-a8xhr.ondigitalocean.app",
+        "localhost", "localhost:*", "127.0.0.1", "127.0.0.1:*",
+    ],
+    allowed_origins=[
+        "https://claude.ai", "https://claude.com",
+        "https://mcp.kriterius.mx", "https://kriterius.mx",
+        "http://localhost:*", "http://127.0.0.1:*",
+    ],
+)
+
 mcp = FastMCP(
     "KriteriusMX",
+    transport_security=SEGURIDAD_TRANSPORTE,
     website_url="https://kriterius.mx",
     instructions=(
         "Consulta fuentes oficiales del derecho mexicano e interamericano: Semanario "
