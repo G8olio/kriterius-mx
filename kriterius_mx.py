@@ -40,6 +40,153 @@ HEADERS = {
                    "Chrome/126.0.0.0 Safari/537.36"),
 }
 
+# ---- Cuidado de las fuentes: caché, freno de concurrencia y reintentos ----
+#
+# El servidor es uno solo y atiende a todos los usuarios, así que sin estos topes
+# cada consulta viaja directo a los portales de gobierno desde la misma IP. Tres
+# mecanismos evitan que eso se convierta en un bloqueo:
+#
+#   Caché       lo que ya se preguntó no se vuelve a pedir. El material jurídico
+#               casi no cambia, así que los tiempos de vida son generosos.
+#   Semáforo    tope de peticiones simultáneas por fuente, para no abrir veinte
+#               conexiones de golpe contra el mismo sitio.
+#   Reintento   ante un fallo pasajero espera 1s, 2s y 4s antes de rendirse.
+#
+# No hay límite por usuario porque Claude se conecta desde la infraestructura de
+# Anthropic: todas las peticiones llegan con el mismo origen y no hay forma de
+# distinguir a quién preguntó. El tope global cumple el objetivo real, que es
+# cuidar a los portales.
+
+import asyncio as _asyncio
+import hashlib as _hashlib
+import json as _json
+import time as _time
+from collections import OrderedDict as _OrderedDict, deque as _deque
+
+CACHE_MAX_ENTRADAS = 400
+LIMITE_PETICIONES_MINUTO = 60
+ESPERA_MAX_CUPO_S = 3.0
+
+# Tiempos de vida en segundos, según qué tanto cambia cada cosa
+TTL = {
+    "sjf_detalle": 30 * 24 * 3600,   # una tesis publicada ya no cambia
+    "sjf_busqueda": 6 * 3600,
+    "tfja": 24 * 3600,
+    "bjdh": 7 * 24 * 3600,           # sentencias de la Corte IDH, prácticamente fijas
+    "dof_hoy": 3600,                 # la edición del día todavía puede crecer
+    "dof_pasado": 30 * 24 * 3600,    # un DOF de ayer ya quedó cerrado
+    "dof_indicadores": 12 * 3600,
+}
+
+CONCURRENCIA = {"sjf": 4, "tfja": 3, "dof": 6, "bjdh": 3}
+
+
+class _Cache:
+    """Caché en memoria con vencimiento y tope de entradas. Descarta lo más viejo
+    cuando se llena, que en 512 MB de RAM es lo que evita un disgusto."""
+
+    def __init__(self, max_entradas: int = CACHE_MAX_ENTRADAS):
+        self._datos: _OrderedDict = _OrderedDict()
+        self._max = max_entradas
+        self.acierto = 0
+        self.fallo = 0
+
+    def obtener(self, clave: str):
+        item = self._datos.get(clave)
+        if item is None:
+            self.fallo += 1
+            return None
+        valor, vence = item
+        if _time.time() > vence:
+            del self._datos[clave]
+            self.fallo += 1
+            return None
+        self._datos.move_to_end(clave)
+        self.acierto += 1
+        return valor
+
+    def guardar(self, clave: str, valor, ttl: float) -> None:
+        if valor is None:
+            return
+        self._datos[clave] = (valor, _time.time() + ttl)
+        self._datos.move_to_end(clave)
+        while len(self._datos) > self._max:
+            self._datos.popitem(last=False)
+
+    def resumen(self) -> str:
+        total = self.acierto + self.fallo
+        pct = (self.acierto / total * 100) if total else 0
+        return f"{len(self._datos)}/{self._max} entradas · {self.acierto} aciertos de {total} ({pct:.0f}%)"
+
+
+_CACHE = _Cache()
+_SEMAFOROS: dict = {}
+_PETICIONES = _deque()
+
+
+def _semaforo(fuente: str):
+    """Los semáforos se crean cuando ya hay bucle de eventos corriendo."""
+    if fuente not in _SEMAFOROS:
+        _SEMAFOROS[fuente] = _asyncio.Semaphore(CONCURRENCIA.get(fuente, 4))
+    return _SEMAFOROS[fuente]
+
+
+def _clave(*partes) -> str:
+    crudo = "|".join(_json.dumps(p, sort_keys=True, default=str) for p in partes)
+    return _hashlib.sha256(crudo.encode()).hexdigest()[:32]
+
+
+async def _esperar_cupo() -> None:
+    """Tope global de peticiones salientes por minuto, con espera breve."""
+    limite = _time.monotonic() + ESPERA_MAX_CUPO_S
+    while True:
+        ahora = _time.monotonic()
+        while _PETICIONES and ahora - _PETICIONES[0] > 60:
+            _PETICIONES.popleft()
+        if len(_PETICIONES) < LIMITE_PETICIONES_MINUTO:
+            _PETICIONES.append(ahora)
+            return
+        if _time.monotonic() >= limite:
+            raise RuntimeError(
+                f"el conector alcanzó su tope de {LIMITE_PETICIONES_MINUTO} consultas por minuto "
+                f"a las fuentes oficiales. Espera unos segundos y vuelve a intentar."
+            )
+        await _asyncio.sleep(0.25)
+
+
+def _es_pasajero(e: Exception) -> bool:
+    if isinstance(e, (httpx.TimeoutException, httpx.ConnectError, httpx.ReadError)):
+        return True
+    m = str(e).lower()
+    return any(s in m for s in ("429", "502", "503", "504", "imperva", "timeout", "temporal"))
+
+
+async def _traer(fuente: str, hacer, clave: str | None = None, ttl: float | None = None):
+    """Punto único de salida a la red: consulta la caché, respeta el tope global,
+    limita la concurrencia por fuente y reintenta los fallos pasajeros."""
+    if clave:
+        guardado = _CACHE.obtener(clave)
+        if guardado is not None:
+            return guardado
+
+    await _esperar_cupo()
+
+    async with _semaforo(fuente):
+        ultimo: Exception | None = None
+        for intento in range(3):
+            try:
+                resultado = await hacer()
+                if clave and ttl:
+                    _CACHE.guardar(clave, resultado, ttl)
+                return resultado
+            except Exception as e:
+                ultimo = e
+                if intento == 2 or not _es_pasajero(e):
+                    raise
+                await _asyncio.sleep(2 ** intento)
+        raise ultimo  # pragma: no cover
+
+
 # El SDK trae protección contra DNS rebinding y la aplica al transporte HTTP:
 # si el header Host de la petición no está en esta lista, responde 421 y el
 # cliente no logra ni el handshake. Sin declarar el dominio, Claude reporta un
@@ -102,8 +249,14 @@ async def _sjf_descubrir_base() -> str | None:
 
 
 async def _sjf_fetch(path: str, method: str = "GET", json_body: dict | None = None):
-    """Llama al API del SJF; si falla, auto-descubre el endpoint y reintenta una vez."""
-    async def intento():
+    """Llama al API del SJF; si falla, auto-descubre el endpoint y reintenta una vez.
+
+    Pasa por caché y por el freno de concurrencia: el detalle de una tesis se guarda
+    un mes porque no cambia, y las búsquedas unas horas."""
+    ttl = TTL["sjf_detalle"] if method == "GET" else TTL["sjf_busqueda"]
+    clave = _clave("sjf", method, path, json_body)
+
+    async def pedir():
         async with httpx.AsyncClient(headers=HEADERS, timeout=30) as client:
             r = await client.request(method, f"{_SJF_BASE}{path}", json=json_body)
             if r.status_code != 200:
@@ -115,6 +268,9 @@ async def _sjf_fetch(path: str, method: str = "GET", json_body: dict | None = No
             except Exception:
                 extracto = re.sub(r"\s+", " ", _strip_html(r.text))[:120]
                 raise RuntimeError(f"respondió contenido no-JSON (posible cambio de API): '{extracto}'")
+
+    async def intento():
+        return await _traer("sjf", pedir, clave=clave, ttl=ttl)
 
     try:
         return await intento()
@@ -511,12 +667,24 @@ TFJA_HEADERS = {
 }
 
 
-async def _tfja_post(client: httpx.AsyncClient, url: str, data: list[tuple[str, str]]) -> str:
+async def _tfja_post_directo(client: httpx.AsyncClient, url: str, data: list[tuple[str, str]]) -> str:
     from urllib.parse import urlencode
     r = await client.post(url, content=urlencode(data).encode(),
                           headers={"Content-Type": "application/x-www-form-urlencoded"})
     r.raise_for_status()
     return r.text
+
+
+async def _tfja_post(client: httpx.AsyncClient, url: str, data: list[tuple[str, str]]) -> str:
+    """Con caché y freno. El token CSRF cambia en cada sesión, así que se excluye
+    de la clave: lo que identifica a la consulta son los campos del formulario."""
+    sin_token = [(k, v) for k, v in data if k != "csrfmiddlewaretoken"]
+    return await _traer(
+        "tfja",
+        lambda: _tfja_post_directo(client, url, data),
+        clave=_clave("tfja", url, sorted(sin_token)),
+        ttl=TTL["tfja"],
+    )
 
 
 async def _tfja_token(client: httpx.AsyncClient) -> str:
@@ -729,8 +897,21 @@ def _parse_fecha_mx(s: str) -> date | None:
 
 
 async def _dof_indice_dia(client: httpx.AsyncClient, fecha: str, edicion: str = "MAT") -> list[dict]:
-    """Índice de un día. Cada nota aparece varias veces (título + iconos PDF/DOC);
-    se conserva el texto más largo por código, que es el título real."""
+    """Índice de un día, con caché. La edición de hoy todavía puede crecer, así que
+    se guarda una hora; la de días pasados ya quedó cerrada y dura un mes."""
+    d0 = _parse_fecha_mx(fecha)
+    ttl = TTL["dof_hoy"] if (d0 and d0 >= date.today()) else TTL["dof_pasado"]
+    return await _traer(
+        "dof",
+        lambda: _dof_indice_dia_directo(client, fecha, edicion),
+        clave=_clave("dof_indice", fecha, edicion),
+        ttl=ttl,
+    )
+
+
+async def _dof_indice_dia_directo(client: httpx.AsyncClient, fecha: str, edicion: str = "MAT") -> list[dict]:
+    """Cada nota aparece varias veces (título + iconos PDF/DOC); se conserva el
+    texto más largo por código, que es el título real."""
     d = _parse_fecha_mx(fecha)
     if not d:
         raise RuntimeError(f"Fecha inválida '{fecha}': usa DD/MM/AAAA")
@@ -1092,7 +1273,18 @@ BJDH_NOMBRE_RANGO = ["Opinión Consultiva", "Fondo/Reparaciones", "Excepciones P
 
 
 async def _bjdh_post(client: httpx.AsyncClient, campos: dict) -> str:
-    """POST al BJDH. Todos los campos deben ir presentes aunque vayan vacíos."""
+    """POST al BJDH, con caché de una semana y freno de concurrencia. Este es el
+    sitio más delicado del conjunto: está detrás de Imperva y abrir muchas
+    conexiones a la vez desde una sola IP es lo que dispara un bloqueo."""
+    return await _traer(
+        "bjdh",
+        lambda: _bjdh_post_directo(client, campos),
+        clave=_clave("bjdh", campos),
+        ttl=TTL["bjdh"],
+    )
+
+
+async def _bjdh_post_directo(client: httpx.AsyncClient, campos: dict) -> str:
     data = {
         "q": campos.get("q", ""), "or": "", "type": campos.get("type", ""),
         "page": str(campos.get("page", 1)),
@@ -1644,10 +1836,17 @@ async def estado_conector() -> str:
     "el sitio de gobierno está lento".
     """
     s = int((datetime.now() - _ARRANQUE).total_seconds())
+    ahora = _time.monotonic()
+    recientes = sum(1 for t in _PETICIONES if ahora - t <= 60)
     return "\n".join([
         "KriteriusMX — servidor VIVO (respuesta sin red).",
         f"Versión 2.6.0 (remota) · encendido hace {s}s · 15 tools registradas.",
         f"Endpoint SJF en uso: {_SJF_BASE}",
+        "",
+        f"Caché: {_CACHE.resumen()}",
+        f"Peticiones a fuentes en el último minuto: {recientes} de {LIMITE_PETICIONES_MINUTO}",
+        f"Concurrencia máxima por fuente: " +
+        ", ".join(f"{k} {v}" for k, v in CONCURRENCIA.items()),
         "",
         "Si una tool dio timeout pero esta responde, el problema es el sitio de origen "
         "(lento o caído), no el conector. Ejecuta diagnosticar_conector para saber "
