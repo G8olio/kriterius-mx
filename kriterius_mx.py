@@ -11,6 +11,8 @@ Fuentes:
 API del SJF (no documentado oficialmente):
   POST /services/sjftesismicroservice/api/public/tesis?page=N&size=M
   GET  /services/sjftesismicroservice/api/public/tesis/{registro}
+  POST /services/sjfejecutoriamicroservice/api/public/ejecutorias?page=N&size=M
+  GET  /services/sjfejecutoriamicroservice/api/public/ejecutorias/{registro}
 """
 
 import html
@@ -21,6 +23,7 @@ from mcp.server.fastmcp import FastMCP
 from mcp.server.transport_security import TransportSecuritySettings
 
 BASE = "https://sjf2.scjn.gob.mx/services/sjftesismicroservice/api/public"
+BASE_EJEC = "https://sjf2.scjn.gob.mx/services/sjfejecutoriamicroservice/api/public"
 HOST = "https://sjf2.scjn.gob.mx"
 
 # IDs internos del clasificador idEpoca (verificados contra el API)
@@ -214,23 +217,32 @@ mcp = FastMCP(
         "Consulta fuentes oficiales del derecho mexicano e interamericano: Semanario "
         "Judicial de la Federación (SCJN), Tribunal Federal de Justicia Administrativa, "
         "Diario Oficial de la Federación y Corte Interamericana de Derechos Humanos. "
-        "Al citar cualquier criterio incluye SIEMPRE la cita completa y su link oficial. "
-        "Los resultados no sustituyen la consulta directa a la fuente."
+        "El Semanario tiene dos colecciones separadas: las tesis y jurisprudencias "
+        "(buscar_tesis, ver_tesis) y las ejecutorias, o sea las sentencias completas "
+        "(buscar_ejecutorias, ver_ejecutoria). Las controversias constitucionales, las "
+        "acciones de inconstitucionalidad y las declaratorias generales solo están en la "
+        "segunda. Al citar cualquier criterio incluye SIEMPRE la cita completa y su link "
+        "oficial. Los resultados no sustituyen la consulta directa a la fuente."
     ),
 )
 
-# Base mutable del API del SJF: permite auto-descubrir el endpoint si cambia
+# Bases mutables del API del SJF: permiten auto-descubrir los endpoints si cambian
 _SJF_BASE = BASE
+_EJEC_BASE = BASE_EJEC
 
 
-async def _sjf_descubrir_base() -> str | None:
+async def _sjf_descubrir_base(coleccion: str = "tesis") -> str | None:
     """Busca en el HTML y bundles JS del sitio del SJF rutas /services/.../api/public
-    para re-descubrir el endpoint si la SCJN lo mueve o renombra."""
-    global _SJF_BASE
+    para re-descubrir el endpoint si la SCJN lo mueve o renombra.
+
+    coleccion distingue las dos colecciones del Semanario: "tesis" y "ejecutoria"."""
+    global _SJF_BASE, _EJEC_BASE
     from urllib.parse import urljoin
+    ejec = coleccion == "ejecutoria"
     patron = r"/services/[A-Za-z0-9_-]+/api/public"
+    pagina = "/busqueda-principal-ejecutorias" if ejec else "/busqueda-principal-tesis"
     async with httpx.AsyncClient(headers=HEADERS, timeout=30, follow_redirects=True) as client:
-        r = await client.get(f"{HOST}/busqueda-principal-tesis")
+        r = await client.get(f"{HOST}{pagina}")
         rutas = re.findall(patron, r.text)
         if not rutas:
             scripts = re.findall(r"src=[\"']([^\"']*(?:main|runtime|chunk)[^\"']*\.js)[\"']",
@@ -241,9 +253,16 @@ async def _sjf_descubrir_base() -> str | None:
                     rutas += re.findall(patron, js)
                 except Exception:
                     continue
-    ruta = next((x for x in rutas if "tesis" in x.lower()), rutas[0] if rutas else None)
+    ruta = next((x for x in rutas if coleccion in x.lower()), None)
+    if not ruta and not ejec:
+        # para tesis se acepta cualquier ruta como último recurso; para ejecutorias no,
+        # porque caer en el microservicio de tesis daría resultados equivocados en silencio
+        ruta = rutas[0] if rutas else None
     if not ruta:
         return None
+    if ejec:
+        _EJEC_BASE = f"{HOST}{ruta}"
+        return _EJEC_BASE
     _SJF_BASE = f"{HOST}{ruta}"
     return _SJF_BASE
 
@@ -645,6 +664,367 @@ async def ver_tesis(registro_digital: int) -> str:
         partes += ["", "NOTAS:", _strip_html(str(d.get("notasGenericas")))]
     partes += ["", f"Fuente: {HOST}/detalle/tesis/{d.get('ius')}"]
     return "\n".join(partes)
+
+
+# ---- SJF: ejecutorias (sentencias, controversias y acciones de inconstitucionalidad) ----
+#
+# Segunda colección del Semanario, en un microservicio aparte. Acepta el MISMO
+# cuerpo de consulta que /tesis, pero los documentos son otra cosa: sentencias
+# íntegras, sin rubro y sin la división entre jurisprudencia y tesis aislada.
+# Aquí viven las controversias constitucionales, las acciones de
+# inconstitucionalidad y las declaratorias generales, que la colección de tesis
+# no contiene.
+#
+# Tres rarezas que salen caras si se ignoran:
+#
+#   1. isSemanal decide entre la colección en curso y la histórica. El valor
+#      equivocado devuelve 404 en unos registros y 500 en otros, así que hay que
+#      probar los dos y no confiarse del código de error.
+#   2. Búsqueda y detalle nombran los campos distinto. En la búsqueda el número
+#      del asunto viene en tipoAsuntoE y el promovente en promovente; en el
+#      detalle el número está en tipoAsunto, el promovente no viene y sala trae
+#      el id numérico del órgano en vez de su nombre.
+#   3. El campo rubro no es un rubro. En la búsqueda trae el fragmento donde cayó
+#      la coincidencia; en el detalle trae los criterios que la sentencia dejó.
+#      El texto completo llega a 180 mil caracteres, así que se entrega por
+#      partes o por coincidencia.
+
+EJEC_TROZO = 12000      # caracteres de texto por parte al leer una ejecutoria
+EJEC_MAX_CRITERIOS = 6000
+EJEC_CONTEXTO = 600     # caracteres a cada lado de una coincidencia
+
+HEADERS_EJEC = dict(HEADERS, Referer=f"{HOST}/busqueda-principal-ejecutorias")
+
+SALAS_EJEC = {"1": "Primera Sala", "2": "Segunda Sala", "6": "Pleno",
+              "7": "Tribunales Colegiados de Circuito", "50": "Plenos de Circuito",
+              "60": "Plenos Regionales"}
+
+
+async def _ejec_fetch(path: str, method: str = "GET", json_body: dict | None = None):
+    """Llama al API de ejecutorias; si falla, auto-descubre el endpoint y reintenta.
+
+    Mismo trato que las tesis: caché larga para el detalle (una sentencia publicada
+    ya no cambia) y corta para las búsquedas."""
+    ttl = TTL["sjf_detalle"] if method == "GET" else TTL["sjf_busqueda"]
+    clave = _clave("ejec", method, path, json_body)
+
+    async def pedir():
+        async with httpx.AsyncClient(headers=HEADERS_EJEC, timeout=45) as client:
+            r = await client.request(method, f"{_EJEC_BASE}{path}", json=json_body)
+            if r.status_code != 200:
+                raise RuntimeError(f"respondió {r.status_code}")
+            if not r.text.strip():
+                return None
+            try:
+                return r.json()
+            except Exception:
+                extracto = re.sub(r"\s+", " ", _strip_html(r.text))[:120]
+                raise RuntimeError(f"respondió contenido no-JSON (posible cambio de API): '{extracto}'")
+
+    async def intento():
+        return await _traer("sjf", pedir, clave=clave, ttl=ttl)
+
+    try:
+        return await intento()
+    except Exception as e1:
+        nueva = None
+        try:
+            nueva = await _sjf_descubrir_base("ejecutoria")
+        except Exception:
+            pass
+        if not nueva:
+            raise RuntimeError(
+                f"El API de ejecutorias del SJF falló ({e1}) y el auto-descubrimiento no "
+                f"encontró un endpoint alternativo. Puede ser falla temporal o un cambio "
+                f"mayor del API. Ejecuta diagnosticar_conector; si persiste, el conector "
+                f"necesita re-mapearse.")
+        try:
+            return await intento()
+        except Exception as e2:
+            raise RuntimeError(
+                f"El API de ejecutorias falló ({e1}). Se auto-descubrió {nueva} pero también "
+                f"falló ({e2}). La estructura del API probablemente cambió; el conector "
+                f"necesita re-mapearse (pide a Claude en Cowork re-mapearlo con el navegador).")
+
+
+def _ejec_loc(loc: str) -> tuple[str, str, str]:
+    """Desarma la localización de una ejecutoria en época, órgano y fuente.
+
+    Formato observado, separado por puntos y no por punto y coma como en las tesis:
+    'Duodécima Época. Pleno. Semanario Judicial de la Federación, Libro 11, Julio de 2026.'"""
+    trozos = [t.strip().rstrip(".") for t in re.split(r"\.\s+", loc or "") if t.strip()]
+    epoca = next((t for t in trozos if "poca" in t.lower()), "")
+    organo = ""
+    for t in trozos:
+        if t is not epoca and "poca" not in t.lower():
+            organo = t
+            break
+    if not organo:
+        organo = NOMBRE_ORGANO[min(_rango_organo(loc or ""), len(NOMBRE_ORGANO) - 1)]
+    fuente = trozos[-1] if len(trozos) > 2 else ""
+    return epoca, organo, fuente
+
+
+def _ejec_ordenar(docs: list[dict]) -> list[dict]:
+    """Ordena por obligatoriedad: órgano primero, época más reciente después.
+
+    Las ejecutorias no se dividen en jurisprudencia y aislada, así que ese escalón
+    de la prelación no aplica; el resto es el mismo criterio que en las tesis."""
+    def clave(par):
+        i, d = par
+        loc = _strip_html(d.get("localizacion") or "")
+        return (_rango_organo(loc), -_numero_epoca(loc), i)
+
+    return [d for _, d in sorted(enumerate(docs), key=clave)]
+
+
+def _ejec_linea(d: dict) -> list[str]:
+    """Cita de una ejecutoria. No hay rubro, así que la identidad la dan el tipo de
+    asunto con su número, el promovente y el órgano que la resolvió."""
+    loc = _strip_html(d.get("localizacion") or "")
+    epoca, organo, fuente = _ejec_loc(loc)
+    asunto = _strip_html(str(d.get("tipoAsuntoE") or d.get("tipoAsunto") or "")).rstrip(".")
+    promovente = _strip_html(str(d.get("promovente") or "")).rstrip(".")
+    lineas = [
+        f"[{asunto or 'Asunto sin identificar'}], [{organo}], "
+        f"[{('Promovente: ' + promovente) if promovente else 'Promovente no indicado'}], "
+        f"[{fuente}], [{epoca}], [{d.get('ius')}]",
+        f"{HOST}/detalle/ejecutoria/{d.get('ius')}",
+    ]
+    coincidencia = re.sub(r"\s+", " ", _strip_html(d.get("rubro") or "")).strip(" .…")
+    if coincidencia:
+        lineas.append(f"Coincidencia: …{coincidencia[:300]}…")
+    lineas.append("")
+    return lineas
+
+
+def _sin_acentos_con_mapa(s: str) -> tuple[str, list[int]]:
+    """Versión sin acentos y en minúsculas, con el índice original de cada carácter.
+
+    El mapa hace falta porque quitar acentos cambia la longitud del texto y sin él
+    los extractos saldrían corridos."""
+    import unicodedata as _u
+    salida, mapa = [], []
+    for i, c in enumerate(s):
+        for d in _u.normalize("NFD", c):
+            if _u.category(d) != "Mn":
+                salida.append(d.lower())
+                mapa.append(i)
+    return "".join(salida), mapa
+
+
+def _ejec_coincidencias(texto: str, termino: str, maximo: int = 8) -> list[str]:
+    """Extractos alrededor de cada aparición del término, sin distinguir acentos."""
+    plano, mapa = _sin_acentos_con_mapa(texto)
+    aguja, _ = _sin_acentos_con_mapa(termino)
+    if not aguja:
+        return []
+    extractos, desde = [], 0
+    while len(extractos) < maximo:
+        j = plano.find(aguja, desde)
+        if j < 0:
+            break
+        centro = mapa[j]
+        fin_norm = min(j + len(aguja), len(mapa) - 1)
+        ini = max(0, centro - EJEC_CONTEXTO)
+        fin = min(len(texto), mapa[fin_norm] + EJEC_CONTEXTO)
+        extractos.append(re.sub(r"\s+", " ", texto[ini:fin]).strip())
+        desde = j + len(aguja)
+    return extractos
+
+
+def _ejec_partir(texto: str) -> list[str]:
+    """Corta el texto en partes de tamaño manejable, respetando el fin de párrafo."""
+    partes, i = [], 0
+    while i < len(texto):
+        fin = min(i + EJEC_TROZO, len(texto))
+        if fin < len(texto):
+            corte = texto.rfind("\n", i + int(EJEC_TROZO * 0.7), fin)
+            if corte > i:
+                fin = corte
+        partes.append(texto[i:fin].strip())
+        i = fin
+    return partes or [""]
+
+
+@mcp.tool()
+async def buscar_ejecutorias(
+    consulta: str,
+    epocas: list[str] | None = None,
+    pagina: int = 1,
+    por_pagina: int = 20,
+    orden: str = "jerarquia",
+) -> str:
+    """Busca ejecutorias y precedentes de la SCJN: las sentencias completas, no las tesis.
+
+    ÚSALA cuando el usuario pregunte por controversias constitucionales, acciones de
+    inconstitucionalidad, declaratorias generales de inconstitucionalidad,
+    contradicciones de criterios o, en general, por lo que resolvió una sentencia y no
+    solo por el criterio que se extrajo de ella. Estos asuntos NO están en buscar_tesis:
+    son colecciones distintas del Semanario.
+
+    Args:
+        consulta: Expresión de búsqueda. Usa comillas dobles para frases exactas,
+            p. ej. '"interés legítimo"'. Busca en localización, rubro y texto.
+        epocas: Filtro opcional de épocas: lista con valores de "5a" a "12a".
+            Sin filtro busca en todas.
+        pagina: Página de resultados (desde 1).
+        por_pagina: Resultados por página (máx. recomendado 50).
+        orden: "jerarquia" (default) ordena por obligatoriedad: órgano
+            (Pleno > Salas > Plenos Regionales > Plenos de Circuito > TCC) y época
+            más reciente. "fecha" respeta el orden nativo del SJF.
+
+    Returns:
+        Lista de ejecutorias con tipo y número de asunto, órgano, promovente, época,
+        registro digital y link directo (https://sjf2.scjn.gob.mx/detalle/ejecutoria/{registro}).
+        Al citar una ejecutoria incluye SIEMPRE su link. Usa ver_ejecutoria(registro)
+        para leer la sentencia.
+    """
+    body = _search_body(consulta, epocas, False)
+    page, size = max(pagina, 1) - 1, min(max(por_pagina, 1), 50)
+    data = await _ejec_fetch(f"/ejecutorias?page={page}&size={size}", method="POST", json_body=body)
+
+    if data and "documents" not in data and "total" not in data:
+        claves = ", ".join(list(data.keys())[:8])
+        return (f"El API de ejecutorias respondió con una estructura distinta a la esperada "
+                f"(claves recibidas: {claves}). El API probablemente cambió; ejecuta "
+                f"diagnosticar_conector y, si persiste, el conector necesita re-mapearse.")
+    data = data or {}
+    docs = data.get("documents") or []
+    total = data.get("total", 0)
+
+    if not docs:
+        return (f"Sin ejecutorias para '{consulta}' (total en el sistema: {total}). "
+                f"Prueba una expresión más general, o busca el criterio en buscar_tesis.")
+
+    if orden == "jerarquia":
+        docs = _ejec_ordenar(docs)
+
+    lineas = [
+        f"EJECUTORIAS Y PRECEDENTES DEL SJF — '{consulta}'",
+        f"Total: {total} resultados. Página {pagina} ({len(docs)} mostrados).",
+        "Colección de sentencias completas: incluye controversias constitucionales, "
+        "acciones de inconstitucionalidad, declaratorias generales y contradicciones de criterios.",
+        "Formato: [ASUNTO Y NÚMERO], [Órgano], [Promovente], [Fuente], [Época], "
+        "[No. de Registro] + link directo (inclúyelo SIEMPRE al citar).",
+        ("Orden: jerarquía de obligatoriedad (órgano → época más reciente)."
+         if orden == "jerarquia" else "Orden: nativo del SJF por publicación."),
+        "",
+    ]
+    for d in docs:
+        lineas.extend(_ejec_linea(d))
+    lineas.append("Para leer una sentencia: ver_ejecutoria(registro_digital). "
+                  "Son textos largos, así que se entregan por partes o por coincidencia "
+                  "(ver_ejecutoria(registro, buscar_en_texto='...')).")
+    return "\n".join(lineas)
+
+
+@mcp.tool()
+async def ver_ejecutoria(
+    registro_digital: int,
+    buscar_en_texto: str | None = None,
+    parte: int = 1,
+) -> str:
+    """Lee una ejecutoria del SJF por su número de registro digital.
+
+    Una sentencia puede pasar de 180 mil caracteres, así que nunca se devuelve entera:
+    siempre llegan los datos de identificación y los criterios que la sentencia dejó, y
+    del cuerpo llega o la parte que pidas o los fragmentos donde aparece un término.
+
+    Args:
+        registro_digital: Número de registro digital (IUS) de la ejecutoria, p. ej. 201074.
+        buscar_en_texto: Si lo indicas, en vez de una parte del texto devuelve los
+            fragmentos donde aparece esa expresión, con su contexto. Ignora acentos.
+            Es la forma más rápida de encontrar lo que dijo la sentencia sobre un punto.
+        parte: Parte del texto a devolver cuando no se busca un término (desde 1).
+            La respuesta indica cuántas partes tiene la sentencia.
+
+    Returns:
+        Identificación del asunto, criterios que dejó, tesis derivadas y el fragmento
+        de texto solicitado, con el link oficial.
+    """
+    # Mismo enredo que en las tesis, y peor: el valor equivocado de isSemanal devuelve
+    # 404 en unos registros y 500 en otros, así que se prueban los dos sin confiar en
+    # el código de error.
+    d, fallos = None, []
+    for semanal in ("true", "false"):
+        try:
+            data = await _ejec_fetch(
+                f"/ejecutorias/{registro_digital}?isSemanal={semanal}&hostName={HOST}")
+            if data and (data.get("texto") or data.get("rubro") or data.get("tipoAsunto")):
+                d = data
+                break
+        except Exception as e:
+            fallos.append(f"isSemanal={semanal}: {e}")
+    if not d:
+        detalle = (" Detalle → " + " | ".join(fallos) + ".") if fallos else ""
+        return (f"No se encontró la ejecutoria con registro digital {registro_digital} "
+                f"(se intentó como sentencia del Semanario en curso y como histórica).{detalle} "
+                f"Verifica el registro o consúltala en {HOST}/detalle/ejecutoria/{registro_digital}")
+
+    asunto = _strip_html(str(d.get("tipoAsunto") or d.get("tipoAsuntoE") or "")).rstrip(".")
+    organo = d.get("instancia") or SALAS_EJEC.get(str(d.get("sala") or ""), "")
+    volumen = _strip_html(str(d.get("volumen") or ""))
+    partes_out = [
+        f"EJECUTORIA — registro digital {d.get('ius') or registro_digital}",
+        f"Asunto: {asunto or '—'}",
+        f"Órgano: {organo or '—'} | Época: {d.get('epoca') or '—'}",
+    ]
+    if d.get("promovente"):
+        partes_out.append(f"Promovente: {_strip_html(str(d['promovente']))}")
+    if d.get("fuente") or volumen:
+        partes_out.append(f"Fuente: {_strip_html(str(d.get('fuente') or ''))}"
+                          + (f", {volumen}" if volumen else ""))
+    if d.get("textoPublicacion"):
+        pub = re.sub(r"\s+", " ", _strip_html(str(d["textoPublicacion"]))).strip()
+        if pub:
+            partes_out.append(f"Publicación: {pub}")
+
+    criterios = _strip_html(d.get("rubro") or "").strip()
+    if criterios:
+        recorte = criterios[:EJEC_MAX_CRITERIOS]
+        partes_out += ["", "CRITERIOS QUE DEJÓ ESTA SENTENCIA:", recorte]
+        if len(criterios) > EJEC_MAX_CRITERIOS:
+            partes_out.append(f"[…recortado: {len(criterios)} caracteres de criterios en total]")
+
+    tesis = [t for t in (d.get("tesis") or []) if t]
+    if tesis:
+        partes_out += ["", "TESIS DERIVADAS (usa ver_tesis para el texto de cada una): "
+                       + ", ".join(str(t) for t in tesis)]
+
+    texto = _strip_html(d.get("texto") or "")
+    if not texto:
+        partes_out += ["", "El API no devolvió el cuerpo de la sentencia. "
+                       f"Consúltala en {HOST}/detalle/ejecutoria/{d.get('ius') or registro_digital}"]
+    elif buscar_en_texto:
+        extractos = _ejec_coincidencias(texto, buscar_en_texto)
+        if extractos:
+            partes_out += ["", f"COINCIDENCIAS DE '{buscar_en_texto}' "
+                           f"({len(extractos)} mostradas, texto de {len(texto):,} caracteres):"]
+            for n, e in enumerate(extractos, 1):
+                partes_out += ["", f"[{n}] …{e}…"]
+            partes_out.append("")
+            partes_out.append("Para leer la sentencia corrida usa ver_ejecutoria(registro, parte=N).")
+        else:
+            trozos = _ejec_partir(texto)
+            partes_out += ["", f"La expresión '{buscar_en_texto}' no aparece en el cuerpo de la "
+                           f"sentencia ({len(texto):,} caracteres). Puede estar en los criterios "
+                           f"de arriba, o con otra redacción. El texto tiene {len(trozos)} partes: "
+                           f"ver_ejecutoria({registro_digital}, parte=1)."]
+    else:
+        trozos = _ejec_partir(texto)
+        n = min(max(parte, 1), len(trozos))
+        partes_out += ["", f"TEXTO — parte {n} de {len(trozos)} ({len(texto):,} caracteres en total):",
+                       trozos[n - 1]]
+        if len(trozos) > 1:
+            siguiente = (f" Siguiente: ver_ejecutoria({registro_digital}, parte={n + 1})."
+                         if n < len(trozos) else " Es la última parte.")
+            partes_out.append("")
+            partes_out.append(f"[Parte {n} de {len(trozos)}.{siguiente} Para ir directo a un punto: "
+                              f"ver_ejecutoria({registro_digital}, buscar_en_texto='...')]")
+
+    partes_out += ["", f"Fuente: {HOST}/detalle/ejecutoria/{d.get('ius') or registro_digital}"]
+    return "\n".join(partes_out)
 
 
 # ---- TFJA: Sistema General de Consulta de Tesis y Jurisprudencias ----
@@ -1840,8 +2220,9 @@ async def estado_conector() -> str:
     recientes = sum(1 for t in _PETICIONES if ahora - t <= 60)
     return "\n".join([
         "KriteriusMX — servidor VIVO (respuesta sin red).",
-        f"Versión 2.6.0 (remota) · encendido hace {s}s · 15 tools registradas.",
-        f"Endpoint SJF en uso: {_SJF_BASE}",
+        f"Versión 2.7.0 (remota) · encendido hace {s}s · 17 tools registradas.",
+        f"Endpoint SJF tesis: {_SJF_BASE}",
+        f"Endpoint SJF ejecutorias: {_EJEC_BASE}",
         "",
         f"Caché: {_CACHE.resumen()}",
         f"Peticiones a fuentes en el último minuto: {recientes} de {LIMITE_PETICIONES_MINUTO}",
@@ -1888,6 +2269,23 @@ async def diagnosticar_conector() -> str:
         if not d or not d.get("rubro") or "IGUALDAD" not in _strip_html(d["rubro"]).upper():
             raise RuntimeError("no regresó el rubro esperado")
         return "texto íntegro recuperado"
+
+    async def _ejec_busqueda():
+        body = _search_body('"interés legítimo"', None, False)
+        d = await _ejec_fetch("/ejecutorias?page=0&size=1", method="POST", json_body=body)
+        doc = (d.get("documents") or [{}])[0] if d else {}
+        if not d or not isinstance(d.get("total"), int) or not doc.get("ius"):
+            claves = ",".join(list(d.keys())[:6]) if d else "vacío"
+            raise RuntimeError(f"estructura inesperada (claves: {claves})")
+        return f"{d['total']} ejecutorias para 'interés legítimo', endpoint {_EJEC_BASE}"
+
+    async def _ejec_detalle():
+        r = await ver_ejecutoria(201074, parte=1)
+        if "CONTROVERSIA CONSTITUCIONAL 267/2024" not in r:
+            raise RuntimeError("no regresó el asunto esperado: " + r[:150])
+        if "TEXTO — parte 1 de" not in r:
+            raise RuntimeError("no se entregó el cuerpo de la sentencia por partes")
+        return r.split("\n")[3]
 
     async def _tfja_sesion():
         async with httpx.AsyncClient(headers=TFJA_HEADERS, timeout=30, follow_redirects=True) as client:
@@ -1957,6 +2355,8 @@ async def diagnosticar_conector() -> str:
 
     await check("SJF búsqueda (API)", _sjf_busqueda)
     await check("SJF detalle (tesis 2012594, P./J. 9/2016)", _sjf_detalle)
+    await check("SJF ejecutorias búsqueda (API)", _ejec_busqueda)
+    await check("SJF ejecutorias detalle (registro 201074, C.C. 267/2024)", _ejec_detalle)
     await check("TFJA sesión y token CSRF", _tfja_sesion)
     await check("TFJA búsqueda (formulario)", _tfja_busqueda)
     await check("TFJA detalle (identificador 48235, IX-P-SS-522)", _tfja_detalle)

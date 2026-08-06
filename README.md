@@ -5,11 +5,12 @@ dentro de Claude, con cita completa y link oficial en cada resultado.
 
 **Sitio:** [kriterius.mx](https://kriterius.mx) · **Endpoint MCP:** `https://mcp.kriterius.mx/mcp`
 
-## Fuentes y herramientas (15)
+## Fuentes y herramientas (17)
 
 | Fuente | Herramientas |
 |---|---|
-| **SJF / SCJN** — Semanario Judicial de la Federación | `buscar_tesis`, `investigar_criterio`, `ver_tesis` |
+| **SJF / SCJN** — Semanario Judicial de la Federación, colección de tesis | `buscar_tesis`, `investigar_criterio`, `ver_tesis` |
+| **SJF / SCJN** — ejecutorias y precedentes (sentencias completas) | `buscar_ejecutorias`, `ver_ejecutoria` |
 | **TFJA** — Tribunal Federal de Justicia Administrativa | `buscar_tesis_tfja`, `ver_tesis_tfja` |
 | **DOF** — Diario Oficial de la Federación | `buscar_dof`, `ver_nota_dof`, `indicadores_dof`, `monitorear_dof` |
 | **Corte IDH** — Buscador Jurídico de Derechos Humanos | `buscar_corteidh`, `explorar_corteidh`, `ver_caso_corteidh`, `investigar_criterio_corteidh` |
@@ -25,6 +26,12 @@ contra México, que vinculan de forma directa al Estado mexicano.
 **Cita lista para pegar en un escrito**, con el link a la fuente oficial en la línea
 siguiente. En la Corte IDH la unidad de resultado es el párrafo, no la tesis.
 
+**Las dos colecciones del Semanario.** Las tesis y las ejecutorias viven en bases
+distintas y solo la segunda contiene las controversias constitucionales, las acciones de
+inconstitucionalidad y las declaratorias generales. Una sentencia puede pasar de 180 mil
+caracteres, así que `ver_ejecutoria` la entrega por partes o devuelve los fragmentos
+donde aparece el término que se busque.
+
 ## Cómo se usa
 
 En claude.ai → *Settings → Connectors → Add custom connector* → pegar
@@ -35,7 +42,9 @@ En claude.ai → *Settings → Connectors → Add custom connector* → pegar
 ```bash
 pip install -r requirements.txt
 python server_http.py          # http://localhost:8000/mcp
-python test_corteidh.py        # pruebas del parser, sin red
+python test_corteidh.py        # parser de la Corte IDH, sin red
+python test_ejecutorias.py     # módulo de ejecutorias, sin red
+python test_limites.py         # caché, concurrencia y reintentos, sin red
 ```
 
 El servidor expone `GET /salud` para monitoreo y `GET /` como página de estado.
