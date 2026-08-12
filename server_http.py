@@ -4,12 +4,15 @@ KriteriusMX — servidor MCP remoto sobre HTTP.
 Expone las 15 tools de kriterius_mx.py como conector remoto para claude.ai.
 El endpoint MCP queda en https://<dominio>/mcp
 
-Además publica dos rutas para humanos y para el monitoreo del hosting:
-    GET /        una página mínima que confirma que el servicio está vivo
-    GET /salud   respuesta JSON para el health check automático de Render
+Además publica cuatro rutas para humanos, para el monitoreo del hosting y para medir uso:
+    GET /         una página mínima que confirma que el servicio está vivo
+    GET /salud    respuesta JSON para el health check automático del hosting
+    GET /uso      panel de adopción, privado (requiere ?clave=...)
+    GET /visita   faro de 1x1 que el sitio carga para contar visitas
 
 Variables de entorno:
-    PORT   puerto de escucha (Render la define sola; por defecto 8000)
+    PORT       puerto de escucha (el hosting la define solo; por defecto 8000)
+    CLAVE_USO  clave de /uso. Sin ella, /uso responde 503 y no expone nada.
 """
 
 import os
@@ -17,9 +20,11 @@ from datetime import datetime, timezone
 
 from starlette.responses import HTMLResponse, JSONResponse
 
-from kriterius_mx import mcp
+# La versión vive en kriterius_mx.py y solo ahí. Cuando estaba duplicada aquí,
+# /salud siguió anunciando la 2.6.0 con la 2.7.0 ya desplegada.
+from kriterius_mx import mcp, VERSION
+import uso
 
-VERSION = "2.6.0"
 ARRANQUE = datetime.now(timezone.utc)
 
 
@@ -56,6 +61,34 @@ async def inicio(request):
 <p>Para agregarlo en Claude, la dirección del conector es:<br>
    <code>https://mcp.kriterius.mx/mcp</code></p>
 </html>""")
+
+
+@mcp.custom_route("/uso", methods=["GET"])
+async def panel_uso(request):
+    """Panel de adopción. Privado: sin la clave correcta responde 404."""
+    return await uso.pagina_uso(request, VERSION)
+
+
+@mcp.custom_route("/visita", methods=["GET"])
+async def visita(request):
+    """Faro del sitio. Devuelve un GIF transparente de 1x1 y cuenta la carga."""
+    return await uso.visita(request)
+
+
+# El middleware se cuelga envolviendo el constructor de la app, no cambiando el arranque:
+# `mcp.run` sigue siendo quien levanta uvicorn con su propia configuración, que ya está
+# probada en producción. Tocar esa parte para meter la medición sería cambiar lo que
+# funciona por lo que apenas se estrena.
+_construir_app = mcp.streamable_http_app
+
+
+def _app_con_medicion():
+    app = _construir_app()
+    app.add_middleware(uso.Medicion, ruta=mcp.settings.streamable_http_path)
+    return app
+
+
+mcp.streamable_http_app = _app_con_medicion
 
 
 if __name__ == "__main__":

@@ -22,6 +22,10 @@ import httpx
 from mcp.server.fastmcp import FastMCP
 from mcp.server.transport_security import TransportSecuritySettings
 
+# Única fuente del número de versión. server_http.py la importa de aquí para que
+# /salud y estado_conector no puedan volver a discrepar.
+VERSION = "2.8.0"
+
 BASE = "https://sjf2.scjn.gob.mx/services/sjftesismicroservice/api/public"
 BASE_EJEC = "https://sjf2.scjn.gob.mx/services/sjfejecutoriamicroservice/api/public"
 HOST = "https://sjf2.scjn.gob.mx"
@@ -231,6 +235,28 @@ _SJF_BASE = BASE
 _EJEC_BASE = BASE_EJEC
 
 
+class _RespuestaHTTP(RuntimeError):
+    """El API contestó con un código distinto de 200.
+
+    Se distingue del resto de fallos a propósito: un 404 (o el 500 que devuelven
+    algunas ejecutorias con el `isSemanal` equivocado) significa "ese registro no
+    existe en esta colección", no "el endpoint se movió". Confundirlos hacía que
+    cada consulta a una tesis histórica disparara el auto-descubrimiento y se
+    bajara la página del SJF con sus dos bundles de JavaScript: tres peticiones
+    tiradas por cada tesis vieja."""
+
+    def __init__(self, status: int):
+        self.status = status
+        super().__init__(f"respondió {status}")
+
+
+def _merece_redescubrir(e: Exception) -> bool:
+    """Solo un fallo de conexión o una respuesta que no sea JSON justifican
+    re-descubrir el endpoint. Un código HTTP es una respuesta del API: el API
+    sigue ahí, lo que no está es el registro."""
+    return not isinstance(e, _RespuestaHTTP)
+
+
 async def _sjf_descubrir_base(coleccion: str = "tesis") -> str | None:
     """Busca en el HTML y bundles JS del sitio del SJF rutas /services/.../api/public
     para re-descubrir el endpoint si la SCJN lo mueve o renombra.
@@ -279,7 +305,7 @@ async def _sjf_fetch(path: str, method: str = "GET", json_body: dict | None = No
         async with httpx.AsyncClient(headers=HEADERS, timeout=30) as client:
             r = await client.request(method, f"{_SJF_BASE}{path}", json=json_body)
             if r.status_code != 200:
-                raise RuntimeError(f"respondió {r.status_code}")
+                raise _RespuestaHTTP(r.status_code)
             if not r.text.strip():
                 return None
             try:
@@ -294,6 +320,8 @@ async def _sjf_fetch(path: str, method: str = "GET", json_body: dict | None = No
     try:
         return await intento()
     except Exception as e1:
+        if not _merece_redescubrir(e1):
+            raise
         nueva = None
         try:
             nueva = await _sjf_descubrir_base()
@@ -712,7 +740,7 @@ async def _ejec_fetch(path: str, method: str = "GET", json_body: dict | None = N
         async with httpx.AsyncClient(headers=HEADERS_EJEC, timeout=45) as client:
             r = await client.request(method, f"{_EJEC_BASE}{path}", json=json_body)
             if r.status_code != 200:
-                raise RuntimeError(f"respondió {r.status_code}")
+                raise _RespuestaHTTP(r.status_code)
             if not r.text.strip():
                 return None
             try:
@@ -727,6 +755,8 @@ async def _ejec_fetch(path: str, method: str = "GET", json_body: dict | None = N
     try:
         return await intento()
     except Exception as e1:
+        if not _merece_redescubrir(e1):
+            raise
         nueva = None
         try:
             nueva = await _sjf_descubrir_base("ejecutoria")
@@ -2220,7 +2250,7 @@ async def estado_conector() -> str:
     recientes = sum(1 for t in _PETICIONES if ahora - t <= 60)
     return "\n".join([
         "KriteriusMX — servidor VIVO (respuesta sin red).",
-        f"Versión 2.7.0 (remota) · encendido hace {s}s · 17 tools registradas.",
+        f"Versión {VERSION} (remota) · encendido hace {s}s · 17 tools registradas.",
         f"Endpoint SJF tesis: {_SJF_BASE}",
         f"Endpoint SJF ejecutorias: {_EJEC_BASE}",
         "",
