@@ -1,0 +1,38 @@
+# Hace instalable `kriterius_mx.py` como paquete, para que la app web lo consuma
+# como dependencia en vez de tener una copia propia. Dos copias del mismo archivo
+# se separan siempre: la pregunta no es si, es cuándo.
+#
+# ADITIVO A PROPÓSITO. Este archivo no cambia cómo se construye el servidor MCP:
+# el Dockerfile copia archivos explícitos y no mira aquí. El despliegue en
+# DigitalOcean sigue igual.
+#
+# ⚠️  ANTES DE SUBIR ESTO A GITHUB: confirma en DigitalOcean que la app está
+#     configurada como build por **Dockerfile** y no por buildpack. Si fuera
+#     buildpack, la aparición de un pyproject.toml cambia la detección del
+#     runtime y el despliegue se comporta distinto.
+#     App Platform → tu app → Settings → Components → Source → Build Command.
+
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "kriterius-core"
+version = "2.8.0"
+description = "Acceso a fuentes oficiales del derecho mexicano e interamericano: SJF/SCJN, TFJA, DOF y Corte IDH"
+requires-python = ">=3.10"
+
+# Fijas a propósito, igual que en requirements.txt. mcp 2.0.0 eliminó
+# mcp.server.fastmcp, del que depende todo este módulo.
+dependencies = [
+    "mcp==1.28.1",
+    "httpx==0.28.1",
+]
+
+[project.urls]
+Homepage = "https://kriterius.mx"
+
+[tool.setuptools]
+# Solo el core. `server_http.py` y `uso.py` son del servidor MCP y no tienen
+# por qué viajar a la app web.
+py-modules = ["kriterius_mx"]
