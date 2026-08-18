@@ -17,6 +17,8 @@ API del SJF (no documentado oficialmente):
 
 import html
 import re
+import weakref as _weakref
+from urllib.parse import urlencode as _urlencode
 
 import httpx
 from mcp.server.fastmcp import FastMCP
@@ -24,7 +26,7 @@ from mcp.server.transport_security import TransportSecuritySettings
 
 # Única fuente del número de versión. server_http.py la importa de aquí para que
 # /salud y estado_conector no puedan volver a discrepar.
-VERSION = "2.8.0"
+VERSION = "2.9.0"
 
 BASE = "https://sjf2.scjn.gob.mx/services/sjftesismicroservice/api/public"
 BASE_EJEC = "https://sjf2.scjn.gob.mx/services/sjfejecutoriamicroservice/api/public"
@@ -2232,6 +2234,529 @@ async def investigar_criterio_corteidh(
                      "oficial completa y su link.")
 
 
+# ---- CourtListener: derecho estadounidense, con la llave del propio usuario ----
+#
+# El servidor remoto lo comparte todo el mundo y no tiene login, así que la llave
+# NO puede ser la de Gonzalo: los cupos de CourtListener son de 125 consultas al
+# día por cuenta y se agotarían con dos personas. Además, la letra chica de las
+# membresías de Free Law Project excluye sostener herramientas de terceros.
+#
+# La solución es un llavero por conversación: el usuario pega su llave gratuita
+# con configurar_courtlistener y vive en memoria, atada al objeto de sesión MCP.
+#
+# Por qué WeakKeyDictionary y no un diccionario normal con el id de la sesión:
+# `id()` se recicla cuando el recolector de basura libera un objeto, y una sesión
+# nueva podría caer en la misma dirección y HEREDAR la llave de otra persona. Con
+# referencias débiles la entrada desaparece junto con la sesión, y no hay forma de
+# que dos conversaciones se crucen.
+#
+# A propósito NO se lee ninguna variable de entorno aquí: si existiera, bastaría
+# con definirla para que todos los usuarios compartieran un solo cupo, que es
+# justo lo que este diseño evita.
+
+CL_BASE = "https://www.courtlistener.com/api/rest/v4"
+CL_SITIO = "https://www.courtlistener.com"
+CL_TROZO = 12000
+CL_MAX_TEXTO_CITAS = 60000
+
+_CL_LLAVES: "_weakref.WeakKeyDictionary" = _weakref.WeakKeyDictionary()
+
+CL_COMO_OBTENERLA = "\n".join([
+    "Cómo conseguir la llave (gratuita, dos minutos):",
+    f"1. Crea una cuenta en {CL_SITIO}/sign-in/",
+    f"2. Copia tu token en {CL_SITIO}/profile/api-token/",
+    "3. Aquí mismo, pídeme: «configura mi llave de CourtListener» y pégala.",
+])
+
+
+def _cl_sesion():
+    """El objeto de sesión MCP, que es lo más parecido a 'esta conversación'."""
+    try:
+        return mcp.get_context().session
+    except Exception:
+        return None
+
+
+def _cl_llave() -> str:
+    s = _cl_sesion()
+    return _CL_LLAVES.get(s, "") if s is not None else ""
+
+
+def _cl_sin_llave() -> str:
+    return "\n".join([
+        "Para consultar derecho estadounidense necesitas tu propia llave de CourtListener.",
+        "",
+        "No uso una llave mía a propósito: el cupo de CourtListener es por cuenta "
+        "(125 consultas al día en el plan gratuito), así que una llave compartida entre "
+        "todos los usuarios se agotaría el primer día. Con la tuya, el cupo es tuyo.",
+        "",
+        CL_COMO_OBTENERLA,
+        "",
+        "Las fuentes mexicanas del conector —SCJN, TFJA, DOF y Corte IDH— no necesitan "
+        "ninguna llave y siguen funcionando con normalidad.",
+    ])
+
+
+async def _cl_fetch(ruta: str, method: str = "GET", form: dict | None = None,
+                    llave: str | None = None):
+    """Llama al API de CourtListener. La llave nunca se escribe en un mensaje de
+    error ni en un log: si algo falla, se dice qué falló, no con qué credencial."""
+    clave = llave if llave is not None else _cl_llave()
+    if not clave:
+        raise RuntimeError(_cl_sin_llave())
+
+    cabeceras = {
+        "Authorization": f"Token {clave}",
+        "Accept": "application/json",
+        "User-Agent": HEADERS["User-Agent"],
+    }
+    if form:
+        cabeceras["Content-Type"] = "application/x-www-form-urlencoded"
+
+    async with httpx.AsyncClient(headers=cabeceras, timeout=30) as client:
+        if form:
+            r = await client.post(f"{CL_BASE}{ruta}", data=form)
+        else:
+            r = await client.request(method, f"{CL_BASE}{ruta}")
+
+    if r.status_code in (401, 403):
+        raise RuntimeError(
+            f"CourtListener rechazó la llave ({r.status_code}). Revisa que sea el token "
+            f"completo de {CL_SITIO}/profile/api-token/ y que siga vigente.")
+    if r.status_code == 429:
+        cuando = ""
+        try:
+            d = r.json()
+            cuando = d.get("wait_until") or d.get("wait_util") or d.get("detail") or ""
+        except Exception:
+            pass
+        raise RuntimeError(
+            "Cupo de CourtListener agotado. El plan gratuito permite 5 peticiones por "
+            "minuto, 50 por hora y 125 al día, en ventana móvil." +
+            (f" El servidor indica: {cuando}." if cuando else "") +
+            " No es una falla del conector ni de la consulta: hay que esperar a que se "
+            f"libere. Para más volumen, Free Law Project vende membresías en "
+            f"https://free.law/membership/.")
+    if r.status_code != 200:
+        raise RuntimeError(f"CourtListener respondió {r.status_code}.")
+    if not r.text.strip():
+        return None
+    try:
+        return r.json()
+    except Exception:
+        extracto = re.sub(r"\s+", " ", _strip_html(r.text))[:120]
+        raise RuntimeError(
+            f"CourtListener respondió algo que no es JSON (posible cambio de API): '{extracto}'")
+
+
+def _cl_link(absolute_url: str | None) -> str:
+    return f"{CL_SITIO}{absolute_url}" if absolute_url else ""
+
+
+def _cl_cita(d: dict) -> str:
+    """La cita como la leería un abogado: nombre, repertorio, tribunal y año."""
+    nombre = _strip_html(d.get("caseName") or d.get("case_name") or "").strip()
+    citas = [c for c in (d.get("citation") or []) if c]
+    anio = str(d.get("dateFiled") or d.get("date_filed") or "")[:4]
+    tribunal = d.get("court_citation_string") or d.get("court_id") or ""
+    dentro = " ".join(x for x in (tribunal, anio) if x)
+    cita = nombre
+    if citas:
+        cita += f", {citas[0]}"
+    if dentro:
+        cita += f" ({dentro})"
+    return cita.strip()
+
+
+def _cl_texto_opinion(o: dict) -> str:
+    """Cada fuente de CourtListener llena un campo distinto: Harvard trae XML,
+    Lawbox y Columbia su propio HTML, y las raspadas texto plano."""
+    for campo in ("html_with_citations", "html", "html_lawbox", "html_columbia",
+                  "xml_harvard", "plain_text"):
+        t = _strip_html(o.get(campo) or "").strip()
+        if len(t) > 40:
+            return t
+    return ""
+
+
+@mcp.tool()
+async def ayuda_derecho_eeuu() -> str:
+    """Explica cómo habilitar las tools de derecho ESTADOUNIDENSE de este conector.
+
+    No consulta nada ni necesita llave: solo explica. Úsala cuando el usuario pida
+    jurisprudencia de Estados Unidos y no haya configurado su llave todavía, o
+    cuando pregunte si el conector sirve para derecho estadounidense.
+    """
+    ya = "SÍ" if _cl_llave() else "NO"
+    return "\n".join([
+        "DERECHO ESTADOUNIDENSE EN KRITERIUSMX",
+        "",
+        "Este conector puede consultar jurisprudencia de Estados Unidos —tribunales "
+        "federales y de los 50 estados— a través de CourtListener, la base abierta de "
+        "Free Law Project, la misma que usan varias herramientas jurídicas comerciales.",
+        "",
+        f"Llave configurada en esta conversación: {ya}.",
+        "",
+        "Qué se puede hacer una vez configurada:",
+        "· buscar_casos_eeuu — búsqueda por palabras clave o en lenguaje natural",
+        "· ver_caso_eeuu — texto íntegro de una decisión",
+        "· quien_cita_eeuu — quién ha citado un caso, para rastrear si sigue vivo",
+        "· verificar_citas_eeuu — revisa las citas de un escrito y detecta las inventadas",
+        "",
+        CL_COMO_OBTENERLA,
+        "",
+        "Sobre la llave, con todas sus letras: viaja en tu mensaje y se guarda en la "
+        "memoria del servidor mientras dure esta conversación; no se escribe en disco, "
+        "no entra a los contadores de uso y no queda en los registros. Aun así queda en "
+        "el historial del chat, así que trátala como lo que es: una credencial. Es "
+        "gratuita, de solo lectura y sobre una base pública, y puedes revocarla cuando "
+        f"quieras en {CL_SITIO}/profile/api-token/.",
+        "",
+        "Si prefieres que no pase por el chat, el conector de escritorio (el paquete "
+        ".mcpb para Claude Desktop) pide la llave al instalar y la guarda en el llavero "
+        "del sistema operativo.",
+        "",
+        "Nada de esto afecta a las fuentes mexicanas: SCJN, TFJA, DOF y Corte IDH no "
+        "necesitan llave.",
+    ])
+
+
+@mcp.tool()
+async def configurar_courtlistener(llave: str) -> str:
+    """Guarda la llave de CourtListener del usuario para ESTA conversación.
+
+    La llave se comprueba contra el API antes de guardarse, vive solo en memoria y
+    desaparece al cerrar la conversación. Manda una cadena vacía para borrarla.
+    NUNCA repitas la llave en tu respuesta al usuario.
+    """
+    s = _cl_sesion()
+    if s is None:
+        return ("No pude identificar la conversación, así que no guardé nada. "
+                "Vuelve a intentarlo; si sigue igual, usa el conector de escritorio, "
+                "que toma la llave de la configuración del sistema.")
+
+    limpia = (llave or "").strip()
+    if not limpia:
+        _CL_LLAVES.pop(s, None)
+        return ("Llave de CourtListener borrada de la memoria del servidor. "
+                "Las fuentes mexicanas siguen disponibles.")
+
+    # Se comprueba con la verificación de citas y no con una búsqueda: ese endpoint
+    # tiene cupo propio (60 citas por minuto), así que validar no le gasta al usuario
+    # ninguna de sus 125 consultas diarias de investigación.
+    try:
+        d = await _cl_fetch("/citation-lookup/", method="POST",
+                            form={"text": "576 U.S. 644"}, llave=limpia)
+    except RuntimeError as e:
+        return (f"No guardé la llave porque no funcionó. {e}\n\n" + CL_COMO_OBTENERLA)
+
+    primera = (d or [{}])[0] if isinstance(d, list) else {}
+    if primera.get("status") != 200:
+        return ("La llave respondió, pero el API no devolvió lo esperado para una cita "
+                "conocida. No la guardé. Vuelve a intentarlo en un momento.")
+
+    _CL_LLAVES[s] = limpia
+    return "\n".join([
+        "Llave de CourtListener comprobada y guardada para esta conversación.",
+        "",
+        "Ya puedes pedir jurisprudencia estadounidense: búsqueda, texto íntegro, "
+        "quién cita un caso y verificación de citas.",
+        "",
+        "Vive solo en la memoria del servidor y desaparece al cerrar la conversación; "
+        "en la siguiente habrá que volver a ponerla. Tu cupo gratuito es de 125 "
+        "consultas al día, así que conviene ir al grano en vez de tantear.",
+    ])
+
+
+@mcp.tool()
+async def buscar_casos_eeuu(consulta: str, tribunal: str = "", desde: str = "",
+                            hasta: str = "", semantica: bool = False,
+                            incluir_no_publicadas: bool = False,
+                            orden: str = "relevancia", cursor: str = "") -> str:
+    """Busca jurisprudencia de ESTADOS UNIDOS en CourtListener.
+
+    Solo para derecho estadounidense; para derecho mexicano usa buscar_tesis y
+    buscar_ejecutorias. Requiere la llave del usuario (configurar_courtlistener).
+    Cada llamada gasta 1 de sus 125 consultas diarias: no explores de más.
+
+    Args:
+        consulta: Búsqueda. Comillas dobles para frase exacta; acepta operadores.
+        tribunal: Id del tribunal, p. ej. 'scotus', 'ca9', 'cal'.
+        desde: Resueltos desde esta fecha, AAAA-MM-DD.
+        hasta: Resueltos hasta esta fecha, AAAA-MM-DD.
+        semantica: True para búsqueda en lenguaje natural en vez de palabras clave.
+        incluir_no_publicadas: Incluye decisiones sin fuerza vinculante plena.
+        orden: 'relevancia', 'fecha' o 'citas'.
+        cursor: Cursor de la página siguiente, devuelto por la llamada anterior.
+    """
+    if not consulta.strip():
+        raise ValueError("Falta 'consulta'.")
+
+    p = {"q": consulta.strip(), "type": "o", "highlight": "on"}
+    if tribunal:
+        p["court"] = tribunal.strip()
+    if desde:
+        p["filed_after"] = desde.strip()
+    if hasta:
+        p["filed_before"] = hasta.strip()
+    if semantica:
+        p["semantic"] = "true"
+    if orden == "fecha":
+        p["order_by"] = "dateFiled desc"
+    elif orden == "citas":
+        p["order_by"] = "citeCount desc"
+    if incluir_no_publicadas:
+        p["stat_Published"] = "on"
+        p["stat_Unpublished"] = "on"
+    if cursor:
+        p["cursor"] = cursor
+
+    d = await _cl_fetch(f"/search/?{_urlencode(p)}")
+    res = (d or {}).get("results") or []
+    if not res:
+        return (f"Sin resultados en CourtListener para \"{consulta}\"" +
+                (f" en el tribunal {tribunal}" if tribunal else "") + ".\n"
+                "Prueba con menos filtros, o con semantica=True para buscar en lenguaje "
+                "natural en vez de por palabras clave.")
+
+    total = d.get("count", len(res))
+    lineas = [f"{total} resultado(s) en CourtListener para \"{consulta}\". "
+              f"Se muestran {len(res)}.", ""]
+    for i, c in enumerate(res, 1):
+        ops = c.get("opinions") or []
+        principal = next((o for o in ops if o.get("type") == "lead-opinion"),
+                         ops[0] if ops else {})
+        frag = re.sub(r"\s+", " ", _strip_html(principal.get("snippet") or "")).strip()
+        lineas.append(f"{i}. {_cl_cita(c)}")
+        if c.get("court") and c.get("court") != c.get("court_citation_string"):
+            lineas.append(f"   {c['court']}")
+        otras = (c.get("citation") or [])[1:]
+        if otras:
+            lineas.append(f"   Citas paralelas: {' · '.join(otras)}")
+        if c.get("docketNumber"):
+            lineas.append(f"   Expediente: {c['docketNumber']}")
+        if c.get("status") and c["status"] != "Published":
+            lineas.append(f"   ⚠ Estado: {c['status']} (no publicada)")
+        if c.get("citeCount") is not None:
+            lineas.append(f"   Citada por {c['citeCount']} decisión(es)")
+        if frag:
+            lineas.append(f"   \"{frag[:300]}{'…' if len(frag) > 300 else ''}\"")
+        lineas.append(f"   {_cl_link(c.get('absolute_url'))}")
+        seguir = f"   ver_caso_eeuu(id_cluster={c.get('cluster_id')})"
+        if principal.get("id"):
+            seguir += f" · quien_cita_eeuu(id_opinion={principal['id']})"
+        lineas.append(seguir)
+        lineas.append("")
+
+    if d.get("next"):
+        m = re.search(r"[?&]cursor=([^&]+)", d["next"])
+        if m:
+            from urllib.parse import unquote
+            lineas.append(f"Hay más: buscar_casos_eeuu(consulta=…, cursor=\"{unquote(m.group(1))}\")")
+    lineas.append("Cada consulta gasta 1 de las 125 diarias de la cuenta gratuita del usuario.")
+    lineas.append("Al citar cualquiera de estos casos, incluye SIEMPRE su link.")
+    return "\n".join(lineas)
+
+
+@mcp.tool()
+async def ver_caso_eeuu(id_cluster: int = 0, id_opinion: int = 0, parte: int = 1,
+                        buscar_en_texto: str = "") -> str:
+    """Texto íntegro de una decisión estadounidense de CourtListener.
+
+    Las sentencias son largas: se entrega por partes de 12 000 caracteres, o solo
+    los fragmentos donde aparece un término con buscar_en_texto.
+
+    Args:
+        id_cluster: Id del cluster (la decisión), como lo da buscar_casos_eeuu.
+        id_opinion: Id de la opinión concreta, si se conoce.
+        parte: Parte del texto a leer, desde 1.
+        buscar_en_texto: Devuelve solo los fragmentos donde aparece este término.
+    """
+    if not id_cluster and not id_opinion:
+        raise ValueError("Falta 'id_cluster' o 'id_opinion'.")
+
+    cluster, opinion = None, None
+    if id_cluster:
+        cluster = await _cl_fetch(f"/clusters/{id_cluster}/")
+        subs = (cluster or {}).get("sub_opinions") or []
+        ref = subs[0] if subs else None
+        oid = re.search(r"/(\d+)/?$", ref).group(1) if isinstance(ref, str) else ref
+        if not oid:
+            raise RuntimeError(f"El cluster {id_cluster} no trae opiniones asociadas.")
+        opinion = await _cl_fetch(f"/opinions/{oid}/")
+    else:
+        opinion = await _cl_fetch(f"/opinions/{id_opinion}/")
+        ref = (opinion or {}).get("cluster")
+        cid = re.search(r"/(\d+)/?$", ref).group(1) if isinstance(ref, str) else ref
+        if cid:
+            cluster = await _cl_fetch(f"/clusters/{cid}/")
+
+    c = cluster or {}
+    citas = [" ".join(str(x) for x in (t.get("volume"), t.get("reporter"), t.get("page")) if x)
+             for t in (c.get("citations") or [])]
+    citas = [x for x in citas if x.strip()]
+    encabezado = [x for x in [
+        _strip_html(c.get("case_name_full") or c.get("case_name") or "(sin nombre)"),
+        f"Cita(s): {' · '.join(citas)}" if citas else "",
+        f"Resuelto: {c['date_filed']}" if c.get("date_filed") else "",
+        f"Estado: {c['precedential_status']}" if c.get("precedential_status") else "",
+        f"Juzgadores: {_strip_html(c['judges'])}" if c.get("judges") else "",
+        f"Citada por {c['citation_count']} decisión(es)" if c.get("citation_count") is not None else "",
+        f"Link: {_cl_link(c.get('absolute_url') or (opinion or {}).get('absolute_url'))}",
+        "",
+    ] if x]
+
+    texto = _cl_texto_opinion(opinion or {})
+    if not texto:
+        return "\n".join(encabezado) + (
+            "\nCourtListener no tiene el texto de esta decisión, solo su ficha. "
+            "Abre el link para ver la fuente.")
+
+    if buscar_en_texto:
+        # El tercer parámetro es el MÁXIMO de extractos (8 por omisión), no el
+        # tamaño del contexto. Pasarle EJEC_CONTEXTO devolvía hasta 600 fragmentos.
+        trozos = _ejec_coincidencias(texto, buscar_en_texto)
+        if not trozos:
+            return "\n".join(encabezado) + (
+                f"\n\"{buscar_en_texto}\" no aparece en el cuerpo de la sentencia. "
+                f"El texto completo tiene {len(texto)} caracteres; léelo con parte=1.")
+        return ("\n".join(encabezado) +
+                f"\nCOINCIDENCIAS DE \"{buscar_en_texto}\" ({len(trozos)}):\n\n" +
+                "\n\n…\n\n".join(trozos))
+
+    partes = max(1, -(-len(texto) // CL_TROZO))
+    parte = min(max(parte or 1, 1), partes)
+    trozo = texto[(parte - 1) * CL_TROZO: parte * CL_TROZO]
+    pie = ""
+    if partes > 1:
+        pie = (f"\n\n— parte {parte} de {partes}. Sigue con "
+               f"ver_caso_eeuu(id_cluster={c.get('id') or id_cluster}, "
+               f"parte={min(parte + 1, partes)}), o busca un término con buscar_en_texto.")
+    return "\n".join(encabezado) + f"TEXTO — parte {parte} de {partes}:\n\n" + trozo + pie
+
+
+@mcp.tool()
+async def quien_cita_eeuu(id_opinion: int = 0, id_cluster: int = 0, cursor: str = "") -> str:
+    """Decisiones estadounidenses que CITAN un caso, de la más reciente a la más antigua.
+
+    Es el primer paso para saber si un precedente sigue vivo. NO es un citador con
+    señales tipo Shepard's: dice quién lo cita, no si lo sigue, lo distingue o lo revoca.
+
+    Args:
+        id_opinion: Id de la opinión citada (lo más directo).
+        id_cluster: Id del cluster; cuesta una petición extra.
+        cursor: Cursor de la página siguiente.
+    """
+    ids: list[str] = []
+    if id_opinion:
+        ids = [str(id_opinion)]
+    elif id_cluster:
+        # El operador cites: trabaja con ids de opinión, no de cluster, y una
+        # decisión puede traer varias opiniones (mayoritaria, concurrentes, votos).
+        cluster = await _cl_fetch(f"/clusters/{id_cluster}/")
+        for x in (cluster or {}).get("sub_opinions") or []:
+            m = re.search(r"/(\d+)/?$", x) if isinstance(x, str) else None
+            ids.append(m.group(1) if m else str(x))
+    ids = [x for x in ids if x]
+    if not ids:
+        raise ValueError("Falta 'id_opinion' o 'id_cluster'.")
+
+    p = {"q": f"cites:({' OR '.join(ids)})", "type": "o", "order_by": "dateFiled desc"}
+    if cursor:
+        p["cursor"] = cursor
+
+    d = await _cl_fetch(f"/search/?{_urlencode(p)}")
+    res = (d or {}).get("results") or []
+    if not res:
+        return ("Ninguna decisión en CourtListener cita este caso.\n"
+                "Ojo con lo que eso significa y lo que no: puede ser un caso reciente, "
+                "poco citado, o de un tribunal con cobertura parcial. La ausencia de citas "
+                "no prueba que el criterio esté vivo ni que esté muerto.")
+
+    total = d.get("count", len(res))
+    lineas = [f"{total} decisión(es) citan este caso. Se muestran {len(res)}, "
+              "de la más reciente a la más antigua.", ""]
+    for i, c in enumerate(res, 1):
+        lineas.append(f"{i}. {_cl_cita(c)}")
+        if c.get("citeCount") is not None:
+            lineas.append(f"   Citada a su vez por {c['citeCount']}")
+        lineas.append(f"   {_cl_link(c.get('absolute_url'))}")
+    lineas.append("")
+    lineas.append("Para saber si el criterio sigue vivo hay que LEER las que lo tratan de "
+                  "frente: la lista dice quién lo cita, no si lo sigue, lo distingue o lo revoca.")
+    return "\n".join(lineas)
+
+
+@mcp.tool()
+async def verificar_citas_eeuu(texto: str) -> str:
+    """Verifica contra CourtListener todas las citas ESTADOUNIDENSES de un texto.
+
+    Antídoto contra citas inventadas: marca cuáles existen, cuáles no y cuáles son
+    ambiguas. Solo reconoce citas a repertorios (p. ej. '576 U.S. 644'); no verifica
+    leyes, revistas jurídicas ni citas con id. o supra. Para citas mexicanas usa
+    ver_tesis con el registro digital.
+
+    Args:
+        texto: El escrito o fragmento cuyas citas se quieren verificar.
+    """
+    if not (texto or "").strip():
+        raise ValueError("Falta 'texto'.")
+
+    recortado = len(texto) > CL_MAX_TEXTO_CITAS
+    d = await _cl_fetch("/citation-lookup/", method="POST",
+                        form={"text": texto[:CL_MAX_TEXTO_CITAS]})
+    citas = d if isinstance(d, list) else []
+    if not citas:
+        return ("No se encontró ninguna cita de jurisprudencia estadounidense en el texto.\n"
+                "Este verificador solo reconoce citas a repertorios (p. ej. '576 U.S. 644'); "
+                "no verifica leyes, revistas jurídicas ni citas con id. o supra.")
+
+    buenas, malas, ambiguas, sin_revisar = [], [], [], []
+    lineas = []
+    for c in citas:
+        norm = [n for n in (c.get("normalized_citations") or []) if n and n != c.get("citation")]
+        cabeza = c.get("citation", "") + (f"  →  {' / '.join(norm)}" if norm else "")
+        estado = c.get("status")
+        if estado == 200:
+            m = (c.get("clusters") or [{}])[0]
+            buenas.append(c.get("citation"))
+            lineas.append(f"✓ {cabeza}")
+            anio = str(m.get("date_filed") or "")[:4]
+            lineas.append(f"   {_strip_html(m.get('case_name_full') or m.get('case_name') or '')}"
+                          + (f" ({anio})" if anio else ""))
+            lineas.append(f"   {_cl_link(m.get('absolute_url'))}")
+        elif estado == 300:
+            ambiguas.append(c.get("citation"))
+            lineas.append(f"? {cabeza} — AMBIGUA: coincide con {len(c.get('clusters') or [])} decisiones")
+            for m in (c.get("clusters") or [])[:4]:
+                lineas.append(f"   · {_strip_html(m.get('case_name') or '')} — {_cl_link(m.get('absolute_url'))}")
+        elif estado == 429:
+            sin_revisar.append(c.get("citation"))
+            lineas.append(f"— {cabeza} — sin revisar (se topó el máximo de 250 citas por petición)")
+        else:
+            malas.append(c.get("citation"))
+            motivo = ("NO EXISTE en la base: no se encontró esa decisión" if estado == 404
+                      else "el repertorio citado no es válido")
+            lineas.append(f"✗ {cabeza} — {motivo}")
+            if c.get("error_message"):
+                lineas.append(f"   {c['error_message']}")
+        lineas.append("")
+
+    resumen = [f"{len(citas)} cita(s) detectada(s): {len(buenas)} verificada(s), "
+               f"{len(malas)} sin respaldo, {len(ambiguas)} ambigua(s)" +
+               (f", {len(sin_revisar)} sin revisar" if sin_revisar else "") + "."]
+    if malas:
+        resumen += ["", "REVISAR ANTES DE PRESENTAR: " + " · ".join(x for x in malas if x)]
+    if recortado:
+        resumen += ["", f"El texto excede {CL_MAX_TEXTO_CITAS} caracteres y se revisó solo "
+                    "esa primera parte. Manda el resto en otra llamada."]
+    resumen.append("")
+    return ("\n".join(resumen) + "\n".join(lineas) +
+            "\nUna cita verificada significa que la decisión existe y que el repertorio "
+            "corresponde. NO significa que diga lo que el escrito afirma: eso se comprueba "
+            "leyendo el texto con ver_caso_eeuu.")
+
+
 # ---- Estado y auto-diagnóstico del conector ----
 
 _ARRANQUE = datetime.now()
@@ -2250,7 +2775,10 @@ async def estado_conector() -> str:
     recientes = sum(1 for t in _PETICIONES if ahora - t <= 60)
     return "\n".join([
         "KriteriusMX — servidor VIVO (respuesta sin red).",
-        f"Versión {VERSION} (remota) · encendido hace {s}s · 17 tools registradas.",
+        # El número de tools se cuenta, no se escribe: es la misma clase de error que
+        # tenía la versión duplicada en /salud, y aquí cambia cada vez que se agrega una.
+        f"Versión {VERSION} (remota) · encendido hace {s}s · "
+        f"{len(await mcp.list_tools())} tools registradas.",
         f"Endpoint SJF tesis: {_SJF_BASE}",
         f"Endpoint SJF ejecutorias: {_EJEC_BASE}",
         "",

@@ -18,8 +18,11 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "kriterius-core"
-version = "2.8.0"
-description = "Acceso a fuentes oficiales del derecho mexicano e interamericano: SJF/SCJN, TFJA, DOF y Corte IDH"
+# La versión se lee de kriterius_mx.VERSION, no se escribe aquí. Escrita a mano ya
+# era el tercer lugar donde vivía el mismo número, y el segundo ya se había quedado
+# atrás una vez: /salud anunció 2.6.0 durante días con la 2.7.0 desplegada.
+dynamic = ["version"]
+description = "Acceso a fuentes oficiales del derecho mexicano e interamericano (SJF/SCJN, TFJA, DOF, Corte IDH) y estadounidense (CourtListener)"
 requires-python = ">=3.10"
 
 # Fijas a propósito, igual que en requirements.txt. mcp 2.0.0 eliminó
@@ -36,3 +39,6 @@ Homepage = "https://kriterius.mx"
 # Solo el core. `server_http.py` y `uso.py` son del servidor MCP y no tienen
 # por qué viajar a la app web.
 py-modules = ["kriterius_mx"]
+
+[tool.setuptools.dynamic]
+version = { attr = "kriterius_mx.VERSION" }
