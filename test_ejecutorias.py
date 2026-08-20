@@ -158,11 +158,16 @@ comprobar("los índices apuntan al carácter correcto",
 comprobar("quita los acentos", "interes legitimo" in plano)
 
 hits = k._ejec_coincidencias(TEXTO, "interes legitimo")
-comprobar("encuentra sin importar acentos ni mayúsculas", len(hits) == 2, str(len(hits)))
+# Las dos apariciones están a 86 caracteres una de otra y el contexto es de 600, así
+# que caen en el MISMO extracto: devolver dos recortes casi idénticos de un texto de
+# 198 caracteres era el bug que se arregló en 2.9.2.
+comprobar("encuentra sin importar acentos ni mayúsculas",
+          len(hits) == 1 and "interés legítimo" in hits[0] and "INTERÉS LEGÍTIMO" in hits[0],
+          str(len(hits)))
 comprobar("el primer extracto trae la frase con sus acentos",
           "interés legítimo" in hits[0], hits[0][:60])
-comprobar("el segundo extracto trae la versión en mayúsculas",
-          "INTERÉS LEGÍTIMO" in hits[1], hits[1][:60])
+comprobar("el extracto fusionado trae también la versión en mayúsculas",
+          "INTERÉS LEGÍTIMO" in hits[0], hits[0][:60])
 comprobar("no encuentra lo que no está", k._ejec_coincidencias(TEXTO, "usucapión") == [])
 comprobar("término vacío no devuelve nada", k._ejec_coincidencias(TEXTO, "") == [])
 
@@ -172,8 +177,15 @@ comprobar("recorta el contexto alrededor de la coincidencia",
           len(uno) == 1 and len(uno[0]) <= 2 * k.EJEC_CONTEXTO + 40, str(len(uno[0])))
 comprobar("y la coincidencia queda dentro del extracto", "punto buscado" in uno[0])
 
-comprobar("tope de coincidencias",
-          len(k._ejec_coincidencias("aguja " * 50, "aguja", maximo=4)) == 4)
+# El tope limita cuántas APARICIONES se consideran. Con la fusión, apariciones
+# vecinas se juntan, así que para probar el tope hay que separarlas más que el
+# contexto; si se pegan, el resultado correcto es un solo extracto.
+separadas = ("aguja" + ("x" * (2 * k.EJEC_CONTEXTO + 100))) * 10
+comprobar("tope de apariciones consideradas",
+          len(k._ejec_coincidencias(separadas, "aguja", maximo=4)) == 4,
+          str(len(k._ejec_coincidencias(separadas, "aguja", maximo=4))))
+comprobar("pegadas entre sí, el tope no multiplica extractos",
+          len(k._ejec_coincidencias("aguja " * 50, "aguja", maximo=4)) == 1)
 
 
 print("\nENTREGA POR PARTES")

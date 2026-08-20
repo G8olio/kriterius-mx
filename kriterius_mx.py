@@ -26,7 +26,7 @@ from mcp.server.transport_security import TransportSecuritySettings
 
 # Única fuente del número de versión. server_http.py la importa de aquí para que
 # /salud y estado_conector no puedan volver a discrepar.
-VERSION = "2.9.0"
+VERSION = "2.9.2"
 
 BASE = "https://sjf2.scjn.gob.mx/services/sjftesismicroservice/api/public"
 BASE_EJEC = "https://sjf2.scjn.gob.mx/services/sjfejecutoriamicroservice/api/public"
@@ -846,23 +846,34 @@ def _sin_acentos_con_mapa(s: str) -> tuple[str, list[int]]:
 
 
 def _ejec_coincidencias(texto: str, termino: str, maximo: int = 8) -> list[str]:
-    """Extractos alrededor de cada aparición del término, sin distinguir acentos."""
+    """Extractos alrededor de cada aparición del término, sin distinguir acentos.
+
+    Primero se ubican los tramos y solo después se recorta. Cuando el término
+    aparece varias veces en párrafos vecinos —lo normal en una sentencia que trata
+    justo de ese tema— los contextos de 600 caracteres se traslapan y devolvían
+    ocho extractos que eran casi el mismo párrafo repetido. Los tramos que se
+    tocan se funden en uno."""
     plano, mapa = _sin_acentos_con_mapa(texto)
     aguja, _ = _sin_acentos_con_mapa(termino)
     if not aguja:
         return []
-    extractos, desde = [], 0
-    while len(extractos) < maximo:
+
+    tramos: list[list[int]] = []
+    desde = 0
+    while len(tramos) < maximo:
         j = plano.find(aguja, desde)
         if j < 0:
             break
-        centro = mapa[j]
         fin_norm = min(j + len(aguja), len(mapa) - 1)
-        ini = max(0, centro - EJEC_CONTEXTO)
+        ini = max(0, mapa[j] - EJEC_CONTEXTO)
         fin = min(len(texto), mapa[fin_norm] + EJEC_CONTEXTO)
-        extractos.append(re.sub(r"\s+", " ", texto[ini:fin]).strip())
+        if tramos and ini <= tramos[-1][1]:
+            tramos[-1][1] = max(tramos[-1][1], fin)
+        else:
+            tramos.append([ini, fin])
         desde = j + len(aguja)
-    return extractos
+
+    return [re.sub(r"\s+", " ", texto[a:b]).strip() for a, b in tramos]
 
 
 def _ejec_partir(texto: str) -> list[str]:
@@ -2277,6 +2288,19 @@ def _cl_sesion():
         return None
 
 
+def _cl_limpiar_llave(v: str) -> str:
+    """Quita el ruido con el que suele llegar una llave pegada a mano.
+
+    Dos casos vistos en la práctica: el marcador del manifiesto sin sustituir
+    —`${user_config...}`, que mandado a CourtListener devuelve 401 y le hace creer
+    al usuario que su llave es inválida cuando nunca puso ninguna— y el encabezado
+    completo ('Token abc123') en vez del token pelón."""
+    v = (v or "").strip()
+    if "${" in v or "user_config" in v:
+        return ""
+    return re.sub(r"^Token\s+", "", v, flags=re.I).strip()
+
+
 def _cl_llave() -> str:
     s = _cl_sesion()
     return _CL_LLAVES.get(s, "") if s is not None else ""
@@ -2324,19 +2348,33 @@ async def _cl_fetch(ruta: str, method: str = "GET", form: dict | None = None,
             f"CourtListener rechazó la llave ({r.status_code}). Revisa que sea el token "
             f"completo de {CL_SITIO}/profile/api-token/ y que siga vigente.")
     if r.status_code == 429:
-        cuando = ""
+        detalle = ""
         try:
             d = r.json()
-            cuando = d.get("wait_until") or d.get("wait_util") or d.get("detail") or ""
+            detalle = str(d.get("wait_until") or d.get("wait_util") or d.get("detail") or "")
         except Exception:
             pass
+
+        # Distinguir CUÁL de los tres límites se topó cambia por completo el consejo.
+        # El de 5 por minuto se libera en segundos; el diario, mañana. Antes se
+        # anunciaban los tres juntos y "125 al día" hacía creer al abogado que había
+        # perdido la jornada cuando solo tenía que esperar seis segundos.
+        segundos = re.search(r"available in (\d+) second", detalle)
+        por_minuto = "5/min" in detalle or bool(segundos)
+        if por_minuto:
+            espera = f" Se libera en {segundos.group(1)} segundos." if segundos else \
+                     " Se libera en menos de un minuto."
+            raise RuntimeError(
+                "Pausa de CourtListener: se topó el límite de 5 peticiones por minuto." +
+                espera + " No se agotó tu cupo diario y no es una falla del conector; "
+                "espera unos segundos y repite la consulta.")
         raise RuntimeError(
-            "Cupo de CourtListener agotado. El plan gratuito permite 5 peticiones por "
-            "minuto, 50 por hora y 125 al día, en ventana móvil." +
-            (f" El servidor indica: {cuando}." if cuando else "") +
+            "Cupo de CourtListener agotado. El plan gratuito permite 50 peticiones por "
+            "hora y 125 al día, en ventana móvil." +
+            (f" El servidor indica: {detalle}." if detalle else "") +
             " No es una falla del conector ni de la consulta: hay que esperar a que se "
-            f"libere. Para más volumen, Free Law Project vende membresías en "
-            f"https://free.law/membership/.")
+            "libere. Para más volumen, Free Law Project vende membresías en "
+            "https://free.law/membership/.")
     if r.status_code != 200:
         raise RuntimeError(f"CourtListener respondió {r.status_code}.")
     if not r.text.strip():
@@ -2351,6 +2389,20 @@ async def _cl_fetch(ruta: str, method: str = "GET", form: dict | None = None,
 
 def _cl_link(absolute_url: str | None) -> str:
     return f"{CL_SITIO}{absolute_url}" if absolute_url else ""
+
+
+def _cl_nombre(d: dict) -> str:
+    """Nombre del caso, prefiriendo el corto.
+
+    `case_name_full` de un asunto consolidado trae a todas las partes de los cuatro
+    casos acumulados y ocupa media pantalla: el de Obergefell son 300 caracteres con
+    cuatro gobernadores dentro. Solo se usa cuando no hay nombre corto o cuando el
+    largo todavía es legible."""
+    corto = _strip_html(d.get("caseName") or d.get("case_name") or "").strip()
+    largo = _strip_html(d.get("caseNameFull") or d.get("case_name_full") or "").strip()
+    if corto:
+        return corto if len(largo) > 120 or not largo else largo
+    return largo or "(sin nombre)"
 
 
 def _cl_cita(d: dict) -> str:
@@ -2435,7 +2487,7 @@ async def configurar_courtlistener(llave: str) -> str:
                 "Vuelve a intentarlo; si sigue igual, usa el conector de escritorio, "
                 "que toma la llave de la configuración del sistema.")
 
-    limpia = (llave or "").strip()
+    limpia = _cl_limpiar_llave(llave)
     if not limpia:
         _CL_LLAVES.pop(s, None)
         return ("Llave de CourtListener borrada de la memoria del servidor. "
@@ -2514,14 +2566,32 @@ async def buscar_casos_eeuu(consulta: str, tribunal: str = "", desde: str = "",
     d = await _cl_fetch(f"/search/?{_urlencode(p)}")
     res = (d or {}).get("results") or []
     if not res:
-        return (f"Sin resultados en CourtListener para \"{consulta}\"" +
+        return (f"Sin resultados en CourtListener para {consulta.strip()}" +
                 (f" en el tribunal {tribunal}" if tribunal else "") + ".\n"
                 "Prueba con menos filtros, o con semantica=True para buscar en lenguaje "
                 "natural en vez de por palabras clave.")
 
+    # CourtListener guarda la misma decisión varias veces cuando le llegó de fuentes
+    # distintas (Harvard, Lawbox, la raspada del tribunal). En la búsqueda real de
+    # 'economic loss rule' en el Noveno Circuito, 4 de 20 resultados eran repetidos.
+    # Se agrupan por nombre + fecha y se queda el que más citas registra, que suele ser
+    # el ejemplar mejor procesado.
+    vistos, orden = {}, []
+    for c in res:
+        clave = (_strip_html(c.get("caseName") or "").lower(), c.get("dateFiled"))
+        previo = vistos.get(clave)
+        if previo is None:
+            vistos[clave] = c
+            orden.append(clave)
+        elif (c.get("citeCount") or 0) > (previo.get("citeCount") or 0):
+            vistos[clave] = c
+    res_unicos = [vistos[k] for k in orden]
+    repetidos = len(res) - len(res_unicos)
+    res = res_unicos
+
     total = d.get("count", len(res))
-    lineas = [f"{total} resultado(s) en CourtListener para \"{consulta}\". "
-              f"Se muestran {len(res)}.", ""]
+    lineas = [f"{total} resultado(s) en CourtListener para {consulta.strip()}. "
+              f"Se muestran {len(res)}" + (f" ({repetidos} repetidos omitidos)." if repetidos else "."), ""]
     for i, c in enumerate(res, 1):
         ops = c.get("opinions") or []
         principal = next((o for o in ops if o.get("type") == "lead-opinion"),
@@ -2596,7 +2666,7 @@ async def ver_caso_eeuu(id_cluster: int = 0, id_opinion: int = 0, parte: int = 1
              for t in (c.get("citations") or [])]
     citas = [x for x in citas if x.strip()]
     encabezado = [x for x in [
-        _strip_html(c.get("case_name_full") or c.get("case_name") or "(sin nombre)"),
+        _cl_nombre(c),
         f"Cita(s): {' · '.join(citas)}" if citas else "",
         f"Resuelto: {c['date_filed']}" if c.get("date_filed") else "",
         f"Estado: {c['precedential_status']}" if c.get("precedential_status") else "",
@@ -2673,9 +2743,28 @@ async def quien_cita_eeuu(id_opinion: int = 0, id_cluster: int = 0, cursor: str 
                 "poco citado, o de un tribunal con cobertura parcial. La ausencia de citas "
                 "no prueba que el criterio esté vivo ni que esté muerto.")
 
+    # CourtListener guarda la misma decisión varias veces cuando le llegó de fuentes
+    # distintas (Harvard, Lawbox, la raspada del tribunal). En la búsqueda real de
+    # 'economic loss rule' en el Noveno Circuito, 4 de 20 resultados eran repetidos.
+    # Se agrupan por nombre + fecha y se queda el que más citas registra, que suele ser
+    # el ejemplar mejor procesado.
+    vistos, orden = {}, []
+    for c in res:
+        clave = (_strip_html(c.get("caseName") or "").lower(), c.get("dateFiled"))
+        previo = vistos.get(clave)
+        if previo is None:
+            vistos[clave] = c
+            orden.append(clave)
+        elif (c.get("citeCount") or 0) > (previo.get("citeCount") or 0):
+            vistos[clave] = c
+    res_unicos = [vistos[k] for k in orden]
+    repetidos = len(res) - len(res_unicos)
+    res = res_unicos
+
     total = d.get("count", len(res))
-    lineas = [f"{total} decisión(es) citan este caso. Se muestran {len(res)}, "
-              "de la más reciente a la más antigua.", ""]
+    lineas = [f"{total} decisión(es) citan este caso. Se muestran {len(res)}"
+              + (f" ({repetidos} repetidos omitidos)" if repetidos else "")
+              + ", de la más reciente a la más antigua.", ""]
     for i, c in enumerate(res, 1):
         lineas.append(f"{i}. {_cl_cita(c)}")
         if c.get("citeCount") is not None:
@@ -2722,8 +2811,7 @@ async def verificar_citas_eeuu(texto: str) -> str:
             buenas.append(c.get("citation"))
             lineas.append(f"✓ {cabeza}")
             anio = str(m.get("date_filed") or "")[:4]
-            lineas.append(f"   {_strip_html(m.get('case_name_full') or m.get('case_name') or '')}"
-                          + (f" ({anio})" if anio else ""))
+            lineas.append(f"   {_cl_nombre(m)}" + (f" ({anio})" if anio else ""))
             lineas.append(f"   {_cl_link(m.get('absolute_url'))}")
         elif estado == 300:
             ambiguas.append(c.get("citation"))
@@ -2923,6 +3011,26 @@ async def diagnosticar_conector() -> str:
     await check("Corte IDH sesión BJDH (cookies Imperva)", _bjdh_sesion_check)
     await check("Corte IDH búsqueda ('desaparición forzada')", _bjdh_busqueda)
     await check("Corte IDH navegación temática (taxo_path)", _bjdh_taxonomia)
+
+    # CourtListener solo se prueba si esta conversación ya configuró su llave, y con la
+    # comprobación más barata: verificar una cita conocida. Ese endpoint tiene cupo propio,
+    # así que el diagnóstico no le come consultas de investigación al usuario.
+    if not _cl_llave():
+        lineas.append("[—]     CourtListener (EE.UU.) — sin llave en esta conversación; se "
+                      "omite. Configúrala con configurar_courtlistener si la necesitas; "
+                      "las fuentes mexicanas no la requieren.")
+    else:
+        async def _cl_check():
+            d = await _cl_fetch("/citation-lookup/", method="POST",
+                                form={"text": "576 U.S. 644"})
+            c = (d or [{}])[0] if isinstance(d, list) else {}
+            if not c:
+                raise RuntimeError("no devolvió ninguna cita para un caso que existe")
+            if c.get("status") != 200:
+                raise RuntimeError(f"status {c.get('status')} para una cita válida")
+            return _strip_html((c.get("clusters") or [{}])[0].get("case_name") or "sin nombre")
+
+        await check("CourtListener verificación de citas (576 U.S. 644, Obergefell)", _cl_check)
 
     lineas.append("")
     if all(resultados):

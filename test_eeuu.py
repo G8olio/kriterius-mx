@@ -349,8 +349,8 @@ comprobar("el llavero usa referencias débiles, no id()",
           "WeakKeyDictionary" in fuente and "_CL_LLAVES[id(" not in fuente)
 comprobar("la llave nunca se escribe a disco",
           "_CL_LLAVES" in fuente and "open(" not in fuente.split("_CL_LLAVES")[1][:4000])
-comprobar("el mensaje de cupo agotado nombra los tres límites",
-          "5 peticiones por" in fuente and "50 por hora" in fuente and "125 al día" in fuente)
+comprobar("el mensaje de cupo agotado nombra los límites que quedan por esperar",
+          "50 peticiones por" in fuente and "125 al día" in fuente)
 comprobar("una llave rechazada se distingue del cupo agotado",
           "CourtListener rechazó la llave" in fuente)
 
@@ -369,6 +369,76 @@ if mcpb.exists():
               {"ayuda_derecho_eeuu", "configurar_courtlistener"} & locales == set())
 else:
     print("  [—]     manifest.json local no encontrado; se omite la paridad")
+
+
+print("\n— Llave pegada con ruido —")
+
+comprobar("el marcador del manifiesto sin sustituir se trata como AUSENTE",
+          k._cl_limpiar_llave("${user_config.courtlistener_token}") == "")
+comprobar("los espacios de sobra se limpian", k._cl_limpiar_llave("  abc123  ") == "abc123")
+comprobar("si pegan 'Token abc123' se guarda solo el token",
+          k._cl_limpiar_llave("Token abc123") == "abc123"
+          and k._cl_limpiar_llave("token abc123") == "abc123")
+comprobar("una llave normal pasa intacta", k._cl_limpiar_llave("a1b2c3d4e5") == "a1b2c3d4e5")
+
+_usar_sesion(_Sesion())
+_simular(por_defecto)
+r = asyncio.run(k.configurar_courtlistener("${user_config.courtlistener_token}"))
+comprobar("configurar con el marcador no lo guarda ni sale a la red",
+          "borrada" in r and k._cl_llave() == "", r[:70])
+
+
+
+print("\n— Lo que salió de la primera prueba real —")
+
+# 1) Extractos solapados: el término repetido en párrafos vecinos devolvía ocho
+#    recortes que eran casi el mismo párrafo. Se comprueba que se fundan.
+seguidas = "Preludio. " + ("La regla de la pérdida económica aplica aquí. " * 6) + " Epílogo."
+tramos = k._ejec_coincidencias(seguidas, "pérdida económica")
+comprobar("las apariciones vecinas se funden en un solo extracto",
+          len(tramos) == 1, f"{len(tramos)} extractos")
+lejos = "pérdida económica" + ("x" * 5000) + "pérdida económica"
+comprobar("las apariciones lejanas siguen separadas",
+          len(k._ejec_coincidencias(lejos, "pérdida económica")) == 2)
+comprobar("ningún extracto se repite dentro del resultado",
+          len(set(tramos)) == len(tramos))
+
+# 2) El 429 de 5/min no debe anunciarse como cupo diario agotado
+import re as _re
+fuente_k = open("kriterius_mx.py", encoding="utf-8").read()
+comprobar("el mensaje distingue el límite por minuto del diario",
+          "5 peticiones por minuto" in fuente_k and "Se libera en" in fuente_k)
+comprobar("el aviso por minuto aclara que el cupo diario sigue vivo",
+          "No se agotó tu cupo diario" in fuente_k)
+
+# 3) Clusters duplicados de la misma decisión
+DUP = {"count": 4, "results": [
+    dict(BUSQUEDA["results"][0]),
+    dict(BUSQUEDA["results"][0], cluster_id=999, absolute_url="/opinion/999/otra/", citeCount=3),
+    dict(BUSQUEDA["results"][1]),
+]}
+_usar_sesion(sesion_a)
+_simular(lambda ruta, form=None: DUP)
+s = asyncio.run(k.buscar_casos_eeuu("x"))
+comprobar("colapsa la misma decisión publicada dos veces",
+          "1 repetidos omitidos" in s, s.split(chr(10))[0])
+comprobar("de las copias conserva la de más citas", "4211" in s and "Citada por 3 " not in s)
+
+# 4) Nombres larguísimos de asuntos consolidados
+largo = {"case_name": "Obergefell v. Hodges",
+         "case_name_full": "James Obergefell, Et Al., Petitioners v. Richard Hodges, " * 4}
+comprobar("prefiere el nombre corto cuando el completo es kilométrico",
+          k._cl_nombre(largo) == "Obergefell v. Hodges")
+comprobar("usa el completo cuando es razonable",
+          k._cl_nombre({"case_name": "Roe v. Wade",
+                        "case_name_full": "Roe et al. v. Wade, District Attorney"})
+          == "Roe et al. v. Wade, District Attorney")
+
+# 5) La consulta ya no sale con comillas duplicadas
+_simular(lambda ruta, form=None: {"count": 0, "results": []})
+s = asyncio.run(k.buscar_casos_eeuu('"economic loss rule"'))
+comprobar("no duplica las comillas de la consulta", '""economic' not in s, s.split(chr(10))[0])
+
 
 k._cl_sesion = _original_sesion
 print(f"\n{'TODO OK' if fallos == 0 else str(fallos) + ' FALLA(S)'}\n")
