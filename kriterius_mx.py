@@ -5,6 +5,7 @@ e interamericanas. Paridad de tools con la versión local en Node (kriterius-mx.
 Fuentes:
   SJF / SCJN   sjf2.scjn.gob.mx        API JSON (ingeniería inversa)
   TFJA         tfja.gob.mx/cesmdfa     scraping con sesión CSRF
+  TEPJF        IUS Electoral           snapshot local (kriterius_datos/tepjf.jsonl), sin red
   DOF          dof.gob.mx + sidof      scraping, con espejo de SEGOB como respaldo
   Corte IDH    bjdh.org.mx             scraping del Buscador Jurídico de DH
 
@@ -24,9 +25,14 @@ import httpx
 from mcp.server.fastmcp import FastMCP
 from mcp.server.transport_security import TransportSecuritySettings
 
+# La quinta fuente mexicana: el IUS Electoral del TEPJF. Es un módulo propio y sin
+# red —lee el snapshot de kriterius_datos/tepjf.jsonl—, así que importarlo aquí no puede
+# tumbar el arranque aunque el archivo falte: `tepjf.cargar()` no lanza.
+import tepjf
+
 # Única fuente del número de versión. server_http.py la importa de aquí para que
 # /salud y estado_conector no puedan volver a discrepar.
-VERSION = "2.9.2"
+VERSION = "2.10.0"
 
 BASE = "https://sjf2.scjn.gob.mx/services/sjftesismicroservice/api/public"
 BASE_EJEC = "https://sjf2.scjn.gob.mx/services/sjfejecutoriamicroservice/api/public"
@@ -222,12 +228,16 @@ mcp = FastMCP(
     instructions=(
         "Consulta fuentes oficiales del derecho mexicano e interamericano: Semanario "
         "Judicial de la Federación (SCJN), Tribunal Federal de Justicia Administrativa, "
+        "Tribunal Electoral del Poder Judicial de la Federación (IUS Electoral), "
         "Diario Oficial de la Federación y Corte Interamericana de Derechos Humanos. "
         "El Semanario tiene dos colecciones separadas: las tesis y jurisprudencias "
         "(buscar_tesis, ver_tesis) y las ejecutorias, o sea las sentencias completas "
         "(buscar_ejecutorias, ver_ejecutoria). Las controversias constitucionales, las "
         "acciones de inconstitucionalidad y las declaratorias generales solo están en la "
-        "segunda. Al citar cualquier criterio incluye SIEMPRE la cita completa y su link "
+        "segunda. Todo lo electoral —paridad, violencia política de género, nulidad de "
+        "elecciones, fiscalización de partidos, propaganda— está en el TEPJF "
+        "(buscar_tesis_tepjf, ver_tesis_tepjf, temas_tepjf), no en el Semanario. "
+        "Al citar cualquier criterio incluye SIEMPRE la cita completa y su link "
         "oficial. Los resultados no sustituyen la consulta directa a la fuente."
     ),
 )
@@ -2845,9 +2855,164 @@ async def verificar_citas_eeuu(texto: str) -> str:
             "leyendo el texto con ver_caso_eeuu.")
 
 
+# ---- TEPJF: IUS Electoral (jurisprudencia y tesis en materia electoral) ----
+#
+# La única fuente del conector que NO sale a la red al consultarla. El corpus
+# completo —2 078 criterios de 1997 a la fecha— vive en kriterius_datos/tepjf.jsonl,
+# versionado en el repo, y se indexa en SQLite FTS5 al arrancar. `tepjf.py`
+# explica por qué; en corto: el API del IUS ignora su parámetro de búsqueda y
+# devuelve siempre los 11.7 MB del corpus entero, y su host está detrás de un bot
+# manager. El snapshot lo actualiza `sincronizar_tepjf.py` una vez por semana en
+# GitHub Actions, que abre un PR con el diff de los cambios de vigencia.
+
+
+@mcp.tool()
+async def buscar_tesis_tepjf(
+    texto: str,
+    frase: str = "",
+    excluir: str = "",
+    solo_jurisprudencia: bool = False,
+    incluir_no_vigentes: bool = True,
+    anio_desde: int = 0,
+    anio_hasta: int = 0,
+    tema: str = "",
+    pagina: int = 1,
+) -> str:
+    """Busca jurisprudencia y tesis en materia ELECTORAL del Tribunal Electoral del
+    Poder Judicial de la Federación (TEPJF, IUS Electoral). Úsala para todo lo
+    electoral: paridad de género en candidaturas, violencia política en razón de
+    género, nulidad de elecciones, financiamiento y fiscalización de partidos,
+    propaganda y actos anticipados de campaña, candidaturas independientes,
+    sistemas normativos indígenas, procedimientos sancionadores.
+
+    Responde al instante y sin red: el corpus completo está en el conector.
+
+    Args:
+        texto: Palabras a buscar en rubro, texto y precedentes (todas deben aparecer).
+        frase: Frase exacta que debe aparecer, p. ej. 'violencia política'.
+        excluir: Palabras que NO deben aparecer, separadas por espacios.
+        solo_jurisprudencia: Si True, omite las tesis (que no son obligatorias).
+        incluir_no_vigentes: Si False, solo criterios vigentes. Por defecto se
+            incluyen los no vigentes, en un bloque aparte y marcados.
+        anio_desde: Año mínimo (0 = sin límite).
+        anio_hasta: Año máximo (0 = sin límite).
+        tema: Filtra por tema del IUS; usa temas_tepjf() para ver la lista.
+        pagina: Página de resultados (10 por página), desde 1.
+
+    Returns:
+        Rubro, sala, tipo y clave, época, vigencia, localización en la Gaceta,
+        extracto y liga. Los no vigentes van en bloque aparte, con el motivo y el
+        link al documento que los derogó o reiteró. Para el texto íntegro:
+        ver_tesis_tepjf(clave).
+    """
+    tepjf.asegurar()
+    if not tepjf.disponible():
+        return tepjf.NO_DISPONIBLE
+    if not (texto or "").strip() and not (frase or "").strip():
+        if (tema or "").strip():
+            return await temas_tepjf(tema=tema)
+        return ("Indica qué buscar (texto o frase). Si no sabes por dónde empezar, "
+                "temas_tepjf() lista los temas del IUS Electoral con su conteo.")
+
+    resultados = tepjf.buscar(
+        texto, frase=frase, excluir=excluir,
+        solo_jurisprudencia=solo_jurisprudencia,
+        incluir_no_vigentes=incluir_no_vigentes,
+        anio_desde=anio_desde or None, anio_hasta=anio_hasta or None,
+        tema=tema)
+    filtros = []
+    if solo_jurisprudencia:
+        filtros.append("solo jurisprudencia")
+    if not incluir_no_vigentes:
+        filtros.append("solo vigentes")
+    if anio_desde or anio_hasta:
+        filtros.append(f"{anio_desde or '…'}–{anio_hasta or '…'}")
+    if tema:
+        filtros.append(f"tema {tema}")
+    encabezado = (f"TEPJF (IUS Electoral) — «{texto or frase}»"
+                  + (f" [{', '.join(filtros)}]" if filtros else ""))
+    return tepjf.formatear_busqueda(resultados, encabezado, pagina=pagina)
+
+
+@mcp.tool()
+async def ver_tesis_tepjf(clave: str, tipo: str = "J") -> str:
+    """Texto íntegro de una jurisprudencia o tesis del TEPJF por su clave.
+
+    Args:
+        clave: Clave del criterio. Las jurisprudencias van con número arábigo
+            ('11/2018') y las tesis con romano ('XVI/2026').
+        tipo: 'J' jurisprudencia (default) o 'T' tesis. Si con el tipo indicado no
+            aparece, se busca con el otro.
+
+    Returns:
+        Rubro, identificación completa, vigencia (y si no está vigente, por qué y
+        con qué documento), texto completo, precedentes con la liga a cada
+        sentencia, aprobación, publicación, artículos citados y la cita lista para
+        pegar.
+    """
+    tepjf.asegurar()
+    if not tepjf.disponible():
+        return tepjf.NO_DISPONIBLE
+    r = tepjf.obtener(clave, tipo)
+    if r is None:
+        parecidos = tepjf.buscar(clave.replace("/", " ")) if clave else []
+        pista = ""
+        if parecidos:
+            pista = "\n¿Alguno de estos?\n" + "\n".join(
+                f"- {p['tipo']} {p['clave']}: {p['rubro'][:100]}" for p in parecidos[:5])
+        return (f"No hay ningún criterio con la clave {clave} en el IUS Electoral. "
+                f"Revisa el número (las tesis se numeran con romanos) y el año."
+                + pista)
+    return tepjf.formatear_criterio(r)
+
+
+@mcp.tool()
+async def temas_tepjf(tema: str = "", pagina: int = 1) -> str:
+    """Temas del IUS Electoral del TEPJF, o los criterios de un tema.
+
+    Es el punto de entrada cuando no se sabe con qué palabras buscar: sin argumento
+    devuelve los temas con su conteo; con un tema, los criterios de ese tema
+    (vigentes primero, jurisprudencia antes que tesis).
+
+    Args:
+        tema: Nombre o fragmento del tema, p. ej. 'Género' o 'fiscaliza'. Vacío
+            para ver la lista completa.
+        pagina: Página de criterios del tema (10 por página), desde 1.
+    """
+    tepjf.asegurar()
+    if not tepjf.disponible():
+        return tepjf.NO_DISPONIBLE
+    if not (tema or "").strip():
+        lista = tepjf.lista_temas()
+        L = [f"TEPJF (IUS Electoral) — {len(lista)} temas:", ""]
+        L += [f"- {nombre} ({n})" for nombre, n in lista]
+        L.append("")
+        L.append("Pide uno con temas_tepjf('Género'), o busca directo con "
+                 "buscar_tesis_tepjf.")
+        return "\n".join(L)
+    hallados = tepjf.por_tema(tema)
+    if not hallados:
+        nombres = ", ".join(n for n, _ in tepjf.lista_temas())
+        return f"No hay un tema que se parezca a «{tema}». Los temas son: {nombres}."
+    return tepjf.formatear_busqueda(hallados, f"TEPJF — tema «{tema}»", pagina=pagina)
+
+
 # ---- Estado y auto-diagnóstico del conector ----
 
 _ARRANQUE = datetime.now()
+
+
+def _linea_estado_tepjf() -> str:
+    """El TEPJF no tiene endpoint que reportar: tiene snapshot. Lo que importa
+    saber de un vistazo es de cuándo es y cuántos criterios trae."""
+    tepjf.asegurar()
+    if not tepjf.disponible():
+        return "TEPJF: sin snapshot (kriterius_datos/tepjf.jsonl no se pudo cargar)"
+    m = tepjf.meta()
+    return (f"TEPJF: {m.get('criterios', 0)} criterios cargados "
+            f"({m.get('no_vigentes', 0)} no vigentes), "
+            f"snapshot del {m.get('fecha_snapshot', 'fecha desconocida')} "
+            f"— sin red al consultar")
 
 
 @mcp.tool()
@@ -2869,6 +3034,7 @@ async def estado_conector() -> str:
         f"{len(await mcp.list_tools())} tools registradas.",
         f"Endpoint SJF tesis: {_SJF_BASE}",
         f"Endpoint SJF ejecutorias: {_EJEC_BASE}",
+        _linea_estado_tepjf(),
         "",
         f"Caché: {_CACHE.resumen()}",
         f"Peticiones a fuentes en el último minuto: {recientes} de {LIMITE_PETICIONES_MINUTO}",
@@ -2999,6 +3165,36 @@ async def diagnosticar_conector() -> str:
             raise RuntimeError("sin párrafos bajo el nodo de prueba; cambió el árbol o el parser")
         return f"{len(items)} párrafos bajo 'Desaparición forzada › Ius cogens'"
 
+    async def _tepjf_snapshot():
+        n = tepjf.asegurar()
+        if not n:
+            raise RuntimeError(
+                "no se pudo cargar kriterius_datos/tepjf.jsonl. En un despliegue por Dockerfile, "
+                "revisa que el COPY del snapshot esté en la imagen.")
+        m = tepjf.meta()
+        return (f"{n} criterios ({m.get('no_vigentes', 0)} no vigentes), "
+                f"snapshot del {m.get('fecha_snapshot', '?')}")
+
+    async def _tepjf_busqueda():
+        r = await buscar_tesis_tepjf("paridad de género")
+        if "Sin resultados" in r or "no está disponible" in r:
+            raise RuntimeError(r[:200])
+        # El índice ignora acentos: si esto dejara de cumplirse, el tokenizador
+        # de FTS5 se construyó sin `remove_diacritics 2` y media búsqueda en
+        # español se vuelve inútil sin avisar.
+        if len(tepjf.buscar("genero")) != len(tepjf.buscar("género")):
+            raise RuntimeError("el índice FTS5 no está ignorando acentos")
+        return r.split("\n")[0]
+
+    async def _tepjf_detalle():
+        r = await ver_tesis_tepjf("11/2018")
+        if "PARIDAD DE GÉNERO" not in r or "CITA" not in r:
+            raise RuntimeError("no regresó el criterio esperado: " + r[:150])
+        return "texto íntegro y cita armada"
+
+    await check("TEPJF snapshot local (sin red)", _tepjf_snapshot)
+    await check("TEPJF búsqueda ('paridad de género')", _tepjf_busqueda)
+    await check("TEPJF detalle (jurisprudencia 11/2018)", _tepjf_detalle)
     await check("SJF búsqueda (API)", _sjf_busqueda)
     await check("SJF detalle (tesis 2012594, P./J. 9/2016)", _sjf_detalle)
     await check("SJF ejecutorias búsqueda (API)", _ejec_busqueda)
@@ -3034,7 +3230,8 @@ async def diagnosticar_conector() -> str:
 
     lineas.append("")
     if all(resultados):
-        lineas.append("Veredicto: todas las tools operan con normalidad (SJF, TFJA, DOF y Corte IDH).")
+        lineas.append("Veredicto: todas las tools operan con normalidad (TEPJF, SJF, TFJA, "
+                      "DOF y Corte IDH).")
     else:
         lineas.append("Veredicto: hay fallas. Guía de acción:")
         lineas.append("- Fallas de red o status 5xx: probablemente temporal; reintentar más tarde.")
@@ -3044,6 +3241,10 @@ async def diagnosticar_conector() -> str:
                       "solución apuntando a tfja.gob.mx/cesmdfa/sctj/sctj-busqueda.")
         lineas.append("- DOF sin notas o sin indicadores: cambió el HTML de dof.gob.mx "
                       "(índice index_113.php y nota_detalle.php); mismo remedio.")
+        lineas.append("- TEPJF sin snapshot: falta kriterius_datos/tepjf.jsonl en la imagen (revisa el "
+                      "COPY del Dockerfile) o el archivo está corrupto. Las demás fuentes "
+                      "no se ven afectadas; el snapshot se regenera con "
+                      "sincronizar_tepjf.py.")
         lineas.append("- Corte IDH bloqueado por Imperva: suele ser temporal (reintentar); si el "
                       "parser no extrae resultados, cambió el HTML del BJDH: mismo remedio "
                       "apuntando a bjdh.org.mx/interamericano/busqueda.")

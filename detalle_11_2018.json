@@ -1,0 +1,121 @@
+{
+ "sentencia": {
+  "clave": "11/2018",
+  "title": "Jurisprudencia 11/2018",
+  "actor": "Uziel Isaí Dávila Pérez",
+  "authority": "Sala Regional correspondiente a la Segunda Circunscripción Plurinominal, con sede en Monterrey, Nuevo León",
+  "texto": "De la interpretación sistemática y funcional de los artículos 1°, párrafo quinto, 4° y 41, Base I, párrafo segundo de la Constitución Política de los Estados Unidos Mexicanos; 1, numeral 1 de la Convención Americana sobre Derechos Humanos; 2, numeral 1 del Pacto Internacional de Derechos Civiles y Políticos; 4, inciso j), 6, inciso a), 7, inciso c), y 8 de la Convención Interamericana para Prevenir, Sancionar y Erradicar la Violencia contra la Mujer; 1, 2, 4, numeral 1, y 7, incisos a) y b) de la Convención sobre la Eliminación de Todas las Formas de Discriminación contra la Mujer; II y III de la Convención sobre los Derechos Políticos de la Mujer, se advierte que la paridad y las acciones afirmativas de género tienen entre sus principales finalidades: 1) garantizar el principio de igualdad entre hombres y mujeres, 2) promover y acelerar la participación política de las mujeres en cargos de elección popular, y 3) eliminar cualquier forma de discriminación y exclusión histórica o estructural. En consecuencia, aunque en la formulación de las disposiciones normativas que incorporan un mandato de postulación paritaria, cuotas de género o cualquier otra medida afirmativa de carácter temporal por razón de género, no se incorporen explícitamente criterios interpretativos específicos, al ser medidas preferenciales a favor de las mujeres, deben interpretarse y aplicarse procurando su mayor beneficio. Lo anterior exige adoptar una perspectiva de la paridad de género como mandato de optimización flexible que admite una participación mayor de mujeres que aquella que la entiende estrictamente en términos cuantitativos, como cincuenta por ciento de hombres y cincuenta por ciento de mujeres. Una interpretación de tales disposiciones en términos estrictos o neutrales podría restringir el principio del efecto útil en la interpretación de dichas normas y a la finalidad de las acciones afirmativas, pues las mujeres se podrían ver limitadas para ser postuladas o acceder a un número de cargos que excedan la paridad en términos cuantitativos, cuando existen condiciones y argumentos que justifican un mayor beneficio para las mujeres en un caso concreto.",
+  "rubro": "PARIDAD DE GÉNERO. LA INTERPRETACIÓN Y APLICACIÓN DE LAS ACCIONES AFIRMATIVAS DEBE PROCURAR EL MAYOR BENEFICIO PARA LAS MUJERES.",
+  "desepoca": "Sexta Época",
+  "precedente1": "Recurso de reconsideración. SUP-REC-1279/2017.—Recurrentes: Uziel Isaí Dávila Pérez.—Autoridad responsable: Sala Regional del Tribunal Electoral del Poder Judicial de la Federación, correspondiente a la Segunda Circunscripción Plurinominal, con sede en Monterrey, Nuevo León.—18 de octubre de 2017.—Unanimidad de votos.—Ponente: Reyes Rodríguez Mondragón.—Secretarios: Mauricio I. Del Toro Huerta y Augusto Arturo Colín Aguado.",
+  "precedente2": "Recurso de reconsideración. SUP-REC-7/2018.—Recurrentes: Eva Avilés Álvarez y otras.—Autoridad responsable: Sala Regional del Tribunal Electoral del Poder Judicial de la Federación, correspondiente a la Primera Circunscripción Plurinominal, con sede en Guadalajara, Jalisco.—31 de enero de 2018.—Unanimidad de votos.—Ponente: Indalfer Infante Gonzales.—Secretarios: Anabel Gordillo Argüello y Rodrigo Escobar Garduño.",
+  "precedente3": "Juicio de revisión constitucional electoral. SUP-JRC-4/2018 y acumulado.—Actores: Partido de Renovación Sudcaliforniana y otro.—Autoridad responsable: Tribunal Estatal Electoral de Baja California Sur.—14 de febrero de 2018.—Unanimidad de votos.—Ponente: Felipe de la Mata Pizaña.—Secretarios: Laura Márquez Martínez, Mercedes de María Jiménez Martínez, María del Carmen Ramírez Díaz, Carlos Gustavo Cruz Miranda y Fernando Ramírez Barrios.",
+  "precedente4": "",
+  "precedente5": "",
+  "obliga": "La Sala Superior en sesión pública celebrada el veinticinco de abril de dos mil dieciocho, aprobó por unanimidad de votos la jurisprudencia que antecede y la declaró formalmente obligatoria.",
+  "publica": "Gaceta de Jurisprudencia y Tesis en materia electoral, Tribunal Electoral del Poder Judicial de la Federación, Año 10, Número 21, 2018, páginas 26 y 27.",
+  "notas": "",
+  "toReplaceInText": [
+   {
+    "word": "artículos 1°, párrafo quinto, 4° y 41, Base I, párrafo segundo de la Constitución Política de los Estados Unidos Mexicanos",
+    "replace": "<b id='745' class='articuloTesis' style='color:#088A68; cursor: pointer'> artículos 1°, párrafo quinto, 4° y 41, Base I, párrafo segundo de la Constitución Política de los Estados Unidos Mexicanos</b>"
+   },
+   {
+    "word": "1, numeral 1 de la Convención Americana sobre Derechos Humanos",
+    "replace": "<b id='746' class='articuloTesis' style='color:#088A68; cursor: pointer'> 1, numeral 1 de la Convención Americana sobre Derechos Humanos</b>"
+   },
+   {
+    "word": "2, numeral 1 del Pacto Internacional de Derechos Civiles y Políticos",
+    "replace": "<b id='747' class='articuloTesis' style='color:#088A68; cursor: pointer'> 2, numeral 1 del Pacto Internacional de Derechos Civiles y Políticos</b>"
+   },
+   {
+    "word": "4, inciso j), 6, inciso a), 7, inciso c), y 8 de la Convención Interamericana para Prevenir, Sancionar y Erradicar la Violencia contra la Mujer",
+    "replace": "<b id='748' class='articuloTesis' style='color:#088A68; cursor: pointer'> 4, inciso j), 6, inciso a), 7, inciso c), y 8 de la Convención Interamericana para Prevenir, Sancionar y Erradicar la Violencia contra la Mujer</b>"
+   },
+   {
+    "word": "1, 2, 4, numeral 1, y 7, incisos a) y b) de la Convención sobre la Eliminación de Todas las Formas de Discriminación contra la Mujer",
+    "replace": "<b id='749' class='articuloTesis' style='color:#088A68; cursor: pointer'> 1, 2, 4, numeral 1, y 7, incisos a) y b) de la Convención sobre la Eliminación de Todas las Formas de Discriminación contra la Mujer</b>"
+   },
+   {
+    "word": "II y III de la Convención sobre los Derechos Políticos de la Mujer",
+    "replace": "<b id='750' class='articuloTesis' style='color:#088A68; cursor: pointer'> II y III de la Convención sobre los Derechos Políticos de la Mujer</b>"
+   }
+  ],
+  "toReplaceInPrecedents": [
+   {
+    "word": "SUP-REC-1279/2017",
+    "replace": "<a href='https://www.te.gob.mx/sentenciasHTML/convertir/expediente/SUP-REC-1279-2017' target='_blank' style='color:#088A68;'>SUP-REC-1279/2017</a>"
+   },
+   {
+    "word": "SUP-REC-7/2018",
+    "replace": "<a href='https://www.te.gob.mx/sentenciasHTML/convertir/expediente/SUP-REC-7-2018' target='_blank' style='color:#088A68;'>SUP-REC-7/2018</a>"
+   },
+   {
+    "word": "SUP-JRC-4/2018",
+    "replace": "<a href='https://www.te.gob.mx/sentenciasHTML/convertir/expediente/SUP-JRC-4-2018' target='_blank' style='color:#088A68;'>SUP-JRC-4/2018</a>"
+   }
+  ]
+ },
+ "descripcionArticulos": [
+  {
+   "idHipervinculo": 745,
+   "clave": "11/2018",
+   "idTipo": "J",
+   "desHipervinculo": "artículos 1°, párrafo quinto, 4° y 41, Base I, párrafo segundo de la Constitución Política de los Estados Unidos Mexicanos",
+   "desLey": "Constitución Política de los Estados Unidos Mexicanos",
+   "desArticulo": "Artículo 1º…\r<br/>…\r<br/>Queda prohibida toda discriminación motivada por origen étnico o nacional, el género, la edad, las discapacidades, la condición social, las condiciones de salud, la religión, las opiniones, las preferencias sexuales, el estado civil o cualquier otra que atente contra la dignidad humana y tenga por objeto anular o menoscabar los derechos y libertades de las personas.\r<br/>\r<br/>\r<br/>Artículo 4º El varón y la mujer son iguales ante la ley. Ésta protegerá la organización y el desarrollo de la familia.\r<br/>\r<br/>Toda persona tiene derecho a decidir de manera libre, responsable e informada sobre el número y el espaciamiento de sus hijos.\r<br/>\r<br/>Toda persona tiene derecho a la alimentación nutritiva, suficiente y de calidad. El Estado lo garantizará.\r<br/>\r<br/>Toda persona tiene derecho a la protección de la salud. La ley definirá las bases y modalidades para el acceso a los servicios de salud y establecerá la concurrencia de la Federación y las entidades federativas en materia de salubridad general, conforme a lo que dispone la fracción XVI del artículo 73 de esta Constitución.\r<br/>\r<br/>Toda persona tiene derecho a un medio ambiente sano para su desarrollo y bienestar. El Estado garantizará el respeto a este derecho. El daño y deterioro ambiental generará responsabilidad para quien lo provoque en términos de lo dispuesto por la ley.\r<br/>\r<br/>Toda persona tiene derecho al acceso, disposición y saneamiento de agua para consumo personal y doméstico en forma suficiente, salubre, aceptable y asequible. El Estado garantizará este derecho y la ley definirá las bases, apoyos y modalidades para el acceso y uso equitativo y sustentable de los recursos hídricos, estableciendo la participación de la Federación, las entidades federativas y los municipios, así como la participación de la ciudadanía para la consecución de dichos fines.\r<br/>\r<br/>Toda familia tiene derecho a disfrutar de vivienda digna y decorosa. La ley establecerá los instrumentos y apoyos necesarios a fin de alcanzar tal objetivo.\r<br/>\r<br/>Toda persona tiene derecho a la identidad y a ser registrado de manera inmediata a su nacimiento. El Estado garantizará el cumplimiento de estos derechos. La autoridad competente expedirá gratuitamente la primera copia certificada del acta de registro de nacimiento.\r<br/>\r<br/>En todas las decisiones y actuaciones del Estado se velará y cumplirá con el principio del interés superior de la niñez, garantizando de manera plena sus derechos. Los niños y las niñas tienen derecho a la satisfacción de sus necesidades de alimentación, salud, educación y sano esparcimiento para su desarrollo integral. Este principio deberá guiar el diseño, ejecución, seguimiento y evaluación de las políticas públicas dirigidas a la niñez.\r<br/>\r<br/>Los ascendientes, tutores y custodios tienen la obligación de preservar y exigir el cumplimiento de estos derechos y principios.\r<br/>\r<br/>El Estado otorgará facilidades a los particulares para que coadyuven al cumplimiento de los derechos de la niñez.\r<br/>\r<br/>Toda persona tiene derecho al acceso a la cultura y al disfrute de los bienes y servicios que presta el Estado en la materia, así como el ejercicio de sus derechos culturales. El Estado promoverá los medios para la difusión y desarrollo de la cultura, atendiendo a la diversidad cultural en todas sus manifestaciones y expresiones con pleno respeto a la libertad creativa. La ley establecerá los mecanismos para el acceso y participación a cualquier manifestación cultural.\r<br/>\r<br/>Toda persona tiene derecho a la cultura física y a la práctica del deporte. Corresponde al Estado su promoción, fomento y estímulo conforme a las leyes en la materia.\r<br/>\r<br/>Artículo 41…\r<br/>…\r<br/>I...\r<br/>Los partidos políticos tienen como fin promover la participación del pueblo en la vida democrática, contribuir a la integración de los órganos de representación política y como organizaciones de ciudadanos, hacer posible el acceso de éstos al ejercicio del poder público, de acuerdo con los programas, principios e ideas que postulan y mediante el sufragio universal, libre, secreto y directo, así como las reglas para garantizar la paridad entre los géneros, en candidaturas a legisladores federales y locales. Sólo los ciudadanos podrán formar partidos políticos y afiliarse libre e individualmente a ellos; por tanto, quedan prohibidas la intervención de organizaciones gremiales o con objeto social diferente en la creación de partidos y cualquier forma de afiliación corporativa.\r<br/>…\r<br/>",
+   "fecha": "2018-05-02T11:33:40.61",
+   "usuario": "maria.rodriguez"
+  },
+  {
+   "idHipervinculo": 746,
+   "clave": "11/2018",
+   "idTipo": "J",
+   "desHipervinculo": "1, numeral 1 de la Convención Americana sobre Derechos Humanos",
+   "desLey": "Convención Americana sobre Derechos Humanos",
+   "desArticulo": "Artículo 1. Obligación de Respetar los Derechos\r<br/>\r<br/>1. Los Estados Partes en esta Convención se comprometen a respetar los derechos y libertades reconocidos en ella y a garantizar su libre y pleno ejercicio a toda persona que esté sujeta a su jurisdicción, sin discriminación alguna por motivos de raza, color, sexo, idioma, religión, opiniones políticas o de cualquier otra índole, origen nacional o social, posición económica, nacimiento o cualquier otra condición social.\r<br/>…\r<br/>",
+   "fecha": "2018-05-02T11:34:14.26",
+   "usuario": "maria.rodriguez"
+  },
+  {
+   "idHipervinculo": 747,
+   "clave": "11/2018",
+   "idTipo": "J",
+   "desHipervinculo": "2, numeral 1 del Pacto Internacional de Derechos Civiles y Políticos",
+   "desLey": "Pacto Internacional de Derechos Civiles y Políticos",
+   "desArticulo": "Artículo 2\r<br/>1. Cada uno de los Estados Partes en el presente Pacto se compromete a respetar y a garantizar a todos los individuos que se encuentren en su territorio y estén sujetos a su jurisdicción los derechos reconocidos en el presente Pacto, sin distinción alguna de raza, color, sexo, idioma, religión, opinión política o de otra índole, origen nacional o social, posición económica, nacimiento o cualquier otra condición social.\r<br/>…\r<br/>",
+   "fecha": "2018-05-02T11:34:38.987",
+   "usuario": "maria.rodriguez"
+  },
+  {
+   "idHipervinculo": 748,
+   "clave": "11/2018",
+   "idTipo": "J",
+   "desHipervinculo": "4, inciso j), 6, inciso a), 7, inciso c), y 8 de la Convención Interamericana para Prevenir, Sancionar y Erradicar la Violencia contra la Mujer",
+   "desLey": "Convención Interamericana para Prevenir, Sancionar y Erradicar la Violencia contra la Mujer",
+   "desArticulo": "Artículo 4\r<br/>Toda mujer tiene derecho al reconocimiento, goce, ejercicio y protección de todos los derechos humanos y a las libertades consagradas por los instrumentos regionales e internacionales sobre derechos humanos.  Estos derechos comprenden, entre otros:\r<br/>…\r<br/>j. el derecho a tener igualdad de acceso a las funciones públicas de su país y a participar en los asuntos públicos, incluyendo la toma de decisiones.\r<br/>\r<br/>\r<br/>Artículo 6\r<br/>El derecho de toda mujer a una vida libre de violencia incluye, entre otros:\r<br/>a. el derecho de la mujer a ser libre de toda forma de discriminación, y\r<br/>…\r<br/>\r<br/>Artículo 7\r<br/>Los Estados Partes condenan todas las formas de violencia contra la mujer y convienen en adoptar, por todos los medios apropiados y sin dilaciones, políticas orientadas a prevenir, sancionar y erradicar dicha violencia y en llevar a cabo lo siguiente:\r<br/>…\r<br/>c. incluir en su legislación interna normas penales, civiles y administrativas, así como las de otra naturaleza que sean necesarias para prevenir, sancionar y erradicar la violencia contra la mujer y adoptar las medidas administrativas apropiadas que sean del caso;\r<br/>…\r<br/>\r<br/>\r<br/>Artículo 8\r<br/>Los Estados Partes convienen en adoptar, en forma progresiva, medidas específicas, inclusive programas para:\r<br/>\r<br/>a. fomentar el conocimiento y la observancia del derecho de la mujer a una vida libre de violencia, y el derecho de la mujer a que se respeten y protejan sus derechos humanos;\r<br/>\r<br/>b. modificar los patrones socioculturales de conducta de hombres y mujeres, incluyendo el diseño de programas de educación formales y no formales apropiados a todo nivel del proceso educativo, para contrarrestar prejuicios y costumbres y todo otro tipo de prácticas que se basen en la premisa de la inferioridad o superioridad de cualquiera de los géneros o en los papeles estereotipados para el hombre y la mujer que legitimizan o exacerban la violencia contra la mujer;\r<br/>\r<br/>c. fomentar la educación y capacitación del personal en la administración de justicia, policial y demás funcionarios encargados de la aplicación de la ley, así como del personal a cuyo cargo esté la aplicación de las políticas de prevención, sanción y eliminación de la violencia contra la mujer;\r<br/>\r<br/>d. suministrar los servicios especializados apropiados para la atención necesaria a la mujer objeto de violencia, por medio de entidades de los sectores público y privado, inclusive refugios, servicios de orientación para toda la familia, cuando sea del caso, y cuidado y custodia de los menores afectados;\r<br/>\r<br/>e. fomentar y apoyar programas de educación gubernamentales y del sector privado destinados a concientizar al público sobre los problemas relacionados con la violencia contra la mujer, los recursos legales y la reparación que corresponda;\r<br/>\r<br/>f. ofrecer a la mujer objeto de violencia acceso a programas eficaces de rehabilitación y capacitación que le permitan participar plenamente en la vida pública, privada y social;\r<br/>\r<br/>g. alentar a los medios de comunicación a elaborar directrices adecuadas de difusión que contribuyan a erradicar la violencia contra la mujer en todas sus formas y a realzar el respeto a la dignidad de la mujer;\r<br/>\r<br/>h. garantizar la investigación y recopilación de estadísticas y demás información pertinente sobre las causas, consecuencias y frecuencia de la violencia contra la mujer, con el fin de evaluar la eficacia de las medidas para prevenir, sancionar y eliminar la violencia contra la mujer y de formular y aplicar los cambios que sean necesarios, y\r<br/>\r<br/>i. promover la cooperación internacional para el intercambio de ideas y experiencias y la ejecución de programas encaminados a proteger a la mujer objeto de violencia.\r<br/>\r<br/>\r<br/>",
+   "fecha": "2018-05-02T11:35:15.197",
+   "usuario": "maria.rodriguez"
+  },
+  {
+   "idHipervinculo": 749,
+   "clave": "11/2018",
+   "idTipo": "J",
+   "desHipervinculo": "1, 2, 4, numeral 1, y 7, incisos a) y b) de la Convención sobre la Eliminación de Todas las Formas de Discriminación contra la Mujer",
+   "desLey": "Convención sobre la Eliminación de Todas las Formas de Discriminación contra la Mujer",
+   "desArticulo": "Artículo 1\r<br/>A los efectos de la presente Convención, la expresión \"discriminación contra la mujer\" denotará toda distinción, exclusión o restricción basada en el sexo que tenga por objeto o resultado menoscabar o anular el reconocimiento, goce o ejercicio por la mujer, independientemente de su estado civil, sobre la base de la igualdad del hombre y la mujer, de los derechos humanos y las libertades fundamentales en las esferas política, económica, social, cultural y civil o en cualquier otra esfera.\r<br/>\r<br/>Artículo 2\r<br/>Los Estados Partes condenan la discriminación contra la mujer en todas sus formas, convienen en seguir, por todos los medios apropiados y sin dilaciones, una política encaminada a eliminar la discriminación contra la mujer y, con tal objeto, se comprometen a:\r<br/>\r<br/>a) Consagrar, si aún no lo han hecho, en sus constituciones nacionales y en cualquier otra legislación apropiada el principio de la igualdad del hombre y de la mujer y asegurar por ley u otros medios apropiados la realización práctica de ese principio;\r<br/>\r<br/>b) Adoptar medidas adecuadas, legislativas y de otro carácter, con las sanciones correspondientes, que prohíban toda discriminación contra la mujer;\r<br/>\r<br/>c) Establecer la protección jurídica de los derechos de la mujer sobre una base de igualdad con los del hombre y garantizar, por conducto de los tribunales nacionales competentes y de otras instituciones públicas, la protección efectiva de la mujer contra todo acto de discriminación;\r<br/>\r<br/>d) Abstenerse de incurrir en todo acto o práctica de discriminación contra la mujer y velar por que las autoridades e instituciones públicas actúen de conformidad con esta obligación;\r<br/>\r<br/>e) Tomar todas las medidas apropiadas para eliminar la discriminación contra la mujer practicada por cualesquiera personas, organizaciones o empresas;\r<br/>\r<br/>f) Adoptar todas las medidas adecuadas, incluso de carácter legislativo, para modificar o derogar leyes, reglamentos, usos y prácticas que constituyan discriminación contra la mujer;\r<br/>\r<br/>g) Derogar todas las disposiciones penales nacionales que constituyan discriminación contra la mujer.\r<br/>\r<br/>\r<br/>Artículo 4\r<br/>1. La adopción por los Estados Partes de medidas especiales de carácter temporal encaminadas a acelerar la igualdad de facto entre el hombre y la mujer no se considerará discriminación en la forma definida en la presente Convención, pero de ningún modo entrañará, como consecuencia, el mantenimiento de normas desiguales o separadas; estas medidas cesarán cuando se hayan alcanzado los objetivos de igualdad de oportunidad y trato.\r<br/>…\r<br/>\r<br/>\r<br/>Artículo 7\r<br/>Los Estados Partes tomarán todas las medidas apropiadas para eliminar la discriminación contra la mujer en la vida política y pública del país y, en particular, garantizarán a las mujeres, en igualdad de condiciones con los hombres, el derecho a:\r<br/>\r<br/>a) Votar en todas las elecciones y referéndums públicos y ser elegibles para todos los organismos cuyos miembros sean objeto de elecciones públicas;\r<br/>\r<br/>b) Participar en la formulación de las políticas gubernamentales y en la ejecución de éstas, y ocupar cargos públicos y ejercer todas las funciones públicas en todos los planos gubernamentales;\r<br/>\r<br/>\r<br/>",
+   "fecha": "2018-05-02T11:35:48.503",
+   "usuario": "maria.rodriguez"
+  },
+  {
+   "idHipervinculo": 750,
+   "clave": "11/2018",
+   "idTipo": "J",
+   "desHipervinculo": "II y III de la Convención sobre los Derechos Políticos de la Mujer",
+   "desLey": "Convención sobre los Derechos Políticos de la Mujer",
+   "desArticulo": "Artículo II \r<br/>Las mujeres serán elegibles para todos los organismos públicos electivos establecidos por la legislación nacional, en condiciones de igualdad con los hombres, sin discriminación alguna. \r<br/>\r<br/>\r<br/>Artículo III \r<br/>Las mujeres tendrán derecho a ocupar cargos públicos y a ejercer todas las funciones públicas establecidas por la legislación nacional, en igualdad de condiciones con los hombres, sin discriminación alguna.\r<br/>",
+   "fecha": "2018-05-02T11:36:11.127",
+   "usuario": "maria.rodriguez"
+  }
+ ]
+}

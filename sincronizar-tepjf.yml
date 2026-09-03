@@ -1,0 +1,60 @@
+# Sincronización semanal del snapshot del IUS Electoral (TEPJF).
+#
+# El servidor nunca le pega al TEPJF: sirve kriterius_datos/tepjf.jsonl, que este workflow
+# regenera y propone en un PR. Revisar el PR toma un minuto —lo que importa leer
+# son los cambios de vigencia— y al mezclarlo se dispara el autodespliegue.
+#
+# Por qué PR y no commit directo a main: un criterio que deja de estar vigente
+# merece ojos humanos, y si algún día el TEPJF devolviera basura con HTTP 200, el
+# PR es la última barrera antes de producción. El guardia del 95 % dentro del
+# script es la primera.
+name: Sincronizar TEPJF
+
+on:
+  schedule:
+    - cron: "0 12 * * 1"        # lunes 06:00 en Ciudad de México
+  workflow_dispatch:            # y a mano cuando haga falta
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  sincronizar:
+    runs-on: ubuntu-latest
+    # El host del IUS está detrás de Radware Bot Manager y responde a golpes: la
+    # descarga de los ~2 100 detalles reintenta con espera creciente y puede
+    # tardar. Si se pasa de esto, algo cambió del otro lado.
+    timeout-minutes: 180
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - run: pip install httpx==0.28.1
+
+      - name: Bajar el corpus y armar el snapshot
+        run: |
+          python sincronizar_tepjf.py \
+            --salida kriterius_datos/tepjf.jsonl \
+            --meta kriterius_datos/tepjf.meta.json \
+            --resumen resumen_tepjf.md
+
+      - name: Probar el snapshot nuevo antes de proponerlo
+        run: |
+          python test_tepjf.py
+          python test_sincronizar_tepjf.py
+
+      - name: Abrir el PR con el diff
+        uses: peter-evans/create-pull-request@v6
+        with:
+          branch: tepjf/sincronizacion
+          title: "TEPJF: actualización del snapshot"
+          body-path: resumen_tepjf.md
+          commit-message: "TEPJF: snapshot sincronizado"
+          add-paths: |
+            kriterius_datos/tepjf.jsonl
+            kriterius_datos/tepjf.meta.json
+          delete-branch: true
