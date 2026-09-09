@@ -1,0 +1,29 @@
+{
+  "fuente": "Gaceta del Semanario Judicial de la Federación (SCJN) — https://www.scjn.gob.mx/coordinacion/gaceta",
+  "generado": "2026-09-07T02:21:39",
+  "tesis": 34041,
+  "por_epoca": {
+    "9a": 2329,
+    "10a": 23168,
+    "11a": 7720,
+    "12a": 824
+  },
+  "libros": 177,
+  "archivos_pdf": 448,
+  "desde": "Novena Época (2011)",
+  "hasta": "Duodécima Época, Libro 12, agosto de 2026",
+  "publicacion_sjf_desde": "2013-12-06",
+  "publicacion_sjf_hasta": "2026-08-21",
+  "cobertura_global_vs_indice": 98.43,
+  "libros_medibles": 142,
+  "libros_medibles_sobre_97": 135,
+  "rechazados": 590,
+  "pct_rechazo": 1.7,
+  "claves_duplicadas": 387,
+  "registro_digital": "no disponible: la Gaceta no lo imprime; se llena con resolver_registros.py cuando el API del SJF vuelva",
+  "limitaciones": [
+    "no incluye tesis publicadas después de agosto de 2026",
+    "no refleja cambios de vigencia posteriores a la publicación de cada libro",
+    "faltan tomos de algunos libros de la Undécima Época (29 sin Tomo II, 36 sin Tomo IV)"
+  ]
+}

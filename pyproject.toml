@@ -48,7 +48,8 @@ packages = ["kriterius_datos"]
 # Ojo con la consecuencia: la app web fija el core por SHA, así que un snapshot
 # nuevo le llega solo cuando ese SHA se actualiza.
 [tool.setuptools.package-data]
-kriterius_datos = ["tepjf.jsonl", "tepjf.meta.json"]
+kriterius_datos = ["tepjf.jsonl", "tepjf.meta.json",
+                   "sjf_gaceta.jsonl.gz", "sjf_gaceta.meta.json"]
 
 [tool.setuptools.dynamic]
 version = { attr = "kriterius_mx.VERSION" }

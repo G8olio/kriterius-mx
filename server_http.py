@@ -4,11 +4,14 @@ KriteriusMX — servidor MCP remoto sobre HTTP.
 Expone las tools de kriterius_mx.py como conector remoto para claude.ai.
 El endpoint MCP queda en https://<dominio>/mcp
 
-Además publica cuatro rutas para humanos, para el monitoreo del hosting y para medir uso:
-    GET /         una página mínima que confirma que el servicio está vivo
-    GET /salud    respuesta JSON para el health check automático del hosting
-    GET /uso      panel de adopción, privado (requiere ?clave=...)
-    GET /visita   faro de 1x1 que el sitio carga para contar visitas
+Además publica rutas para humanos, para el monitoreo del hosting, para medir uso y
+para que el conector de escritorio se descargue el acervo local del SJF:
+    GET /                una página mínima que confirma que el servicio está vivo
+    GET /salud           respuesta JSON para el health check automático del hosting
+    GET /uso             panel de adopción, privado (requiere ?clave=...)
+    GET /visita          faro de 1x1 que el sitio carga para contar visitas
+    GET /datos/sjf_gaceta.jsonl.gz    el acervo de la Gaceta (42 MB)
+    GET /datos/sjf_gaceta.json        su huella: tamaño, sha256 y cobertura
 
 Variables de entorno:
     PORT       puerto de escucha (el hosting la define solo; por defecto 8000)
@@ -18,11 +21,12 @@ Variables de entorno:
 import os
 from datetime import datetime, timezone
 
-from starlette.responses import HTMLResponse, JSONResponse
+from starlette.responses import FileResponse, HTMLResponse, JSONResponse, Response
 
 # La versión vive en kriterius_mx.py y solo ahí. Cuando estaba duplicada aquí,
 # /salud siguió anunciando la 2.6.0 con la 2.7.0 ya desplegada.
 from kriterius_mx import mcp, VERSION
+import sjf_local
 import tepjf
 import uso
 
@@ -35,6 +39,33 @@ import uso
 # sin esto la línea no aparece en el log del despliegue —justo cuando más sirve, que es
 # cuando hay que averiguar si el snapshot llegó a la imagen.
 print(f"TEPJF: {tepjf.cargar()} criterios indexados", flush=True)
+
+# El acervo de la Gaceta se indexa aquí y no en la primera consulta: construir el
+# índice FTS toma unos segundos y no se los va a comer el primer usuario que busque
+# una tesis con el API del SJF caído. Si ya hay índice en la caché, esto son
+# milisegundos. Si el archivo faltara, `cargar` devuelve 0 y el servidor arranca
+# igual: buscar_tesis y ver_tesis simplemente no tendrán a qué caer.
+print(f"SJF respaldo local: {sjf_local.cargar()} tesis de la Gaceta indexadas", flush=True)
+
+_SHA_ACERVO: str | None = None
+
+
+def _sha256_acervo() -> str:
+    """El sha256 del acervo, calculado una sola vez. El archivo no cambia mientras el
+    proceso viva: viene dentro de la imagen."""
+    global _SHA_ACERVO
+    if _SHA_ACERVO is None:
+        import hashlib
+        h = hashlib.sha256()
+        try:
+            with open(sjf_local.RUTA_DATOS, "rb") as f:
+                for trozo in iter(lambda: f.read(1 << 20), b""):
+                    h.update(trozo)
+            _SHA_ACERVO = h.hexdigest()
+        except Exception:
+            _SHA_ACERVO = ""
+    return _SHA_ACERVO
+
 
 ARRANQUE = datetime.now(timezone.utc)
 
@@ -49,6 +80,39 @@ async def salud(request):
         "endpoint_mcp": "/mcp",
         "segundos_encendido": int((datetime.now(timezone.utc) - ARRANQUE).total_seconds()),
     })
+
+
+@mcp.custom_route("/datos/sjf_gaceta.json", methods=["GET"])
+async def acervo_sjf_huella(request):
+    """La huella del acervo, para que el conector de escritorio sepa si ya tiene la
+    versión buena antes de bajarse 42 MB."""
+    ruta = sjf_local.RUTA_DATOS
+    if not ruta.exists():
+        return JSONResponse({"error": "el acervo no está en este despliegue"}, status_code=404)
+    return JSONResponse({
+        "archivo": ruta.name,
+        "bytes": ruta.stat().st_size,
+        "sha256": _sha256_acervo(),
+        "url": "/datos/sjf_gaceta.jsonl.gz",
+        "meta": sjf_local.meta(),
+    })
+
+
+@mcp.custom_route("/datos/sjf_gaceta.jsonl.gz", methods=["GET"])
+async def acervo_sjf(request):
+    """El acervo de la Gaceta. Lo descarga el .mcpb la primera vez que el API del SJF
+    le falla; de ahí en adelante vive en su caché en disco. Es contenido público —son
+    PDF oficiales de la Corte procesados—, así que no lleva llave; lo que sí lleva es
+    un ETag, para que una segunda descarga no repita los 42 MB."""
+    ruta = sjf_local.RUTA_DATOS
+    if not ruta.exists():
+        return JSONResponse({"error": "el acervo no está en este despliegue"}, status_code=404)
+    etag = f'"{_sha256_acervo()[:32]}"'
+    if request.headers.get("if-none-match") == etag:
+        return Response(status_code=304, headers={"ETag": etag})
+    return FileResponse(ruta, media_type="application/gzip",
+                        filename="sjf_gaceta.jsonl.gz",
+                        headers={"ETag": etag, "Cache-Control": "public, max-age=86400"})
 
 
 @mcp.custom_route("/", methods=["GET"])

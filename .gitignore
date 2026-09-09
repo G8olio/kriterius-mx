@@ -5,3 +5,7 @@ __pycache__/
 *.mcpb
 venv/
 .venv/
+
+# Índice FTS del acervo local del SJF: se reconstruye solo desde el
+# .jsonl.gz y pesa cientos de megas. Vive en la caché, no en el repo.
+sjf_gaceta.fts.sqlite*

@@ -28,11 +28,12 @@ from mcp.server.transport_security import TransportSecuritySettings
 # La quinta fuente mexicana: el IUS Electoral del TEPJF. Es un módulo propio y sin
 # red —lee el snapshot de kriterius_datos/tepjf.jsonl—, así que importarlo aquí no puede
 # tumbar el arranque aunque el archivo falte: `tepjf.cargar()` no lanza.
+import sjf_local
 import tepjf
 
 # Única fuente del número de versión. server_http.py la importa de aquí para que
 # /salud y estado_conector no puedan volver a discrepar.
-VERSION = "2.10.0"
+VERSION = "2.11.0"
 
 BASE = "https://sjf2.scjn.gob.mx/services/sjftesismicroservice/api/public"
 BASE_EJEC = "https://sjf2.scjn.gob.mx/services/sjfejecutoriamicroservice/api/public"
@@ -170,6 +171,12 @@ async def _esperar_cupo() -> None:
 
 
 def _es_pasajero(e: Exception) -> bool:
+    # Primero por tipo y código, no por texto: el mensaje de un _RespuestaHTTP puede
+    # contener "Imperva" o "temporal" (ver _BloqueoWAF) sin que eso vuelva pasajero un
+    # bloqueo del WAF. Reintentar tres veces contra un WAF que ya dijo que no solo
+    # empeora la reputación de la IP del servidor.
+    if isinstance(e, _RespuestaHTTP):
+        return e.status in (429, 502, 503, 504)
     if isinstance(e, (httpx.TimeoutException, httpx.ConnectError, httpx.ReadError)):
         return True
     m = str(e).lower()
@@ -242,6 +249,14 @@ mcp = FastMCP(
     ),
 )
 
+# FastMCP deja el logging en INFO, y en ese nivel httpx escribe cada URL saliente en el
+# log del contenedor: registros consultados y, en CourtListener, el término de búsqueda
+# (`/search/?q=…`). El conector se comprometió a no guardar términos de búsqueda
+# (ver uso.py), así que httpx se calla salvo que algo falle.
+import logging as _logging
+for _nombre in ("httpx", "httpcore"):
+    _logging.getLogger(_nombre).setLevel(_logging.WARNING)
+
 # Bases mutables del API del SJF: permiten auto-descubrir los endpoints si cambian
 _SJF_BASE = BASE
 _EJEC_BASE = BASE_EJEC
@@ -262,11 +277,62 @@ class _RespuestaHTTP(RuntimeError):
         super().__init__(f"respondió {status}")
 
 
+# Desde el 3 de septiembre de 2026 sjf2.scjn.gob.mx está detrás de Imperva Incapsula.
+# A un cliente que no pasó su reto de JavaScript lo redirige (302) a su recurso de
+# verificación o lo niega en seco (403); y si se sigue la redirección, entrega su página
+# HTML en lugar del JSON del API. Nada de eso es una respuesta del API ni un registro
+# inexistente, y tampoco un "cambio de API" que amerite re-mapear.
+_CODIGOS_WAF = frozenset({301, 302, 303, 307, 308, 403})
+_HUELLA_WAF = re.compile(r"Incapsula|_Incapsula_Resource|Request unsuccessful", re.I)
+
+
+class _BloqueoWAF(_RespuestaHTTP):
+    """El cortafuegos de la SCJN rechazó la petición antes de llegar al API.
+
+    Hereda de _RespuestaHTTP para que `_merece_redescubrir` siga diciendo que no
+    (no hay tormenta de auto-descubrimiento) y `_es_pasajero` que tampoco (no se
+    reintenta). Lo que cambia es el mensaje: explica qué pasó y qué hacer, en vez del
+    crudo "respondió 302" que hacía pensar en un registro mal escrito."""
+
+    def __init__(self, status: int, coleccion: str = "tesis", pagina_html: bool = False):
+        self.status = status
+        como = ("entregó su página de verificación en lugar del JSON del API"
+                if pagina_html else f"rechazó la petición con HTTP {status}")
+        RuntimeError.__init__(
+            self,
+            f"El Semanario Judicial de la Federación no atendió la consulta de {coleccion}: "
+            f"el cortafuegos de la SCJN (Imperva) {como}. No es un error del registro ni de "
+            f"la consulta, ni un cambio del API: la SCJN está filtrando clientes "
+            f"automatizados desde la dirección de este servidor. Qué hacer: (1) reintenta en "
+            f"unos minutos; (2) consulta directo en el navegador: {HOST}; (3) el conector de "
+            f"escritorio (.mcpb) consulta desde tu propia conexión y suele pasar. TEPJF, TFJA "
+            f"y DOF no se ven afectados.")
+
+
 def _merece_redescubrir(e: Exception) -> bool:
     """Solo un fallo de conexión o una respuesta que no sea JSON justifican
     re-descubrir el endpoint. Un código HTTP es una respuesta del API: el API
     sigue ahí, lo que no está es el registro."""
     return not isinstance(e, _RespuestaHTTP)
+
+
+def _clasificar_respuesta_scjn(r, coleccion: str):
+    """Levanta la excepción que corresponde a una respuesta del SJF que no es JSON
+    utilizable: bloqueo del WAF (302/403 o su página HTML), código HTTP del API, o
+    contenido no-JSON de origen desconocido. Devuelve el JSON o None si vino vacío."""
+    if r.status_code in _CODIGOS_WAF:
+        raise _BloqueoWAF(r.status_code, coleccion)
+    if r.status_code != 200:
+        raise _RespuestaHTTP(r.status_code)
+    if not r.text.strip():
+        return None
+    try:
+        return r.json()
+    except Exception:
+        if _HUELLA_WAF.search(r.text):
+            raise _BloqueoWAF(r.status_code, coleccion, pagina_html=True)
+        extracto = re.sub(r"\s+", " ", _strip_html(r.text))[:120]
+        raise RuntimeError(f"respondió contenido no-JSON (posible cambio de API): '{extracto}'")
 
 
 async def _sjf_descubrir_base(coleccion: str = "tesis") -> str | None:
@@ -316,15 +382,7 @@ async def _sjf_fetch(path: str, method: str = "GET", json_body: dict | None = No
     async def pedir():
         async with httpx.AsyncClient(headers=HEADERS, timeout=30) as client:
             r = await client.request(method, f"{_SJF_BASE}{path}", json=json_body)
-            if r.status_code != 200:
-                raise _RespuestaHTTP(r.status_code)
-            if not r.text.strip():
-                return None
-            try:
-                return r.json()
-            except Exception:
-                extracto = re.sub(r"\s+", " ", _strip_html(r.text))[:120]
-                raise RuntimeError(f"respondió contenido no-JSON (posible cambio de API): '{extracto}'")
+            return _clasificar_respuesta_scjn(r, "tesis")
 
     async def intento():
         return await _traer("sjf", pedir, clave=clave, ttl=ttl)
@@ -351,6 +409,41 @@ async def _sjf_fetch(path: str, method: str = "GET", json_body: dict | None = No
                 f"El API del SJF falló ({e1}). Se auto-descubrió {nueva} pero también falló "
                 f"({e2}). La estructura del API probablemente cambió; el conector necesita "
                 f"re-mapearse (pide a Claude en Cowork re-mapearlo con el navegador).")
+
+
+# ---- Respaldo local: la Gaceta cuando el API del SJF no contesta ----
+#
+# Desde el 3 de septiembre de 2026 sjf2.scjn.gob.mx está detrás de Imperva y
+# rechaza al servidor remoto. Antes que devolver "no se pudo", buscar_tesis,
+# ver_tesis e investigar_criterio caen al acervo construido de la Gaceta oficial
+# (sjf_local.py) y lo dicen con todas sus letras.
+#
+# Reglas de la conmutación, en orden de importancia:
+#   1. El dato vivo SIEMPRE gana. Sin fallo del API, el acervo no se toca.
+#   2. Nunca se sirve el respaldo en silencio: toda salida empieza con el aviso
+#      "⚠ ACERVO LOCAL" y dice el motivo y hasta dónde llega el acervo.
+#   3. Si el acervo tampoco está, se devuelve el mensaje original del API. Un
+#      respaldo ausente no puede tapar el diagnóstico real.
+
+
+def _motivo_respaldo(e: Exception) -> str:
+    """Cómo describirle al usuario por qué se está usando el respaldo."""
+    if isinstance(e, _BloqueoWAF):
+        return (f"el cortafuegos de la SCJN (Imperva) rechazó la petición "
+                f"(HTTP {getattr(e, 'status', '?')})")
+    if isinstance(e, _RespuestaHTTP):
+        return f"el API respondió HTTP {getattr(e, 'status', '?')}"
+    if isinstance(e, (httpx.TimeoutException, asyncio.TimeoutError)):
+        return "el API no respondió a tiempo"
+    return f"el API falló ({e})"
+
+
+def _hay_respaldo() -> bool:
+    try:
+        sjf_local.asegurar()
+        return sjf_local.disponible()
+    except Exception:
+        return False
 
 
 def _strip_html(texto: str | None) -> str:
@@ -534,7 +627,20 @@ async def buscar_tesis(
     """
     body = _search_body(consulta, epocas, incluir_precedentes)
     page, size = max(pagina, 1) - 1, min(max(por_pagina, 1), 50)
-    data = await _sjf_fetch(f"/tesis?page={page}&size={size}", method="POST", json_body=body)
+    try:
+        data = await _sjf_fetch(f"/tesis?page={page}&size={size}", method="POST", json_body=body)
+    except Exception as e:
+        # Se devuelve como contenido, no como excepción: así llega íntegro y con el
+        # mismo tono que los demás avisos de la tool, no como "Error executing tool".
+        if not _hay_respaldo():
+            if isinstance(e, _RespuestaHTTP):
+                return str(e)
+            raise
+        resultados = sjf_local.buscar(consulta, epocas=epocas, tipo=tipo,
+                                      incluir_precedentes=incluir_precedentes)
+        return sjf_local.formatear_busqueda(resultados, consulta, _motivo_respaldo(e),
+                                            pagina=max(pagina, 1),
+                                            por_pagina=min(max(por_pagina, 1), 50))
 
     if data and "documents" not in data and "total" not in data:
         claves = ", ".join(list(data.keys())[:8])
@@ -595,17 +701,36 @@ async def investigar_criterio(
     Returns:
         Criterios ordenados por obligatoriedad, cada uno con su link directo.
     """
+    # Los rangos son los de _rango_organo / NOMBRE_ORGANO: 0 Pleno, 1 Primera Sala,
+    # 2 Segunda Sala, 3 Salas históricas, 4 Plenos Regionales, 5 Plenos de Circuito,
+    # 6 TCC, 7 TDJ, 8 otros. Antes decía 6 para "Plenos Regionales" y 8 para
+    # "Tribunales Colegiados": la etapa etiquetada como Plenos Regionales recogía
+    # jurisprudencia de TCC, la de TCC recogía "otros órganos", y los Plenos
+    # Regionales y de Circuito no tenían etapa. La prueba `test_waf.py` lo amarra
+    # contra NOMBRE_ORGANO para que no vuelva a desalinearse.
     etapas = [
         ("Jurisprudencia del Pleno de la SCJN", 0, True),
         ("Jurisprudencia de la Primera Sala", 1, True),
         ("Jurisprudencia de la Segunda Sala", 2, True),
-        ("Jurisprudencia de Plenos Regionales", 6, True),
-        ("Jurisprudencia de Tribunales Colegiados", 8, True),
+        ("Jurisprudencia de Plenos Regionales", 4, True),
+        ("Jurisprudencia de Plenos de Circuito", 5, True),
+        ("Jurisprudencia de Tribunales Colegiados", 6, True),
         ("Tesis aisladas (cualquier órgano)", None, False),
     ]
 
     body = _search_body(tema, epocas, False)
-    data = await _sjf_fetch("/tesis?page=0&size=50", method="POST", json_body=body) or {}
+    try:
+        data = await _sjf_fetch("/tesis?page=0&size=50", method="POST", json_body=body) or {}
+    except Exception as e:
+        if not _hay_respaldo():
+            if isinstance(e, _RespuestaHTTP):
+                return str(e)
+            raise
+        # El acervo local ya ordena por la misma prelación, así que la investigación
+        # por etapas se reduce a tomar los más vinculantes de esa lista.
+        resultados = sjf_local.buscar(tema, epocas=epocas)[:max(1, int(limite))]
+        return sjf_local.formatear_busqueda(resultados, tema, _motivo_respaldo(e),
+                                            por_pagina=max(1, int(limite)))
     docs = data.get("documents") or []
     total = data.get("total", 0)
     if not docs:
@@ -656,15 +781,46 @@ async def investigar_criterio(
 
 
 @mcp.tool()
-async def ver_tesis(registro_digital: int) -> str:
-    """Obtiene el texto íntegro de una tesis del SJF por su número de registro digital.
+async def ver_tesis(registro_digital: int | str) -> str:
+    """Obtiene el texto íntegro de una tesis del SJF por su número de registro digital
+    o, si el API está caído, por su clave de identificación.
 
     Args:
-        registro_digital: Número de registro digital (IUS), p. ej. 2032415.
+        registro_digital: Número de registro digital (IUS), p. ej. 2032415. También
+            acepta la clave de la tesis —p. ej. "1a./J. 45/2026 (12a.)" o
+            "(IV Región)1o. J/1 A (12a.)"—, que es la única forma de identificarla
+            en el acervo local de la Gaceta: la Gaceta impresa no publica el
+            registro digital, solo la clave.
 
     Returns:
-        Rubro, localización, clave, materias, texto completo y precedentes.
+        Rubro, localización, clave, materias, texto completo y precedentes. Si el
+        API del SJF no respondió y la tesis se sirvió del acervo local, la respuesta
+        lo dice al principio y la cita indica que el registro digital está pendiente.
     """
+    # Una clave no es un registro: el API solo resuelve por registro digital, así
+    # que una clave va derecho al acervo local, que es quien las indexa.
+    crudo = str(registro_digital).strip()
+    if not crudo.isdigit():
+        if not _hay_respaldo():
+            return (f"'{crudo}' no es un registro digital y el acervo local de la "
+                    f"Gaceta no está disponible en este despliegue, así que no hay "
+                    f"forma de resolver una clave. Usa buscar_tesis para localizar "
+                    f"la tesis y su registro digital.")
+        hallazgos = sjf_local.obtener(crudo)
+        if not hallazgos:
+            return (f"No se encontró la clave '{crudo}' en el acervo local de la "
+                    f"Gaceta ({sjf_local.cobertura()}). Revisa la clave —van con "
+                    f"su época entre paréntesis, p. ej. '1a./J. 45/2026 (12a.)'— o "
+                    f"usa buscar_tesis.")
+        motivo = ("la búsqueda fue por clave y el API del SJF solo resuelve por "
+                  "registro digital")
+        if len(hallazgos) == 1:
+            return sjf_local.formatear_tesis(hallazgos[0], motivo)
+        # La misma clave en dos libros: reimpresión o corrección de rubro. Se
+        # muestran las dos; quedarse con una sería decidir por el usuario.
+        partes = [sjf_local.formatear_tesis(h, motivo) for h in hallazgos[:3]]
+        return ("\n\n" + "=" * 60 + "\n\n").join(partes)
+
     # El API exige isSemanal=true para tesis del Semanario en curso y isSemanal=false
     # para las históricas; el valor equivocado devuelve 404. Se prueban ambos.
     d, fallos = None, []
@@ -674,6 +830,20 @@ async def ver_tesis(registro_digital: int) -> str:
             if d and d.get("rubro"):
                 break
             d = None
+        except _BloqueoWAF as e:
+            # Un bloqueo del WAF no es "no se encontró": el segundo isSemanal va a
+            # fallar igual y decir que el registro no existe sería un falso negativo.
+            # El acervo local tampoco puede ayudar aquí: la Gaceta no imprime el
+            # registro digital, así que no hay por dónde buscar ESTE número. Lo
+            # honesto es decirlo y ofrecer el camino que sí existe, la clave.
+            if _hay_respaldo():
+                return (f"{e}\n\nHay un acervo local de la Gaceta oficial "
+                        f"({sjf_local.cobertura()}), pero no se puede consultar por "
+                        f"registro digital: la Gaceta impresa no lo publica, solo la "
+                        f"clave. Usa buscar_tesis con el tema —cae al acervo local "
+                        f"automáticamente— y luego ver_tesis con la clave que "
+                        f"aparezca, p. ej. ver_tesis(\"1a./J. 45/2026 (12a.)\").")
+            return str(e)
         except Exception as e:
             fallos.append(f"isSemanal={semanal}: {e}")
     if not d:
@@ -751,15 +921,7 @@ async def _ejec_fetch(path: str, method: str = "GET", json_body: dict | None = N
     async def pedir():
         async with httpx.AsyncClient(headers=HEADERS_EJEC, timeout=45) as client:
             r = await client.request(method, f"{_EJEC_BASE}{path}", json=json_body)
-            if r.status_code != 200:
-                raise _RespuestaHTTP(r.status_code)
-            if not r.text.strip():
-                return None
-            try:
-                return r.json()
-            except Exception:
-                extracto = re.sub(r"\s+", " ", _strip_html(r.text))[:120]
-                raise RuntimeError(f"respondió contenido no-JSON (posible cambio de API): '{extracto}'")
+            return _clasificar_respuesta_scjn(r, "ejecutorias")
 
     async def intento():
         return await _traer("sjf", pedir, clave=clave, ttl=ttl)
@@ -935,7 +1097,10 @@ async def buscar_ejecutorias(
     """
     body = _search_body(consulta, epocas, False)
     page, size = max(pagina, 1) - 1, min(max(por_pagina, 1), 50)
-    data = await _ejec_fetch(f"/ejecutorias?page={page}&size={size}", method="POST", json_body=body)
+    try:
+        data = await _ejec_fetch(f"/ejecutorias?page={page}&size={size}", method="POST", json_body=body)
+    except _BloqueoWAF as e:
+        return str(e)
 
     if data and "documents" not in data and "total" not in data:
         claves = ", ".join(list(data.keys())[:8])
@@ -1007,6 +1172,8 @@ async def ver_ejecutoria(
             if data and (data.get("texto") or data.get("rubro") or data.get("tipoAsunto")):
                 d = data
                 break
+        except _BloqueoWAF as e:
+            return str(e)
         except Exception as e:
             fallos.append(f"isSemanal={semanal}: {e}")
     if not d:
@@ -3002,6 +3169,21 @@ async def temas_tepjf(tema: str = "", pagina: int = 1) -> str:
 _ARRANQUE = datetime.now()
 
 
+def _linea_estado_sjf_local() -> str:
+    """Qué respaldo hay para el SJF y hasta dónde llega. Con el API vivo esto es
+    informativo; con el API bloqueado es lo que el usuario necesita saber antes de
+    citar nada."""
+    if not _hay_respaldo():
+        return ("SJF respaldo local: sin acervo (falta kriterius_datos/"
+                "sjf_gaceta.jsonl.gz) — si el API se bloquea, buscar_tesis y "
+                "ver_tesis se quedan sin fuente")
+    m = sjf_local.meta()
+    return (f"SJF respaldo local: {m.get('tesis', 0)} tesis de la Gaceta oficial "
+            f"(hasta {m.get('hasta', 'agosto de 2026')}), cobertura "
+            f"{m.get('cobertura_global_vs_indice', '?')} % contra el índice de cada "
+            f"libro — se usa SOLO si el API del SJF falla, y siempre avisando")
+
+
 def _linea_estado_tepjf() -> str:
     """El TEPJF no tiene endpoint que reportar: tiene snapshot. Lo que importa
     saber de un vistazo es de cuándo es y cuántos criterios trae."""
@@ -3034,6 +3216,7 @@ async def estado_conector() -> str:
         f"{len(await mcp.list_tools())} tools registradas.",
         f"Endpoint SJF tesis: {_SJF_BASE}",
         f"Endpoint SJF ejecutorias: {_EJEC_BASE}",
+        _linea_estado_sjf_local(),
         _linea_estado_tepjf(),
         "",
         f"Caché: {_CACHE.resumen()}",
@@ -3192,6 +3375,25 @@ async def diagnosticar_conector() -> str:
             raise RuntimeError("no regresó el criterio esperado: " + r[:150])
         return "texto íntegro y cita armada"
 
+    async def _sjf_respaldo():
+        n = sjf_local.asegurar()
+        if not n:
+            raise RuntimeError(
+                "no se pudo cargar kriterius_datos/sjf_gaceta.jsonl.gz. Sin él, si el "
+                "API del SJF vuelve a bloquearse, buscar_tesis y ver_tesis se quedan "
+                "sin fuente. En un despliegue por Dockerfile, revisa el COPY.")
+        # La muestra dorada: verificada a ojo contra el PDF de la Gaceta. Si deja de
+        # salir completa, el parser o el archivo cambiaron.
+        d = sjf_local.obtener("(IV Región)1o. J/1 A (12a.)")
+        if not d or "DERECHOS POR REVALIDACIÓN" not in (d[0].get("rubro") or ""):
+            raise RuntimeError("el acervo cargó pero la muestra dorada no salió íntegra")
+        if len(sjf_local.buscar("interes legitimo")) != len(sjf_local.buscar("interés legítimo")):
+            raise RuntimeError("el índice FTS5 no está ignorando acentos")
+        m = sjf_local.meta()
+        return (f"{n} tesis de la Gaceta hasta {m.get('hasta', '?')}, "
+                f"cobertura {m.get('cobertura_global_vs_indice', '?')} % vs índice")
+
+    await check("SJF respaldo local de la Gaceta (sin red)", _sjf_respaldo)
     await check("TEPJF snapshot local (sin red)", _tepjf_snapshot)
     await check("TEPJF búsqueda ('paridad de género')", _tepjf_busqueda)
     await check("TEPJF detalle (jurisprudencia 11/2018)", _tepjf_detalle)
@@ -3235,6 +3437,11 @@ async def diagnosticar_conector() -> str:
     else:
         lineas.append("Veredicto: hay fallas. Guía de acción:")
         lineas.append("- Fallas de red o status 5xx: probablemente temporal; reintentar más tarde.")
+        lineas.append("- SJF con 302/403 o 'cortafuegos de la SCJN (Imperva)': la SCJN está filtrando "
+                      "clientes automatizados desde la IP de este servidor. NO es un cambio del API "
+                      "ni hay que re-mapear nada; el endpoint es el mismo. Reintentar más tarde, "
+                      "consultar en el navegador o usar el conector de escritorio, que sale desde "
+                      "la conexión del usuario.")
         lineas.append("- SJF con estructura inesperada o auto-descubrimiento fallido: el API cambió; "
                       "el conector necesita re-mapearse con el navegador en una sesión de Cowork.")
         lineas.append("- TFJA sin resultados o sin token: el sitio cambió su formulario; misma "
