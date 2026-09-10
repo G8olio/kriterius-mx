@@ -22,6 +22,7 @@ Uso: python3 test_dockerfile.py
 import os
 import pathlib
 import re
+import shlex
 import shutil
 import subprocess
 import sys
@@ -105,7 +106,13 @@ try:
             entorno[clave] = valor
         elif l.startswith("RUN python"):
             paso += 1
-            r = subprocess.run(l[4:], shell=True, env=entorno, cwd=RAIZ,
+            # Dentro de la imagen el intérprete se llama `python`; en macOS solo
+            # existe `python3`, así que ahí el comando tal cual falla con
+            # "command not found" y la prueba daba un falso negativo. Lo que se
+            # comprueba es la lógica del RUN, no el nombre del binario: se ejecuta
+            # con el intérprete de esta máquina.
+            cmd = re.sub(r"^python\b", shlex.quote(sys.executable), l[4:])
+            r = subprocess.run(cmd, shell=True, env=entorno, cwd=RAIZ,
                                capture_output=True, text=True, timeout=900)
             salida = (r.stdout + r.stderr).strip().splitlines()
             comprobar(f"RUN #{paso} termina con código 0", r.returncode == 0,
@@ -122,12 +129,17 @@ try:
          "print(n, round((time.time()-t)*1000))"],
         env=entorno, cwd=RAIZ, capture_output=True, text=True, timeout=300)
     partes = r.stdout.split()
-    comprobar("en runtime el índice se abre, ya hecho",
-              len(partes) == 2 and int(partes[0]) > 30000, r.stdout.strip() or r.stderr[-200:])
-    if len(partes) == 2:
+    abrio = len(partes) == 2 and int(partes[0]) > 30000
+    comprobar("en runtime el índice se abre, ya hecho", abrio,
+              r.stdout.strip() or r.stderr[-200:])
+    # Solo tiene sentido medir la apertura si de verdad abrió: si no, un "0 ms"
+    # se leía como aprobado y tapaba la falla de arriba.
+    if abrio:
         ms = int(partes[1])
         # Si tardara segundos, el readiness probe de App Platform volvería a matarlo.
         comprobar(f"y se abre rápido ({ms} ms, tope 3000)", ms < 3000, f"{ms} ms")
+    else:
+        comprobar("y se abre rápido", False, "no se pudo medir: el índice no abrió")
 finally:
     shutil.rmtree(tmp, ignore_errors=True)
 
