@@ -25,8 +25,13 @@ COPY kriterius_datos/ kriterius_datos/
 # KRITERIUS_SJF_SOLO_LECTURA=1 es el cinturón: en runtime el servidor abre el índice
 # si sirve, y si no se declara sin respaldo, pero nunca intenta reconstruirlo.
 ENV KRITERIUS_CACHE_DIR=/app/cache
-ENV KRITERIUS_SJF_SOLO_LECTURA=1
 RUN python -c "import sjf_local, sys; n = sjf_local.cargar(); print(f'índice FTS del SJF: {n} tesis'); sys.exit(0 if n > 30000 else 1)"
+
+# El cinturón va DESPUÉS de construir, no antes. Puesto arriba del RUN —como estaba
+# en la 2.11.1— el propio build se rehusaba a construir el índice, devolvía 0 tesis
+# y salía con código 1. En runtime el servidor abre el índice si sirve, y si no se
+# declara sin respaldo, pero nunca intenta reconstruirlo.
+ENV KRITERIUS_SJF_SOLO_LECTURA=1
 
 # Render inyecta PORT; 8000 es solo el valor por defecto para correr en local
 ENV PORT=8000
