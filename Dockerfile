@@ -16,10 +16,17 @@ COPY kriterius_mx.py server_http.py uso.py tepjf.py sjf_local.py ./
 # "fuente no disponible".
 COPY kriterius_datos/ kriterius_datos/
 
-# El índice FTS del acervo del SJF se construye al arrancar y ocupa ~440 MB. Va a una
-# ruta escribible fuera del código; si el disco no da, sjf_local cae solo a un índice
-# en memoria (~500 MB de RSS) y sigue funcionando.
-ENV KRITERIUS_CACHE_DIR=/tmp/kriterius-cache
+# El índice FTS del acervo del SJF se construye AQUÍ, en el build, y viaja dentro de
+# la imagen. No en el arranque: el contenedor tiene 512 MB de RAM y un vCPU
+# compartido, y armar 34 041 tesis ahí tarda lo suficiente para que el readiness
+# probe falle y la plataforma mate el proceso. El build, en cambio, dispone de
+# 15 GiB de RAM y 24 GiB de disco.
+#
+# KRITERIUS_SJF_SOLO_LECTURA=1 es el cinturón: en runtime el servidor abre el índice
+# si sirve, y si no se declara sin respaldo, pero nunca intenta reconstruirlo.
+ENV KRITERIUS_CACHE_DIR=/app/cache
+ENV KRITERIUS_SJF_SOLO_LECTURA=1
+RUN python -c "import sjf_local, sys; n = sjf_local.cargar(); print(f'índice FTS del SJF: {n} tesis'); sys.exit(0 if n > 30000 else 1)"
 
 # Render inyecta PORT; 8000 es solo el valor por defecto para correr en local
 ENV PORT=8000

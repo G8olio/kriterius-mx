@@ -86,6 +86,14 @@ NO_DISPONIBLE = (
     "diagnosticar_conector para ver el detalle."
 )
 
+# En el servidor remoto el índice viene YA CONSTRUIDO dentro de la imagen: se arma
+# en tiempo de build, donde hay 15 GiB de RAM y 24 GiB de disco. En runtime el
+# contenedor tiene 512 MB y /tmp es efímero, así que construir ahí mata el proceso
+# antes de que abra el puerto — que es exactamente lo que pasó el 10 de septiembre
+# de 2026 con la 2.11.0. Con esta variable en "1", `cargar` usa el índice si sirve
+# y si no se declara no disponible, pero nunca intenta construirlo.
+SOLO_LECTURA = os.environ.get("KRITERIUS_SJF_SOLO_LECTURA", "") == "1"
+
 _db: sqlite3.Connection | None = None
 _por_clave: dict[str, list[int]] = {}
 _registros: dict[str, int] = {}
@@ -231,6 +239,10 @@ def cargar(ruta: Path | str = RUTA_DATOS, ruta_meta: Path | str = RUTA_META,
         else:
             if not ruta.exists():
                 raise FileNotFoundError(ruta)
+            if SOLO_LECTURA:
+                raise RuntimeError(
+                    "el índice FTS no está construido y KRITERIUS_SJF_SOLO_LECTURA=1 "
+                    "prohíbe construirlo aquí: se arma en tiempo de build")
             n = 0
             if ruta_indice is not None:
                 tmp = Path(ruta_indice).with_suffix(".sqlite.tmp")

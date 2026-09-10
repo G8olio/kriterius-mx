@@ -19,6 +19,7 @@ Variables de entorno:
 """
 
 import os
+import threading as _threading
 from datetime import datetime, timezone
 
 from starlette.responses import FileResponse, HTMLResponse, JSONResponse, Response
@@ -40,12 +41,27 @@ import uso
 # cuando hay que averiguar si el snapshot llegó a la imagen.
 print(f"TEPJF: {tepjf.cargar()} criterios indexados", flush=True)
 
-# El acervo de la Gaceta se indexa aquí y no en la primera consulta: construir el
-# índice FTS toma unos segundos y no se los va a comer el primer usuario que busque
-# una tesis con el API del SJF caído. Si ya hay índice en la caché, esto son
-# milisegundos. Si el archivo faltara, `cargar` devuelve 0 y el servidor arranca
-# igual: buscar_tesis y ver_tesis simplemente no tendrán a qué caer.
-print(f"SJF respaldo local: {sjf_local.cargar()} tesis de la Gaceta indexadas", flush=True)
+# El acervo de la Gaceta se abre en SEGUNDO PLANO, nunca bloqueando el arranque.
+#
+# La 2.11.0 lo cargaba aquí, en línea, y el despliegue murió: abrir 34 041 tesis
+# tarda lo suficiente para que el readiness probe de App Platform falle tres veces
+# ("connection refused" en el 8080, porque el puerto todavía no estaba abierto) y la
+# plataforma mate el contenedor. El servidor tiene que escuchar primero y cargar
+# después; mientras tanto las tools del SJF avisan que el respaldo se está
+# preparando, que es información honesta y no un error.
+def _cargar_acervo_sjf():
+    try:
+        n = sjf_local.cargar()
+        print(f"SJF respaldo local: {n} tesis de la Gaceta listas"
+              if n else "SJF respaldo local: no disponible (sin índice ni acervo)",
+              flush=True)
+    except Exception as e:  # noqa: BLE001
+        print(f"SJF respaldo local: falló al abrirse ({e})", flush=True)
+
+
+_hilo_sjf = _threading.Thread(target=_cargar_acervo_sjf, name="sjf-local",
+                              daemon=True)
+_hilo_sjf.start()
 
 _SHA_ACERVO: str | None = None
 
