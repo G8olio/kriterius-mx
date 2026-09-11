@@ -24,7 +24,11 @@ Lo que este acervo NO tiene, y por eso cada respuesta lo dice:
     cuando el API vuelva.
   - **Los cambios de vigencia posteriores** a la publicación de cada libro. Una
     tesis interrumpida o sustituida después sigue impresa igual en su Gaceta.
-  - **Lo publicado después del último libro** del acervo (agosto de 2026).
+  - **Lo publicado después del último libro** del acervo. Hasta dónde llega lo dice
+    `kriterius_datos/sjf_gaceta.meta.json`, que la sincronización semanal mantiene
+    al día: `sincronizar_gacetas.py` revisa los viernes si la Corte publicó Gacetas
+    nuevas y las agrega en `sjf_gaceta_nuevos.jsonl`, el incremental que este módulo
+    carga junto al base.
 
 El índice FTS5 se construye una vez en disco, junto al JSONL, y se reutiliza en
 los arranques siguientes; si el directorio no es escribible cae a memoria. En
@@ -50,6 +54,12 @@ from pathlib import Path
 _DIR = Path(__file__).parent / "kriterius_datos"
 RUTA_DATOS = _DIR / "sjf_gaceta.jsonl.gz"
 RUTA_META = _DIR / "sjf_gaceta.meta.json"
+# Incremental: lo que la sincronización semanal le agrega al acervo. Va aparte y sin
+# comprimir porque el base son 42 MB de gzip y regrabarlo cada semana le costaría al
+# repo un par de gigas al año de historia de git. Cuando un libro aparece en los dos
+# —la Corte republica libros corregidos— manda el incremental y el base se ignora
+# para ESE libro, no tesis por tesis: un libro corregido se reemplaza entero.
+RUTA_NUEVOS = _DIR / "sjf_gaceta_nuevos.jsonl"
 # Mapa id -> registro digital que produce resolver_registros.py cuando el API del
 # SJF vuelve a estar accesible. Va aparte del JSONL a propósito: así el JSONL
 # sigue siendo la salida exacta y determinista del parser, y el enriquecimiento se
@@ -157,53 +167,105 @@ def _abrir_lineas(ruta: Path):
     return ruta.open(encoding="utf-8")
 
 
-def _construir(db: sqlite3.Connection, ruta: Path) -> int:
+def _libro_de(r: dict) -> tuple:
+    """La identidad del libro del que salió una tesis. La Décima Época tiene dos
+    series con la misma numeración, así que la serie va en la llave."""
+    g = r.get("gaceta") or {}
+    return (r.get("epoca") or "", g.get("serie") or "",
+            str(g.get("libro_cita") or g.get("libro") or ""))
+
+
+def _libros_en(ruta: Path) -> set[tuple]:
+    libros: set[tuple] = set()
+    try:
+        with _abrir_lineas(ruta) as f:
+            for linea in f:
+                linea = linea.strip()
+                if linea:
+                    libros.add(_libro_de(json.loads(linea)))
+    except Exception:
+        return set()
+    return libros
+
+
+def _construir(db: sqlite3.Connection, rutas: Path | list[Path]) -> int:
+    """Arma el índice con el acervo base y, si existe, el incremental de la
+    sincronización semanal. Un libro que venga en el incremental se toma SOLO de
+    ahí: es la versión corregida que publicó la Corte."""
+    if isinstance(rutas, (str, Path)):
+        rutas = [Path(rutas)]
+    rutas = [Path(x) for x in rutas]
+    # Los libros que reemplaza el incremental. Se calcula sobre todo lo que no es
+    # el primer archivo, o sea sobre los incrementales.
+    reemplazados: set[tuple] = set()
+    for extra in rutas[1:]:
+        reemplazados |= _libros_en(extra)
+
     db.executescript(_ESQUEMA)
     n = 0
+    omitidas = 0
     lote_f, lote_d = [], []
-    with _abrir_lineas(ruta) as f:
-        for linea in f:
-            linea = linea.strip()
-            if not linea:
-                continue
-            r = json.loads(linea)
-            n += 1
-            lote_f.append((
-                n, r.get("rubro") or "", r.get("texto") or "",
-                " ".join(r.get("precedentes") or []),
-                r.get("clave") or "", r.get("tipo") or "TA",
-                rango_organo(r.get("clave") or "", r.get("nivel") or ""),
-                _epoca_n(r.get("epoca") or ""),
-                int((r.get("gaceta") or {}).get("anio") or 0),
-            ))
-            lote_d.append((n, linea))
-            if len(lote_f) >= 2000:
-                db.executemany(
-                    "INSERT INTO criterios(rowid,rubro,texto,precedentes,clave,tipo,"
-                    "rango,epoca_n,anio) VALUES (?,?,?,?,?,?,?,?,?)", lote_f)
-                db.executemany("INSERT INTO docs(rowid,json) VALUES (?,?)", lote_d)
-                lote_f, lote_d = [], []
-    if lote_f:
-        db.executemany(
-            "INSERT INTO criterios(rowid,rubro,texto,precedentes,clave,tipo,"
-            "rango,epoca_n,anio) VALUES (?,?,?,?,?,?,?,?,?)", lote_f)
-        db.executemany("INSERT INTO docs(rowid,json) VALUES (?,?)", lote_d)
+
+    def vaciar():
+        if lote_f:
+            db.executemany(
+                "INSERT INTO criterios(rowid,rubro,texto,precedentes,clave,tipo,"
+                "rango,epoca_n,anio) VALUES (?,?,?,?,?,?,?,?,?)", lote_f)
+            db.executemany("INSERT INTO docs(rowid,json) VALUES (?,?)", lote_d)
+            lote_f.clear()
+            lote_d.clear()
+
+    for i, ruta in enumerate(rutas):
+        if not ruta.exists():
+            continue
+        es_base = i == 0
+        with _abrir_lineas(ruta) as f:
+            for linea in f:
+                linea = linea.strip()
+                if not linea:
+                    continue
+                r = json.loads(linea)
+                if es_base and reemplazados and _libro_de(r) in reemplazados:
+                    omitidas += 1
+                    continue
+                n += 1
+                lote_f.append((
+                    n, r.get("rubro") or "", r.get("texto") or "",
+                    " ".join(r.get("precedentes") or []),
+                    r.get("clave") or "", r.get("tipo") or "TA",
+                    rango_organo(r.get("clave") or "", r.get("nivel") or ""),
+                    _epoca_n(r.get("epoca") or ""),
+                    int((r.get("gaceta") or {}).get("anio") or 0),
+                ))
+                lote_d.append((n, linea))
+                if len(lote_f) >= 2000:
+                    vaciar()
+    vaciar()
     db.execute("INSERT INTO info(k,v) VALUES('tesis',?)", (str(n),))
-    db.execute("INSERT INTO info(k,v) VALUES('origen',?)", (_huella(ruta),))
+    db.execute("INSERT INTO info(k,v) VALUES('origen',?)", (_huella(rutas),))
+    db.execute("INSERT INTO info(k,v) VALUES('reemplazadas',?)", (str(omitidas),))
     db.commit()
     return n
 
 
-def _huella(ruta: Path) -> str:
-    """Nombre, tamaño y fecha del JSONL de origen. Los tres, no solo la fecha: al
+def _huella(rutas: Path | list[Path]) -> str:
+    """Nombre, tamaño y fecha de cada JSONL de origen. Los tres, no solo la fecha: al
     copiar un repo todos los archivos quedan con la misma marca de tiempo, y un
-    índice construido de otro archivo pasaría por bueno."""
-    st = ruta.stat()
-    return f"{ruta.name}|{st.st_size}|{int(st.st_mtime)}"
+    índice construido de otro archivo pasaría por bueno. Y todos los archivos, no
+    solo el base: si llega un incremental nuevo el índice tiene que reconstruirse."""
+    if isinstance(rutas, (str, Path)):
+        rutas = [Path(rutas)]
+    partes = []
+    for ruta in (Path(x) for x in rutas):
+        if not ruta.exists():
+            continue
+        st = ruta.stat()
+        partes.append(f"{ruta.name}|{st.st_size}|{int(st.st_mtime)}")
+    return "+".join(partes)
 
 
-def _indice_sirve(ruta_indice: Path, ruta_datos: Path) -> bool:
-    """El índice en disco vale si existe, abre y se construyó de ESTE JSONL. Un
+def _indice_sirve(ruta_indice: Path, rutas_datos: Path | list[Path]) -> bool:
+    """El índice en disco vale si existe, abre y se construyó de ESTOS JSONL. Un
     índice viejo sirviendo tesis que ya no están es peor que no tener índice."""
     try:
         if not ruta_indice.exists():
@@ -212,7 +274,7 @@ def _indice_sirve(ruta_indice: Path, ruta_datos: Path) -> bool:
         try:
             fila = db.execute("SELECT v FROM info WHERE k='origen'").fetchone()
             n = db.execute("SELECT v FROM info WHERE k='tesis'").fetchone()
-            return bool(fila and n and fila[0] == _huella(ruta_datos) and int(n[0]) > 0)
+            return bool(fila and n and fila[0] == _huella(rutas_datos) and int(n[0]) > 0)
         finally:
             db.close()
     except Exception:
@@ -220,7 +282,8 @@ def _indice_sirve(ruta_indice: Path, ruta_datos: Path) -> bool:
 
 
 def cargar(ruta: Path | str = RUTA_DATOS, ruta_meta: Path | str = RUTA_META,
-           ruta_indice: Path | str | None = RUTA_INDICE) -> int:
+           ruta_indice: Path | str | None = RUTA_INDICE,
+           ruta_nuevos: Path | str | None = RUTA_NUEVOS) -> int:
     """Deja el acervo listo para consultar. Devuelve cuántas tesis hay, o 0 si no
     se pudo: nunca lanza.
 
@@ -230,9 +293,12 @@ def cargar(ruta: Path | str = RUTA_DATOS, ruta_meta: Path | str = RUTA_META,
     arranque."""
     global _db, _por_clave, _meta, _n, _registros
     ruta = Path(ruta)
+    rutas = [ruta]
+    if ruta_nuevos is not None and Path(ruta_nuevos).exists():
+        rutas.append(Path(ruta_nuevos))
     db = None
     try:
-        if ruta_indice is not None and _indice_sirve(Path(ruta_indice), ruta):
+        if ruta_indice is not None and _indice_sirve(Path(ruta_indice), rutas):
             db = sqlite3.connect(f"file:{Path(ruta_indice)}?mode=ro", uri=True,
                                  check_same_thread=False)
             n = int(db.execute("SELECT v FROM info WHERE k='tesis'").fetchone()[0])
@@ -250,7 +316,7 @@ def cargar(ruta: Path | str = RUTA_DATOS, ruta_meta: Path | str = RUTA_META,
                     Path(ruta_indice).parent.mkdir(parents=True, exist_ok=True)
                     tmp.unlink(missing_ok=True)
                     constructor = sqlite3.connect(tmp)
-                    n = _construir(constructor, ruta)
+                    n = _construir(constructor, rutas)
                     constructor.close()
                     # Publicación atómica: nadie ve un índice a medio construir.
                     tmp.replace(Path(ruta_indice))
@@ -264,7 +330,7 @@ def cargar(ruta: Path | str = RUTA_DATOS, ruta_meta: Path | str = RUTA_META,
                     db, n = None, 0
             if db is None:
                 db = sqlite3.connect(":memory:", check_same_thread=False)
-                n = _construir(db, ruta)
+                n = _construir(db, rutas)
     except Exception:
         try:
             if db is not None:
@@ -319,7 +385,10 @@ def disponible() -> bool:
 
 def meta() -> dict:
     d = dict(_meta)
-    d.setdefault("tesis", _n)
+    # El conteo manda el índice cargado, no el meta del base: con el incremental de
+    # la sincronización semanal ya no coinciden, y el número que el usuario ve al
+    # citar tiene que ser el de lo que de veras se está consultando.
+    d["tesis"] = _n
     return d
 
 

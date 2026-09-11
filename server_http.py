@@ -12,6 +12,7 @@ para que el conector de escritorio se descargue el acervo local del SJF:
     GET /visita          faro de 1x1 que el sitio carga para contar visitas
     GET /datos/sjf_gaceta.jsonl.gz    el acervo de la Gaceta (42 MB)
     GET /datos/sjf_gaceta.json        su huella: tamaño, sha256 y cobertura
+    GET /datos/sjf_gaceta_nuevos.jsonl  el incremental semanal (unos KB)
 
 Variables de entorno:
     PORT       puerto de escucha (el hosting la define solo; por defecto 8000)
@@ -63,24 +64,28 @@ _hilo_sjf = _threading.Thread(target=_cargar_acervo_sjf, name="sjf-local",
                               daemon=True)
 _hilo_sjf.start()
 
-_SHA_ACERVO: str | None = None
+_SHAS: dict[str, str] = {}
 
 
-def _sha256_acervo() -> str:
-    """El sha256 del acervo, calculado una sola vez. El archivo no cambia mientras el
-    proceso viva: viene dentro de la imagen."""
-    global _SHA_ACERVO
-    if _SHA_ACERVO is None:
+def _sha256_archivo(ruta) -> str:
+    """El sha256 de un archivo del acervo, calculado una sola vez por archivo. No
+    cambian mientras el proceso viva: vienen dentro de la imagen."""
+    llave = str(ruta)
+    if llave not in _SHAS:
         import hashlib
         h = hashlib.sha256()
         try:
-            with open(sjf_local.RUTA_DATOS, "rb") as f:
+            with open(ruta, "rb") as f:
                 for trozo in iter(lambda: f.read(1 << 20), b""):
                     h.update(trozo)
-            _SHA_ACERVO = h.hexdigest()
+            _SHAS[llave] = h.hexdigest()
         except Exception:
-            _SHA_ACERVO = ""
-    return _SHA_ACERVO
+            _SHAS[llave] = ""
+    return _SHAS[llave]
+
+
+def _sha256_acervo() -> str:
+    return _sha256_archivo(sjf_local.RUTA_DATOS)
 
 
 ARRANQUE = datetime.now(timezone.utc)
@@ -105,13 +110,41 @@ async def acervo_sjf_huella(request):
     ruta = sjf_local.RUTA_DATOS
     if not ruta.exists():
         return JSONResponse({"error": "el acervo no está en este despliegue"}, status_code=404)
-    return JSONResponse({
+    cuerpo = {
         "archivo": ruta.name,
         "bytes": ruta.stat().st_size,
         "sha256": _sha256_acervo(),
         "url": "/datos/sjf_gaceta.jsonl.gz",
         "meta": sjf_local.meta(),
-    })
+    }
+    # El incremental de la sincronización semanal. El base casi no cambia; esto sí,
+    # cada viernes, y pesa kilobytes: el escritorio puede bajarlo solo a él en vez de
+    # repetir los 42 MB para enterarse de treinta tesis nuevas.
+    nuevos = sjf_local.RUTA_NUEVOS
+    if nuevos.exists():
+        cuerpo["incremental"] = {
+            "archivo": nuevos.name,
+            "bytes": nuevos.stat().st_size,
+            "sha256": _sha256_archivo(nuevos),
+            "url": "/datos/sjf_gaceta_nuevos.jsonl",
+        }
+    return JSONResponse(cuerpo)
+
+
+@mcp.custom_route("/datos/sjf_gaceta_nuevos.jsonl", methods=["GET"])
+async def acervo_sjf_nuevos(request):
+    """Las Gacetas que la sincronización semanal le agregó al acervo. Mismo trato que
+    el base: público, con ETag, sin llave."""
+    ruta = sjf_local.RUTA_NUEVOS
+    if not ruta.exists():
+        return JSONResponse({"error": "este despliegue no tiene incremental"},
+                            status_code=404)
+    etag = f'"{_sha256_archivo(ruta)[:32]}"'
+    if request.headers.get("if-none-match") == etag:
+        return Response(status_code=304, headers={"ETag": etag})
+    return FileResponse(ruta, media_type="application/x-ndjson",
+                        filename="sjf_gaceta_nuevos.jsonl",
+                        headers={"ETag": etag, "Cache-Control": "public, max-age=3600"})
 
 
 @mcp.custom_route("/datos/sjf_gaceta.jsonl.gz", methods=["GET"])

@@ -1,0 +1,95 @@
+# Revisión semanal de la Gaceta del Semanario Judicial de la Federación.
+#
+# La Corte publica los viernes. Esto corre el sábado a las 03:00 UTC, que son las
+# 21:00 del viernes en Ciudad de México: alcanza lo de ese día y el PR está listo
+# para el fin de semana.
+#
+# El servidor NUNCA le pega al SJF: sirve kriterius_datos/sjf_gaceta.jsonl.gz, el
+# acervo congelado que salió de los PDF de la Gaceta. Este workflow es lo único que
+# mira hacia scjn.gob.mx y solo pide los PDF públicos del portal de la Gaceta —el
+# mismo archivo que cualquiera baja con el navegador—. No toca sjf2.scjn.gob.mx,
+# que está detrás de Imperva desde el 3 de septiembre de 2026, ni resuelve retos de
+# bot, ni usa navegador headless. Si el portal también cerrara, este job falla con
+# el error a la vista y el acervo se queda como está.
+#
+# Por qué PR y no commit directo: una tesis mal parseada se cita mal, y citar mal es
+# el único error que este proyecto no puede permitirse. El resumen del PR trae la
+# cobertura de cada libro nuevo contra su propio índice; si baja del 95 % la maqueta
+# del PDF cambió y hay que mirarlo antes de mezclar. Al mezclar se dispara el
+# autodespliegue.
+name: Sincronizar Gacetas del SJF
+
+on:
+  schedule:
+    - cron: "0 3 * * 6"         # sábado 03:00 UTC = viernes 21:00 en Ciudad de México
+  workflow_dispatch:
+    inputs:
+      solo_detectar:
+        description: "Solo reportar qué hay de nuevo, sin bajar ni procesar"
+        type: boolean
+        default: false
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  sincronizar:
+    runs-on: ubuntu-latest
+    # Un libro de la Décima Época son ~8 s de pdftotext por tomo y unos cientos de MB
+    # de PDF. Con publicación semanal normalmente es un archivo; el margen es por si
+    # se juntan varios tras un fin de semana largo.
+    timeout-minutes: 90
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      # pdftotext, que es lo que convierte el PDF a texto respetando el orden de lectura.
+      - name: Instalar poppler y httpx
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq poppler-utils
+          pip install httpx==0.28.1
+          pdftotext -v
+
+      # Se prueba el parseo del portal ANTES de salir a la red: si el fixture ya no
+      # pasa, el detector está roto y no tiene caso pedirle nada a la Corte.
+      - name: Probar el detector contra el markup guardado
+        run: python test_sincronizar_gacetas.py
+
+      - name: Revisar el portal y procesar lo nuevo
+        run: |
+          python sincronizar_gacetas.py \
+            ${{ inputs.solo_detectar && '--solo-detectar' || '' }} \
+            --resumen resumen_gacetas.md
+
+      # El acervo se carga entero con lo nuevo adentro antes de proponer nada: si el
+      # incremental rompiera el índice, se ve aquí y no en producción.
+      - name: Probar el acervo con lo nuevo adentro
+        if: ${{ !inputs.solo_detectar }}
+        run: |
+          python test_sjf_incremental.py
+          python test_sjf_local.py
+          python test_sjf_respaldo.py
+
+      - name: Abrir el PR con el diff
+        if: ${{ !inputs.solo_detectar }}
+        uses: peter-evans/create-pull-request@v6
+        with:
+          branch: gacetas/sincronizacion
+          title: "SJF: Gacetas nuevas del Semanario"
+          body-path: resumen_gacetas.md
+          commit-message: "SJF: incorporadas las Gacetas nuevas del Semanario"
+          add-paths: |
+            kriterius_datos/sjf_gaceta_nuevos.jsonl
+            kriterius_datos/sjf_gaceta.meta.json
+            gacetas/gacetas_manifest.tsv
+          delete-branch: true
+
+      # Sin novedades no hay PR, y eso es lo normal la mayoría de las semanas.
+      - name: Dejar el resumen a la vista
+        if: always()
+        run: cat resumen_gacetas.md >> "$GITHUB_STEP_SUMMARY" || true
