@@ -80,12 +80,17 @@ for l in instrucciones:
     if l.startswith("COPY "):
         for token in l[5:].split():
             copiados.add(token.rstrip("/"))
-importados = set()
-for archivo in ("server_http.py",):
-    texto = (RAIZ / archivo).read_text(encoding="utf-8")
+# Transitivo: server_http importa kriterius_mx, y kriterius_mx importa los módulos de
+# cada fuente. Mirando solo server_http, quitar repositorio_scjn.py del COPY pasaba
+# esta prueba y tumbaba el arranque en el contenedor.
+locales, pendientes = set(), ["server_http"]
+while pendientes:
+    texto = (RAIZ / f"{pendientes.pop()}.py").read_text(encoding="utf-8")
     for m in re.finditer(r"^\s*import (\w+)|^\s*from (\w+) import", texto, re.M):
-        importados.add((m.group(1) or m.group(2)))
-locales = {n for n in importados if (RAIZ / f"{n}.py").exists()}
+        n = m.group(1) or m.group(2)
+        if (RAIZ / f"{n}.py").exists() and n not in locales:
+            locales.add(n)
+            pendientes.append(n)
 faltantes = sorted(n for n in locales if f"{n}.py" not in copiados)
 comprobar("cada módulo local que importa el servidor está en un COPY",
           not faltantes, f"faltan: {', '.join(faltantes)}")

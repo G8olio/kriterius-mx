@@ -1,0 +1,474 @@
+{
+ "from": 1,
+ "fromTo": 3,
+ "pagina": 1,
+ "size": 3,
+ "total": 100,
+ "totalPaginas": 34,
+ "resultados": [
+  {
+   "idEjecutoria": 201074,
+   "tesis": "",
+   "instancia": "Suprema Corte de Justicia de la Nación",
+   "organoJuris": "Primera Sala",
+   "epoca": "Duodécima Época",
+   "volumen": "Libro 7, Marzo de 2026",
+   "tomo": "",
+   "fuente": "Sistema de Precedentes en Controversias Constitucionales y en Acciones de Inconstitucionalidad",
+   "rubro": "I. CONTROVERSIA CONSTITUCIONAL. LA PERSONA TITULAR DE LA UNIDAD ESPECIALIZADA EN ASUNTOS JURÍDICOS DE LA FISCALÍA GENERAL DE LA REPÚBLICA TIENE LEGITIMACIÓN PARA PROMOVERLA (ARTÍCULOS 23 DE LA LEY DE LA FISCALÍA GENERAL DE LA REPÚBLICA, ASÍ COMO 17, FRACCIÓN XXV, DE SU ESTATUTO ORGÁNICO).\r\n\r\nII. CONTROVERSIA CONSTITUCIONAL. LA FISCALÍA GENERAL DE LA REPÚBLICA TIENE LEGITIMACIÓN PARA PROMOVERLA CONTRA LOS ACTOS DE OTRO ÓRGANO CONSTITUCIONAL AUTÓNOMO FEDERAL CUANDO ESTIME QUE AFECTE SUS COMPETENCIAS CONSTITUCIONALES EN TÉRMINOS DE LOS ARTÍCULOS 102, APARTADO A, PÁRRAFO PRIMERO Y 105, FRACCIÓN I, INCISO L), DE LA CONSTITUCIÓN POLÍTICA DE LOS ESTADOS UNIDOS MEXICANOS.\r\n\r\nIII. CONTROVERSIA CONSTITUCIONAL. EL TRIBUNAL FEDERAL DE JUSTICIA ADMINISTRATIVA TIENE LEGITIMACIÓN PASIVA, AL TRATARSE DE UN ÓRGANO CONSTITUCIONAL AUTÓNOMO CON PLENA JURISDICCIÓN PARA DICTAR LA RESOLUCIÓN IMPUGNADA EN TÉRMINOS DE LOS ARTÍCULOS 73, FRACCIÓN XXIX-H, DE LA CONSTITUCIÓN POLÍTICA DE LOS ESTADOS UNIDOS MEXICANOS Y 1, PÁRRAFO SEGUNDO, DE LA LEY ORGÁNICA DEL TRIBUNAL FEDERAL DE JUSTICIA ADMINISTRATIVA.\r\n\r\nIV. CONTROVERSIA CONSTITUCIONAL. LA REPRESENTACIÓN DEL TRIBUNAL FEDERAL DE JUSTICIA ADMINISTRATIVA CORRESPONDE A LA PERSONA QUE OCUPE SU PRESIDENCIA (ARTÍCULO 54 DE LA LEY ORGÁNICA DEL TRIBUNAL FEDERAL DE JUSTICIA ADMINISTRATIVA).\r\n\r\nV. CONTROVERSIA CONSTITUCIONAL. NO SE ACTUALIZA LA CAUSA DE IMPROCEDENCIA PLANTEADA POR EL TRIBUNAL FEDERAL DE JUSTICIA ADMINISTRATIVA RELATIVA A LA FALTA DE LEGITIMACIÓN ACTIVA DE LA FISCALÍA GENERAL DE LA REPÚBLICA, AL TRATARSE DE UN ÓRGANO CONSTITUCIONAL AUTÓNOMO LEGITIMADO PARA PROMOVER ESTE MEDIO DE CONTROL CONSTITUCIONAL EN TÉRMINOS DE LOS ARTÍCULOS 102, APARTADO A, PÁRRAFO PRIMERO Y 105, FRACCIÓN I, INCISO L), DE LA CONSTITUCIÓN POLÍTICA DE LOS ESTADOS UNIDOS MEXICANOS (ACUERDO DE NUEVE DE ABRIL DE DOS MIL VEINTICUATRO DICTADO EN EL JUICIO CONTENCIOSO ADMINISTRATIVO CON NÚMERO DE EXPEDIENTE 3694/24-17-10-8 POR LA DÉCIMA SALA REGIONAL METROPOLITANA DEL TRIBUNAL FEDERAL DE JUSTICIA ADMINISTRATIVA).\r\n\r\nVI. CONTROVERSIA CONSTITUCIONAL. ES INFUNDADA LA CAUSA DE IMPROCEDENCIA PLANTEADA POR EL TRIBUNAL FEDERAL DE JUSTICIA ADMINISTRATIVA RELATIVA A LA FALTA DE INTERÉS LEGÍTIMO DE LA FISCALÍA GENERAL DE LA REPÚBLICA ACTORA, AL HABER PLANTEADO ÉSTA UNA INVASIÓN A SU AUTONOMÍA CONSTITUCIONAL EN MATERIA DE SEPARACIÓN DE AGENTES DEL PERSONAL MINISTERIAL, PERICIAL O POLICIAL (ACUERDO DE NUEVE DE ABRIL DE DOS MIL VEINTICUATRO DICTADO EN EL JUICIO CONTENCIOSO ADMINISTRATIVO CON NÚMERO DE EXPEDIENTE 3694/24-17-10-8 POR LA DÉCIMA SALA REGIONAL METROPOLITANA DEL TRIBUNAL FEDERAL DE JUSTICIA ADMINISTRATIVA).\r\n\r\nVII. CONTROVERSIA CONSTITUCIONAL. SI SE HACE VALER UNA CAUSA DE IMPROCEDENCIA QUE INVOLUCRA EL ESTUDIO DE FONDO, DEBERÁ DESESTIMARSE.\r\n\r\nVIII. CONTROVERSIA CONSTITUCIONAL. PROCEDE DE MANERA EXCEPCIONAL, AUN CUANDO EL ACTO IMPUGNADO SEA UNA RESOLUCIÓN JURISDICCIONAL, SI EL ACTOR SOSTIENE QUE ÉSTA IMPLICA UNA INVASIÓN A SU ESFERA COMPETENCIAL.\r\n\r\nIX. CONTROVERSIA CONSTITUCIONAL. PROCEDE LA PROMOVIDA POR LA FISCALÍA GENERAL DE LA REPÚBLICA CONTRA EL ACUERDO DICTADO POR EL TRIBUNAL FEDERAL DE JUSTICIA ADMINISTRATIVA, MEDIANTE EL CUAL ADMITIÓ LA DEMANDA PARA CONOCER DE UN JUICIO DE NULIDAD PROMOVIDO CONTRA LA RESOLUCIÓN DEFINITIVA DICTADA POR AQUÉLLA POR LA QUE SE DETERMINÓ LA SEPARACIÓN DEL CARGO DE UN AGENTE DE LA POLICÍA FEDERAL MINISTERIAL, AL HABER PLANTEADO UNA INVASIÓN A SU ESFERA COMPETENCIAL (ACUERDO DE NUEVE DE ABRIL DE DOS MIL VEINTICUATRO DICTADO EN EL JUICIO CONTENCIOSO ADMINISTRATIVO CON NÚMERO DE EXPEDIENTE 3694/24-17-10-8 POR LA DÉCIMA SALA REGIONAL METROPOLITANA DEL TRIBUNAL FEDERAL DE JUSTICIA ADMINISTRATIVA).\r\n\r\nX. CONTROVERSIA CONSTITUCIONAL. LA VÍA PREVISTA EN LA LEGISLACIÓN LOCAL SÓLO DEBE AGOTARSE PARA SU PROCEDENCIA CUANDO EN LOS CONCEPTOS DE INVALIDEZ NO SE PLANTEEN VIOLACIONES DIRECTAS E INMEDIATAS A LA CONSTITUCIÓN FEDERAL, SINO QUE SU TRANSGRESIÓN SE HAGA DERIVAR DE LA VULNERACIÓN DE LAS NORMAS LOCALES (ACUERDO DE NUEVE DE ABRIL DE DOS MIL VEINTICUATRO DICTADO EN EL JUICIO CONTENCIOSO ADMINISTRATIVO CON NÚMERO DE EXPEDIENTE 3694/24-17-10-8 POR LA DÉCIMA SALA REGIONAL METROPOLITANA DEL TRIBUNAL FEDERAL DE JUSTICIA ADMINISTRATIVA).\r\n\r\nXI. CONTROVERSIA CONSTITUCIONAL. NO SE ACTUALIZA LA CAUSA DE IMPROCEDENCIA DE FALTA DE DEFINITIVIDAD DEL ACTO IMPUGNADO CONSISTENTE EN EL AUTO ADMISORIO DEL JUICIO DE NULIDAD DICTADO POR EL TRIBUNAL FEDERAL DE JUSTICIA ADMINISTRATIVA TODA VEZ QUE LA INVASIÓN COMPETENCIAL ALEGADA POR LA FISCALÍA GENERAL DE LA REPÚBLICA SE GENERA DESDE LA ADMISIÓN DE LA DEMANDA, AL SOMETER A DICHO ENTE AUTÓNOMO A UN PROCEDIMIENTO JURISDICCIONAL PARA REVISAR LA LEGALIDAD DE SUS DETERMINACIONES QUE CONSIDERA TIENEN INATACABILIDAD Y DEFINITIVIDAD POR PREVISIÓN EXPRESA DE LOS ARTÍCULOS 102, APARTADO A Y 123, APARTADO B, FRACCIÓN XIII, DE LA CONSTITUCIÓN GENERAL (ACUERDO DE NUEVE DE ABRIL DE DOS MIL VEINTICUATRO DICTADO EN EL JUICIO CONTENCIOSO ADMINISTRATIVO CON NÚMERO DE EXPEDIENTE 3694/24-17-10-8 POR LA DÉCIMA SALA REGIONAL METROPOLITANA DEL TRIBUNAL FEDERAL DE JUSTICIA ADMINISTRATIVA).\r\n\r\nXII. DERECHO HUMANO DE TUTELA JURISDICCIONAL EFECTIVA. COMPRENDE DIVERSAS FASES CONSISTENTES EN EL LIBRE ACCESO A LOS ÓRGANOS JURISDICCIONALES, ASÍ COMO LOS DERECHOS AL DEBIDO PROCESO, A QUE SE DICTE UNA RESOLUCIÓN AJUSTADA A LA LEY, A RECURRIR LA DECISIÓN Y A SU EJECUCIÓN.\r\n\r\nXIII. DERECHO HUMANO DE TUTELA JURISDICCIONAL EFECTIVA. ES GRADUAL POR LO QUE SE PERFECCIONA CON EL CUMPLIMIENTO DE LAS DIVERSAS ETAPAS CORRELATIVAS Y SUCESIVAS QUE LO COMPONEN, MISMAS QUE, A SU VEZ, ESTÁN INTERCONECTADAS CON OTROS DERECHOS FUNDAMENTALES ESPECIALMENTE LOS DERECHOS DE AUDIENCIA Y DEBIDO PROCESO PREVISTOS EN EL ARTÍCULO 14, SEGUNDO PÁRRAFO, DE LA CONSTITUCIÓN GENERAL.\r\n\r\nXIV. DERECHO HUMANO DE ACCESO A LA JURISDICCIÓN. SU CONTENIDO ESPECÍFICO COMO PARTE DEL DERECHO A LA TUTELA JURISDICCIONAL EFECTIVA Y SU COMPATIBILIDAD CON LA EXISTENCIA DE REQUISITOS DE PROCEDENCIA DE UNA ACCIÓN.\r\n\r\nXV. DERECHO HUMANO DE ACCESO A LA JURISDICCIÓN. SE ENCUENTRA TUTELADO POR EL ARTÍCULO 17, PÁRRAFO SEGUNDO, DE LA CONSTITUCIÓN POLÍTICA DE LOS ESTADOS UNIDOS MEXICANOS.\r\n\r\nXVI. DERECHO HUMANO DE TUTELA JURISDICCIONAL EFECTIVA. FACETAS RECONOCIDAS POR EL ARTÍCULO 17 DE LA CONSTITUCIÓN POLÍTICA DE LOS ESTADOS UNIDOS MEXICANOS.\r\n\r\nXVII. DERECHO HUMANO DE TUTELA JURISDICCIONAL EFECTIVA. SE TRADUCE EN LA OBLIGACIÓN DEL ESTADO MEXICANO PARA GARANTIZAR QUE TODAS LAS PERSONAS QUE LO REQUIERAN PUEDAN SOMETER SUS CONFLICTOS A LOS TRIBUNALES EN CONDICIONES DE EQUIDAD Y QUE LAS RESPUESTAS QUE OBTENGAN DE ÉSTOS ÚLTIMOS RESUELVAN LOS CONFLICTOS EN FORMA EFECTIVA TANTO PARA LOS INDIVIDUOS INVOLUCRADOS COMO PARA LA SOCIEDAD EN TÉRMINOS DE LOS ARTÍCULOS 17 DE LA CONSTITUCIÓN GENERAL, ASÍ COMO 14.1 DEL PACTO INTERNACIONAL DE DERECHO CIVILES Y POLÍTICOS Y 8.1 Y 25.1 DE LA CONVENCIÓN AMERICANA SOBRE DERECHOS HUMANOS.\r\n\r\nXVIII. DERECHO HUMANO DE ACCESO A LA JURISDICCIÓN. PARA LOS ÓRGANOS JURISDICCIONALES CONLLEVA EL DEBER DE GARANTIZAR LA EFECTIVIDAD DE LOS RECURSOS O MEDIOS DE DEFENSA PREVISTOS EN LA CONSTITUCIÓN Y EN LA LEY, POR LO CUAL DEBEN ABSTENERSE DE CONDICIONAR SU PROCEDENCIA A REQUISITOS O FORMALISMOS TÉCNICOS QUE RESULTEN EXCESIVOS O CARENTES DE RAZONABILIDAD, SIN QUE ELLO IMPLIQUE QUE LAS PARTES NO DEBEN CUMPLIR CON LOS REQUISITOS DE PROCEDENCIA ESTABLECIDOS EN LA LEY.\r\n\r\nXIX. DERECHO HUMANO DE ACCESO A LA JURISDICCIÓN. LA POTESTAD QUE OTORGA AL LEGISLADOR EL ARTÍCULO 17 CONSTITUCIONAL PARA FIJAR LOS REQUISITOS PROCESALES NO ES ILIMITADA, DEBE TENER SUSTENTO CONSTITUCIONAL.\r\n\r\nXX. MIEMBROS DE LOS CUERPOS DE SEGURIDAD PÚBLICA. EVOLUCIÓN CONSTITUCIONAL DEL ARTÍCULO 123, APARTADO B, FRACCIÓN XIII, DE LA CONSTITUCIÓN POLÍTICA DE LOS ESTADOS UNIDOS MEXICANOS.\r\n\r\nXXI. MIEMBROS DE LOS CUERPOS DE SEGURIDAD PÚBLICA. PERTENECEN A UN RÉGIMEN DE EXCEPCIÓN CUYA RELACIÓN CON EL ESTADO NO PUEDE SER ASIMILADA A LA DE TRABAJO, SINO QUE SE RIGEN POR SUS PROPIAS LEYES, GENERANDO UNA RELACIÓN DE NATURALEZA ADMINISTRATIVA.\r\n\r\nXXII. MIEMBROS DE LOS CUERPOS DE SEGURIDAD PÚBLICA. LAS DETERMINACIONES EN MATERIA DE SEPARACIÓN DE CARGO DE AGENTES DEL MINISTERIO PÚBLICO, PERITOS Y POLICÍAS SERÁN REVISABLES POR AUTORIDAD JURISDICCIONAL, QUIEN DEBE RESOLVER SI TAL SEPARACIÓN, REMOCIÓN, BAJA O CESE, O CUALQUIER OTRA FORMA DE SEPARACIÓN DEL SERVICIO FUE JUSTIFICADA Y, EN SU CASO, DE LA INDEMNIZACIÓN Y DEMÁS PRESTACIONES A QUE TENGA DERECHO EL SERVIDOR PÚBLICO EN TÉRMINOS DEL ARTÍCULO 123, APARTADO B, FRACCIÓN XIII, PÁRRAFO SEGUNDO, DE LA CONSTITUCIÓN POLÍTICA DE LOS ESTADOS UNIDOS MEXICANOS.\r\n\r\nXXIII. TRIBUNAL FEDERAL DE JUSTICIA ADMINISTRATIVA. ES LA AUTORIDAD JURISDICCIONAL COMPETENTE PARA REVISAR LA LEGALIDAD DE LA SEPARACIÓN, REMOCIÓN, BAJA, CESE O CUALQUIER OTRA FORMA DE TERMINACIÓN DEL SERVICIO, ASÍ COMO DEL PAGO DE LA INDEMNIZACIÓN QUE CORRESPONDA Y DEMÁS PRESTACIONES A QUE TENGA DERECHO UN ELEMENTO DE SEGURIDAD PÚBLICA POR DISPOSICIÓN EXPRESA DE LOS ARTÍCULOS 123, APARTADO B, FRACCIÓN XIII, DE LA CONSTITUCIÓN GENERAL EN RELACIÓN CON EL 50 DE LA LEY FEDERAL DE PROCEDIMIENTO CONTENCIOSO ADMINISTRATIVO ATENTO A SU RELACIÓN DE NATURALEZA ADMINISTRATIVA CON EL ESTADO Y QUE AQUEL TRIBUNAL ES EL MÁS A FIN A LA MATERIA.\r\n\r\nXXIV. FISCALÍA GENERAL DE LA REPÚBLICA. SUS DETERMINACIONES RELACIONADAS CON LA CONCLUSIÓN DEL SERVICIO RESPECTO DE LOS SERVIDORES PÚBLICOS QUE LA INTEGRAN NO PUEDEN CONSIDERARSE COMO DEFINITIVAS NI INATACABLES, POR LO QUE LA REVISIÓN DE SU LEGALIDAD ES COMPETENCIA DE LA AUTORIDAD JURISDICCIONAL DENOMINADA TRIBUNAL FEDERAL DE JUSTICIA ADMINISTRATIVA.\r\n\r\nXXV. FISCALÍA GENERAL DE LA REPÚBLICA. LA REVISIÓN DE LA LEGALIDAD DE SUS DETERMINACIONES RELACIONADAS CON LA CONCLUSIÓN DEL SERVICIO RESPECTO DE LOS SERVIDORES PÚBLICOS QUE LA INTEGRAN POR EL TRIBUNAL FEDERAL DE JUSTICIA ADMINISTRATIVA NO VULNERA SU AUTONOMÍA EN TANTO QUE EL JUICIO CONTENCIOSO ADMINISTRATIVO NO TIENE POR OBJETO LA REVISIÓN DE SUS DETERMINACIONES RELACIONADAS CON SUS FACULTADES EN MATERIA DE PROCURACIÓN DE JUSTICIA, INVESTIGACIÓN DE DELITOS, EJERCICIO DE LA ACCIÓN PENAL U OTRAS AFINES Y EXCLUSIVAS DE LA INSTITUCIÓN DEL MINISTERIO PÚBLICO SINO QUE SE CONSTRIÑEN A LA MATERIA DE LA SEPARACIÓN DE SU PERSONAL SUSTANTIVO.\r\n\r\nXXVI. FISCALÍA GENERAL DE LA REPÚBLICA. SU AUTONOMÍA E INDEPENDENCIA DE LOS PODERES PRIMARIOS NO IMPLICA QUE SUS DETERMINACIONES RELACIONADAS CON LA CONCLUSIÓN DEL SERVICIO RESPECTO DE LOS SERVIDORES PÚBLICOS QUE LA INTEGRAN QUEDEN EXENTAS DE LA REVISIÓN DE LEGALIDAD A QUE SE REFIERE EL ARTÍCULO 123 DE LA CONSTITUCIÓN GENERAL, MÁXIME QUE DICHA DISPOSICIÓN ES UNA GARANTÍA PARA LA PROTECCIÓN DE LOS DERECHOS HUMANOS DE ACCESO A LA JUSTICIA Y TUTELA JURISDICCIONAL EFECTIVA DE LOS SERVIDORES PÚBLICOS.\r\n\r\nXXVII. FISCALÍA GENERAL DE LA REPÚBLICA. EL ARTÍCULO 69 DE SU LEY ORGÁNICA QUE ESTABLECE QUE NO PROCEDE RECURSO ALGUNO CONTRA LAS RESOLUCIONES DICTADAS DENTRO DEL PROCEDIMIENTO DE SEPARACIÓN DEL PERSONAL SUSTANTIVO Y AQUELLA QUE LE PONGA FIN DEBE SER INTERPRETADO EN EL SENTIDO DE QUE DICHO PROCEDIMIENTO DE SEPARACIÓN ES IRRECURRIBLE ANTE LA PROPIA FISCALÍA, PERO NO INHIBE LA REVISIÓN ANTE EL TRIBUNAL FEDERAL DE JUSTICIA ADMINISTRATIVA.\r\n\r\nXXVIII. FISCALÍA GENERAL DE LA REPÚBLICA. LAS RESOLUCIONES DICTADAS EN EL PROCEDIMIENTO DE SEPARACIÓN DEL CARGO DE UN MIEMBRO DE LOS CUERPOS DE SEGURIDAD PÚBLICA POR INCUMPLIR LOS REQUISITOS DE PERMANENCIA, INCLUIDA LA QUE DECLARA EL SOBRESEIMIENTO Y ORDENA LA RESTITUCIÓN EN SUS FUNCIONES Y PRESTACIONES DEL SERVIDOR PÚBLICO, SON REVISABLES POR AUTORIDAD JURISDICCIONAL EN ARAS DE SALVAGUARDAR EL DERECHO DE ACCESO A LA JURISDICCIÓN (RESOLUCIÓN DICTADA POR LA SEGUNDA SALA REGIONAL METROPOLITANA DEL TRIBUNAL FEDERAL DE JUSTICIA ADMINISTRATIVA EL UNO DE AGOSTO DE DOS MIL VEINTICUATRO, EN EL JUICIO CONTENCIOSO ADMINISTRATIVO CON NÚMERO DE EXPEDIENTE 14975/24-17-02-8).\r\n\r\nXXIX. TRIBUNAL FEDERAL DE JUSTICIA ADMINISTRATIVA. ES LA AUTORIDAD JURISDICCIONAL COMPETENTE PARA REVISAR LA LEGALIDAD DE LA RESOLUCIÓN DICTADA POR LA FISCALÍA GENERAL DE LA REPÚBLICA EN LA QUE SE DECLARÓ EL SOBRESEIMIENTO EN EL PROCEDIMIENTO DE SEPARACIÓN DEL CARGO DE UN SERVIDOR PÚBLICO Y ORDENÓ SU RESTITUCIÓN EN SUS FUNCIONES Y PRESTACIONES EN TÉRMINOS DEL ARTÍCULO 123, APARTADO B, FRACCIÓN XIII, PÁRRAFO SEGUNDO, DE LA CONSTITUCIÓN GENERAL EN RELACIÓN CON EL 50 DE LA LEY FEDERAL DE PROCEDIMIENTO CONTENCIOSO ADMINISTRATIVO ATENTO A SU RELACIÓN DE NATURALEZA ADMINISTRATIVA CON EL ESTADO Y QUE AQUEL TRIBUNAL ES EL MÁS A FIN A LA MATERIA (RESOLUCIÓN DICTADA POR LA SEGUNDA SALA REGIONAL METROPOLITANA DEL TRIBUNAL FEDERAL DE JUSTICIA ADMINISTRATIVA EL UNO DE AGOSTO DE DOS MIL VEINTICUATRO, EN EL JUICIO CONTENCIOSO ADMINISTRATIVO CON NÚMERO DE EXPEDIENTE 14975/24-17-02-8).",
+   "texto": " CONTROVERSIA CONSTITUCIONAL 267/2024. FISCALÍA GENERAL DE LA REPÚBLICA. 30 DE ABRIL DE 2025. MAYORÍA DE CUATRO VOTOS DE LA SEÑORA MINISTRA Y LOS SEÑORES MINISTROS JORGE MARIO PARDO REBOLLEDO, JUAN LUIS GONZÁLEZ ALCÁNTARA CARRANCÁ, ANA MARGARITA RÍOS FARJAT Y ALFREDO GUTIÉRREZ ORTIZ MENA. VOTÓ EN CONTRA LA MINISTRA PRESIDENTA LORETTA ORTIZ AHLF. PONENTE: MINISTRO JORGE MARIO PARDO REBOLLEDO. SECRETARIO: YAIRSINIO DAVID GARCÍA ORTIZ.\n\nÍNDICE TEMÁTICO\n\nActo impugnado: El acuerdo de primero de agosto de dos mil veinticuatro, dictado en el juicio contencioso administrativo con número de expediente ********, por la Segunda Sala Regional Metropolitana del Tribunal Federal de Justicia Administrativa, (en adelante Tribunal Federal de Justicia Administrativa).\n\nVer índice temático\n\nCiudad de México. La Primera Sala de la Suprema Corte de Justicia de la Nación, en sesión correspondiente al día treinta de abril de dos mil veinticinco, emite la siguiente:\n\nS E N T E N C I A\n\nMediante la cual se resuelve la controversia constitucional 267/2024, promovida por la Fiscalía General de la República en contra del Tribunal Federal de Justicia Administrativa.\n\n1. Presentación de la demanda, poder demandado y acto impugnado. Por escrito presentado el seis de septiembre de dos mil veinticuatro, en la Oficina de Certificación Judicial y Correspondencia de esta Suprema Corte de Justicia de la Nación, Carmen Lucía Sustaita Figueroa, en su calidad de Titular de la Unidad Especializada en Asuntos Jurídicos de la Fiscalía General de la República, promovió controversia constitucional en representación del citado organismo autónomo, en la que solicitó la invalidez del acto emitido por la Segunda Sala Regional Metropolitana del Tribunal Federal de Justicia Administrativa, consistente en:\n\n“El acuerdo de 1 de agosto de 2024, dictado en el expediente ******** por la Segunda Sala Regional Metropolitana del Tribunal Federal de Justicia Administrativa (en adelante Tribunal de Justicia Administrativa), a través del cual, sin contar con competencias, admite a trámite una demanda de nulidad promovida por un Agente de la Policía Federal Ministerial de la Fiscalía General de la República. en la que impugnó la resolución contenida en el expediente ******** de 29 de mayo de 2024, por medio del cual, el Titular del Centro de Formación y Servicio Profesional de Carrera de esta Fiscalía, sobreseyó la queja contenida en el oficio ********, dejó insubsistente la suspensión en sueldo y funciones y, ordenó la restitución se sueldo y prestaciones.”\n\nANTECEDENTES QUE SE NARRAN EN LA DEMANDA\n\n2. Antecedentes. Según se desprende las constancias que obran en autos, se aprecian los siguientes hechos.\n\n• Mediante oficio ******** de primero de diciembre de dos mil veintidós, el Titular de la Policía Federal Ministerial formuló queja en contra de un Agente de la Policía Federal Ministerial de la Fiscalía (en adelante Agente Ministerial), para el inicio de procedimiento administrativo de separación, por incumplimiento al requisito de permanencia previsto en los artículos cuadragésimo, fracción VIII en relación con el trigésimo séptimo, ambos de los \"LINEAMIENTOS L/003/19'', por los que se regula al personal adscrito a la entonces Procuraduría General de la República que continúa en la Fiscalía General de la República, así como al personal de transición.\n\n• Derivado de lo anterior, El diecinueve de diciembre de dos mil veintidós el centro de Formación y Servicio Profesional de Carrera de La Fiscalía General de La República (en lo sucesivo Centro), determinó: i) formar el expediente de queja ******** y, ii) decretar la suspensión de sueldo y funciones del Agente Ministerial, hasta en tanto se emita sentencia ejecutoriada dentro de La causa penal ********.\n\n• El veintisiete de mayo de dos mil veinticuatro, la Unidad de Servicio Profesional de Carrera emitió el acuerdo por el que propuso sobreseer en el expediente ********, al actualizarse una causal de notoria improcedencia.\n\n• El veintinueve de mayo de dos mil veinticuatro, el Centro resolvió: i) sobreseer en el expediente ********; ii) dejar insubsistente La suspensión en sueldo y funciones y, iii) se restituya al Agente Ministerial en el pago de salario y demás prestaciones a que tenga derecho.\n\n• Inconforme con lo anterior, el Agente Ministerial promovió juicio de nulidad, en el que impugnó la resolución de veintinueve de mayo de dos mil veinticuatro, emitida dentro del expediente ******** por el Centro.\n\n• Por acuerdo de primero de agosto de dos mil veinticuatro, el Tribunal Federal de Justicia Administrativa, admitió a trámite la demanda de nulidad en la vía ordinaria radicándola con el número ********, de la cual, para el caso que interesa, se advierte lo siguiente:\n\n“[...]\n\nSe da cuenta con el escrito ingresado en la Oficialía de Partes Común para las Salas Regionales Metropolitanas de este Tribunal el veinticinco de junio de dos mil veinticuatro, a través de cual, [xxx], por propio derecho. comparece a demandar",
+   "asunto": "CONTROVERSIA CONSTITUCIONAL 267/2024.",
+   "promovente": "FISCALÍA GENERAL DE LA REPÚBLICA.",
+   "anio": 2026,
+   "mes": "Marzo",
+   "anexos": "CONTROVERSIA_CONSTITUCIONAL_267_2024.pdf",
+   "esSemanario": false,
+   "huellaDigital": "2c0ab48a94ce28adfee25d5b04007c29b27907a30ab4c089eb0e5455f2aa8a1d"
+  },
+  {
+   "idEjecutoria": 201073,
+   "tesis": "",
+   "instancia": "Suprema Corte de Justicia de la Nación",
+   "organoJuris": "Primera Sala",
+   "epoca": "Duodécima Época",
+   "volumen": "Libro 7, Marzo de 2026",
+   "tomo": "",
+   "fuente": "Sistema de Precedentes en Controversias Constitucionales y en Acciones de Inconstitucionalidad",
+   "rubro": "I. CONTROVERSIA CONSTITUCIONAL. LA PERSONA TITULAR DE LA UNIDAD ESPECIALIZADA EN ASUNTOS JURÍDICOS DE LA FISCALÍA GENERAL DE LA REPÚBLICA TIENE LEGITIMACIÓN PARA PROMOVERLA (ARTÍCULOS 23 DE LA LEY DE LA FISCALÍA GENERAL DE LA REPÚBLICA, ASÍ COMO 17, FRACCIÓN XXV, DE SU ESTATUTO ORGÁNICO).\r\n\r\nII. CONTROVERSIA CONSTITUCIONAL. LA FISCALÍA GENERAL DE LA REPÚBLICA TIENE LEGITIMACIÓN PARA PROMOVERLA CONTRA LOS ACTOS DE OTRO ÓRGANO CONSTITUCIONAL AUTÓNOMO FEDERAL CUANDO ESTIME QUE AFECTE SUS COMPETENCIAS CONSTITUCIONALES EN TÉRMINOS DE LOS ARTÍCULOS 102, APARTADO A, PÁRRAFO PRIMERO Y 105, FRACCIÓN I, INCISO L), DE LA CONSTITUCIÓN POLÍTICA DE LOS ESTADOS UNIDOS MEXICANOS.\r\n\r\nIII. CONTROVERSIA CONSTITUCIONAL. EL TRIBUNAL FEDERAL DE JUSTICIA ADMINISTRATIVA TIENE LEGITIMACIÓN PASIVA, AL TRATARSE DE UN ÓRGANO CONSTITUCIONAL AUTÓNOMO CON PLENA JURISDICCIÓN PARA DICTAR LA RESOLUCIÓN IMPUGNADA EN TÉRMINOS DE LOS ARTÍCULOS 73, FRACCIÓN XXIX-H, DE LA CONSTITUCIÓN POLÍTICA DE LOS ESTADOS UNIDOS MEXICANOS Y 1, PÁRRAFO SEGUNDO, DE LA LEY ORGÁNICA DEL TRIBUNAL FEDERAL DE JUSTICIA ADMINISTRATIVA.\r\n\r\nIV. CONTROVERSIA CONSTITUCIONAL. LA REPRESENTACIÓN DEL TRIBUNAL FEDERAL DE JUSTICIA ADMINISTRATIVA CORRESPONDE A LA PERSONA QUE OCUPE SU PRESIDENCIA (ARTÍCULO 54 DE LA LEY ORGÁNICA DEL TRIBUNAL FEDERAL DE JUSTICIA ADMINISTRATIVA).\r\n\r\nV. CONTROVERSIA CONSTITUCIONAL. NO SE ACTUALIZA LA CAUSA DE IMPROCEDENCIA PLANTEADA POR EL TRIBUNAL FEDERAL DE JUSTICIA ADMINISTRATIVA RELATIVA A LA FALTA DE LEGITIMACIÓN ACTIVA DE LA FISCALÍA GENERAL DE LA REPÚBLICA, AL TRATARSE DE UN ÓRGANO CONSTITUCIONAL AUTÓNOMO LEGITIMADO PARA PROMOVER ESTE MEDIO DE CONTROL CONSTITUCIONAL EN TÉRMINOS DE LOS ARTÍCULOS 102, APARTADO A, PÁRRAFO PRIMERO Y 105, FRACCIÓN I, INCISO L), DE LA CONSTITUCIÓN POLÍTICA DE LOS ESTADOS UNIDOS MEXICANOS (ACUERDO DE NUEVE DE ABRIL DE DOS MIL VEINTICUATRO DICTADO EN EL JUICIO CONTENCIOSO ADMINISTRATIVO CON NÚMERO DE EXPEDIENTE 3694/24-17-10-8 POR LA DÉCIMA SALA REGIONAL METROPOLITANA DEL TRIBUNAL FEDERAL DE JUSTICIA ADMINISTRATIVA).\r\n\r\nVI. CONTROVERSIA CONSTITUCIONAL. ES INFUNDADA LA CAUSA DE IMPROCEDENCIA PLANTEADA POR EL TRIBUNAL FEDERAL DE JUSTICIA ADMINISTRATIVA RELATIVA A LA FALTA DE INTERÉS LEGÍTIMO DE LA FISCALÍA GENERAL DE LA REPÚBLICA ACTORA, AL HABER PLANTEADO ÉSTA UNA INVASIÓN A SU AUTONOMÍA CONSTITUCIONAL EN MATERIA DE RESPONSABILIDAD ADMINISTRATIVA DE SU PERSONAL SUSTANTIVO (ACUERDO DE NUEVE DE ABRIL DE DOS MIL VEINTICUATRO DICTADO EN EL JUICIO CONTENCIOSO ADMINISTRATIVO CON NÚMERO DE EXPEDIENTE 3694/24-17-10-8 POR LA DÉCIMA SALA REGIONAL METROPOLITANA DEL TRIBUNAL FEDERAL DE JUSTICIA ADMINISTRATIVA).\r\n\r\nVII. CONTROVERSIA CONSTITUCIONAL. SI SE HACE VALER UNA CAUSA DE IMPROCEDENCIA QUE INVOLUCRA EL ESTUDIO DE FONDO, DEBERÁ DESESTIMARSE.\r\n\r\nVIII. CONTROVERSIA CONSTITUCIONAL. PROCEDE DE MANERA EXCEPCIONAL, AUN CUANDO EL ACTO IMPUGNADO SEA UNA RESOLUCIÓN JURISDICCIONAL, SI EL ACTOR SOSTIENE QUE ÉSTA IMPLICA UNA INVASIÓN A SU ESFERA COMPETENCIAL.\r\n\r\nIX. CONTROVERSIA CONSTITUCIONAL. PROCEDE LA PROMOVIDA POR LA FISCALÍA GENERAL DE LA REPÚBLICA CONTRA EL ACUERDO DICTADO POR EL TRIBUNAL FEDERAL DE JUSTICIA ADMINISTRATIVA, MEDIANTE EL CUAL ADMITIÓ LA DEMANDA PARA CONOCER DE UN JUICIO DE NULIDAD PROMOVIDO CONTRA LA RESOLUCIÓN DEFINITIVA DICTADA POR AQUÉLLA, AL HABER PLANTEADO UNA INVASIÓN A SU ESFERA COMPETENCIAL (ACUERDO DE NUEVE DE ABRIL DE DOS MIL VEINTICUATRO DICTADO EN EL JUICIO CONTENCIOSO ADMINISTRATIVO CON NÚMERO DE EXPEDIENTE 3694/24-17-10-8 POR LA DÉCIMA SALA REGIONAL METROPOLITANA DEL TRIBUNAL FEDERAL DE JUSTICIA ADMINISTRATIVA).\r\n\r\nX. CONTROVERSIA CONSTITUCIONAL. LA VÍA PREVISTA EN LA LEGISLACIÓN LOCAL SÓLO DEBE AGOTARSE PARA SU PROCEDENCIA CUANDO EN LOS CONCEPTOS DE INVALIDEZ NO SE PLANTEEN VIOLACIONES DIRECTAS E INMEDIATAS A LA CONSTITUCIÓN FEDERAL, SINO QUE SU TRANSGRESIÓN SE HAGA DERIVAR DE LA VULNERACIÓN DE LAS NORMAS LOCALES (ACUERDO DE NUEVE DE ABRIL DE DOS MIL VEINTICUATRO DICTADO EN EL JUICIO CONTENCIOSO ADMINISTRATIVO CON NÚMERO DE EXPEDIENTE 3694/24-17-10-8 POR LA DÉCIMA SALA REGIONAL METROPOLITANA DEL TRIBUNAL FEDERAL DE JUSTICIA ADMINISTRATIVA).\r\n\r\nXI. CONTROVERSIA CONSTITUCIONAL. NO SE ACTUALIZA LA CAUSA DE IMPROCEDENCIA DE FALTA DE DEFINITIVIDAD DEL ACTO IMPUGNADO CONSISTENTE EN EL AUTO ADMISORIO DEL JUICIO DE NULIDAD DICTADO POR EL TRIBUNAL FEDERAL DE JUSTICIA ADMINISTRATIVA TODA VEZ QUE LA INVASIÓN COMPETENCIAL ALEGADA POR LA FISCALÍA GENERAL DE LA REPÚBLICA SE GENERA DESDE LA ADMISIÓN DE LA DEMANDA, AL SOMETER A DICHO ENTE AUTÓNOMO A UN PROCEDIMIENTO JURISDICCIONAL PARA REVISAR LA LEGALIDAD DE SUS DETERMINACIONES QUE CONSIDERA TIENEN INATACABILIDAD Y DEFINITIVIDAD POR PREVISIÓN EXPRESA DE LOS ARTÍCULOS 102, APARTADO A Y 123, APARTADO B, FRACCIÓN XIII, DE LA CONSTITUCIÓN GENERAL (ACUERDO DE NUEVE DE ABRIL DE DOS MIL VEINTICUATRO DICTADO EN EL JUICIO CONTENCIOSO ADMINISTRATIVO CON NÚMERO DE EXPEDIENTE 3694/24-17-10-8 POR LA DÉCIMA SALA REGIONAL METROPOLITANA DEL TRIBUNAL FEDERAL DE JUSTICIA ADMINISTRATIVA).\r\n\r\nXII. RESPONSABILIDAD ADMINISTRATIVA DE LOS SERVIDORES PÚBLICOS Y COMBATE A LA CORRUPCIÓN. ASPECTOS RELEVANTES DE LA REFORMA CONSTITUCIONAL DE VEINTISIETE DE MAYO DE DOS MIL QUINCE.\r\n\r\nXIII. TRIBUNAL FEDERAL DE JUSTICIA ADMINISTRATIVA. ES LA AUTORIDAD JURISDICCIONAL COMPETENTE PARA REVISAR LA LEGALIDAD DE LA SEPARACIÓN, REMOCIÓN, BAJA, CESE O CUALQUIER OTRA FORMA DE TERMINACIÓN DEL SERVICIO, ASÍ COMO DEL PAGO DE LA INDEMNIZACIÓN QUE CORRESPONDA Y DEMÁS PRESTACIONES A QUE TENGA DERECHO UN ELEMENTO DE SEGURIDAD PÚBLICA POR DISPOSICIÓN EXPRESA DE LOS ARTÍCULOS 123, APARTADO B, FRACCIÓN XIII, DE LA CONSTITUCIÓN GENERAL EN RELACIÓN CON EL 50 DE LA LEY FEDERAL DE PROCEDIMIENTO CONTENCIOSO ADMINISTRATIVO ATENTO A SU RELACIÓN DE NATURALEZA ADMINISTRATIVA CON EL ESTADO Y QUE AQUEL TRIBUNAL ES EL MÁS A FIN A LA MATERIA.\r\n\r\nXIV. FISCALÍA GENERAL DE LA REPÚBLICA. SUS DETERMINACIONES EN MATERIA DE RESPONSABILIDAD ADMINISTRATIVA DE SU PERSONAL SUSTANTIVO NO PUEDEN CONSIDERARSE COMO DEFINITIVAS NI INATACABLES, POR LO QUE LA REVISIÓN DE SU LEGALIDAD ES COMPETENCIA DE LA AUTORIDAD JURISDICCIONAL DENOMINADA TRIBUNAL FEDERAL DE JUSTICIA ADMINISTRATIVA (RESOLUCIÓN DICTADA POR LA DÉCIMO PRIMERA SALA REGIONAL METROPOLITANA DEL TRIBUNAL FEDERAL DE JUSTICIA ADMINISTRATIVA EL DOCE DE AGOSTO DE DOS MIL VEINTICUATRO, EN EL JUICIO CONTENCIOSO ADMINISTRATIVO CON NÚMERO DE EXPEDIENTE 17398/24-17-11-9).\r\n\r\nXV. FISCALÍA GENERAL DE LA REPÚBLICA. LA REVISIÓN DE LA LEGALIDAD DE SUS DETERMINACIONES EN MATERIA DE RESPONSABILIDAD ADMINISTRATIVA DE LOS SERVIDORES PÚBLICOS SUSTANTIVOS QUE LA INTEGRAN POR EL TRIBUNAL FEDERAL DE JUSTICIA ADMINISTRATIVA NO VULNERA SU AUTONOMÍA EN TANTO QUE EL JUICIO CONTENCIOSO ADMINISTRATIVO NO TIENE POR OBJETO LA REVISIÓN DE SUS DETERMINACIONES RELACIONADAS CON SUS FACULTADES EN MATERIA DE PROCURACIÓN DE JUSTICIA, INVESTIGACIÓN DE DELITOS, EJERCICIO DE LA ACCIÓN PENAL U OTRAS AFINES Y EXCLUSIVAS DE LA INSTITUCIÓN DEL MINISTERIO PÚBLICO (RESOLUCIÓN DICTADA POR LA DÉCIMO PRIMERA SALA REGIONAL METROPOLITANA DEL TRIBUNAL FEDERAL DE JUSTICIA ADMINISTRATIVA EL DOCE DE AGOSTO DE DOS MIL VEINTICUATRO, EN EL JUICIO CONTENCIOSO ADMINISTRATIVO CON NÚMERO DE EXPEDIENTE 17398/24-17-11-9).\r\n\r\nXVI. FISCALÍA GENERAL DE LA REPÚBLICA. SUS DETERMINACIONES EN MATERIA DE RESPONSABILIDAD ADMINISTRATIVA DE LOS SERVIDORES PÚBLICOS QUE LA INTEGRAN SON REVISABLES POR AUTORIDAD JURISDICCIONAL EN ARAS DE SALVAGUARDAR EL DERECHO DE ACCESO A LA JURISDICCIÓN (RESOLUCIÓN DICTADA POR LA DÉCIMO PRIMERA SALA REGIONAL METROPOLITANA DEL TRIBUNAL FEDERAL DE JUSTICIA ADMINISTRATIVA EL DOCE DE AGOSTO DE DOS MIL VEINTICUATRO, EN EL JUICIO CONTENCIOSO ADMINISTRATIVO CON NÚMERO DE EXPEDIENTE 17398/24-17-11-9).",
+   "texto": " CONTROVERSIA CONSTITUCIONAL 288/2024. FISCALÍA GENERAL DE LA REPÚBLICA. 14 DE MAYO DE 2025. PONENTE: MINISTRO JORGE MARIO PARDO REBOLLEDO. SECRETARIO: YAIRSINIO DAVID GARCÍA ORTIZ.\n\nÍNDICE TEMÁTICO\n\nActo impugnado: El acuerdo de doce de agosto de dos mil veinticuatro, dictado en el juicio contencioso administrativo con número de expediente ********, por la Décimo Primera Sala Regional Metropolitana del Tribunal Federal de Justicia Administrativa (en adelante Tribunal Federal de Justicia Administrativa).\n\nVer índice temático\n\nCiudad de México. La Primera Sala de la Suprema Corte de Justicia de la Nación, en sesión correspondiente de catorce de mayo de dos mil veinticinco.\n\nS E N T E N C I A\n\nMediante la cual se resuelve la controversia constitucional 288/2024, promovida por la Fiscalía General de la República en contra del Tribunal Federal de Justicia Administrativa.\n\n1. Presentación de la demanda, poder demandado y acto impugnado. Por escrito presentado el veintiséis de septiembre de dos mil veinticuatro, en la Oficina de Certificación Judicial y Correspondencia de esta Suprema Corte de Justicia de la Nación, ********, en su calidad de Titular de la Unidad Especializada en Asuntos Jurídicos de la Fiscalía General de la República, promovió controversia constitucional en representación del citado organismo autónomo, en la que solicitó la invalidez del acto emitido por la Décimo Primera Sala Regional Metropolitana del Tribunal Federal de Justicia Administrativa, consistente en:\n\n“El Acuerdo de 12 de agosto de 2024, dictado en el expediente ******** por la Décimo Primera Sala Regional Metropolitana del Tribunal Federal de Justicia Administrativa (en adelante Tribunal de Justicia Administrativa), a través del cual, sin contar con competencias, admite a trámite una demanda de nulidad en la vía sumaria promovida por un Oficial Investigador, en la que impugnó la resolución contenida en el oficio ******** de 25 de junio de 2024, emitido por el Jefe de Policía Federal Ministerial en el Estado de Tabasco de la Unidad de Despliegue Nacional de la Policía Federal Ministerial de la Agencia de Investigación Criminal de la Fiscalía General de la República mediante la cual se le impuso una sanción administrativa, consistente en la multa de 200 (doscientas) Unidades de Medida y Actualización equivalente a la cantidad de $******** (sic) (******** 00/100 moneda nacional).”\n\nANTECEDENTES QUE SE NARRAN EN LA DEMANDA\n\n2. Antecedentes. Según se desprende de las constancias que obran en autos, se aprecian los siguientes hechos.\n\n• El veintitrés de febrero de dos mil veinticuatro, la Subunidad de Apoyo Jurídico de la Policía Federal Ministerial de la Fiscalía General de la República. mediante oficio ********, solicitó al Jefe de la Policía Federal Ministerial en el Estado de Tabasco, notificar al Oficial Investigador para que dé cumplimiento al pago de la sanción administrativa, consistente en la multa de 200 (doscientas) Unidades de Medida y Actualización (UMA'S), impuesta por la Dirección General de Registro Federal de Armas de Fuego y Control de Explosivos, equivalente a la cantidad de $******** (********00/100 M.N.), derivado del robo de un arma de fuego que se encontraba al resguardo del citado servidor público.\n\n• El veinticinco de junio de dos mil veinticuatro, el Jefe de la Policía Federal Ministerial en el Estado de Tabasco de la Fiscalía General de la República, notificó al Oficial Investigador el oficio ********, por el que se le instruye a dar cumplimiento al pago de La sanción administrativa, consistente en la multa de 200 (doscientas) Unidades de Medida y Actualización equivalente a La cantidad de $********00/100 M.N.),\n\n• Inconforme con Lo anterior, el dos de agosto de dos mil veinticuatro el Oficial Investigador, promovió juicio contencioso administrativo en el que impugnó el oficio ********de veinticinco de junio de dos mil veinticuatro.\n\n• Por acuerdo de doce de agosto de dos mil veinticuatro, el Tribunal de Justicia, administrativa, admitió a trámite La demanda de nulidad en la vía sumaria radicándola con el número ********.\n\n• De lo anterior se tiene que, el Tribunal de Justicia Administrativa a través del acuerdo de doce de agosto de dos mil veinticuatro, admitió a trámite la demanda de nulidad, para conocer y pronunciarse sobre la determinación emitida por el Jefe de la Policía Federal Ministerial en el Estado de Tabasco de la Fiscalía General de la República, en el oficio ******** de veinticinco de junio de dos mil veinticuatro, -en el cual se instruyó al Oficial Investigador para dar cumplimiento al pago de la sanción administrativa-.\n\n• Asimismo, se emplazó al Jefe de Policía Federal Ministerial en el Estado de Tabasco, para que conteste la demanda.\n\n• El veinte de agosto de dos mil veinticuatro, el Tribunal de Justicia Administrativa vía boletín jurisdiccional notificó a la Fiscalía General de la República el acuerdo de doce de agosto de dos mil veinticuatro, dictado en el expediente ********.\n\n3. Concepto",
+   "asunto": "CONTROVERSIA CONSTITUCIONAL 288/2024.",
+   "promovente": "FISCALÍA GENERAL DE LA REPÚBLICA.",
+   "anio": 2026,
+   "mes": "Marzo",
+   "anexos": "CONTROVERSIA_CONSTITUCIONAL_288_2024.pdf",
+   "esSemanario": false,
+   "huellaDigital": "50d21e971fd096f7656433bbd067ef574a867ed8c6c03b6e0f7fc68df33cc307"
+  },
+  {
+   "idEjecutoria": 34295,
+   "tesis": "",
+   "instancia": "Suprema Corte de Justicia de la Nación",
+   "organoJuris": "Pleno",
+   "epoca": "Duodécima Época",
+   "volumen": "Libro 14, Octubre de 2026",
+   "tomo": "",
+   "fuente": "Semanario Judicial de la Federación",
+   "rubro": "I. CONTROVERSIA CONSTITUCIONAL. NO SE ACTUALIZA SU IMPROCEDENCIA MANIFIESTA E INDUDABLE POR FALTA DE INTERÉS LEGÍTIMO CUANDO LA NORMA IMPUGNADA ES SUSCEPTIBLE DE IMPACTAR EN LA ESFERA DE ATRIBUCIONES DEL MUNICIPIO ACTOR.",
+   "texto": "idad jerárquica sobre el municipio, lo cual no está reconocido constitucionalmente. Dada la estructura de los niveles de gobierno definida por la Constitución, las autoridades estatales no tienen competencia para revisar los actos de las autoridades municipales.&#x0D;\n&#x0D;\n• Toda vez que la reforma constitucional eliminó a los organismos constitucionales autónomos en materia de transparencia, el Poder Legislativo remplazó a estas autoridades con las encargadas de control interno. Sin embargo, estas autoridades no cuentan con competencia para revisar actos de otros órdenes de gobierno.&#x0D;\n&#x0D;\n• El Municipio alegó que la norma impugnada es inconstitucional porque, al permitirle a la autoridad estatal revisar los actos emitidos por la autoridad municipal, implica asegurar que los municipios y su administración pertenecen al Poder Ejecutivo.&#x0D;\n&#x0D;\n• Mencionó que, eliminar la posibilidad de que el municipio resuelva recursos relacionados con solicitudes de acceso a la información municipal, priva a la ciudadanía de un medio de defensa ágil y sencillo en el que el propio órgano interno de control revise si su sentencia es acorde a derecho. &#x0D;\n&#x0D;\n3. Trámite. Mediante acuerdo de seis de mayo de dos mil veinticinco, la entonces Ministra Presidenta de esta Suprema Corte de Justicia de la Nación registró la controversia constitucional con el número 165/2025, y reservó su turno hasta que se materializara la nueva integración de la Suprema Corte.&#x0D;\n&#x0D;\n4. Una vez que se incorporaron los nuevos integrantes de esta Suprema Corte de Justicia de la Nación, mediante acuerdo de cuatro de septiembre de dos mil veinticinco, la Presidencia de turnó el asunto al Ministro Irving Espinosa Betanzo, como instructor pues existe conexidad con las controversias constitucionales 158/2025, 159/2025, 160/2025, 161/2025, 162/2025, 163/2025, 164/2025, 166/2025, 167/2025 y 172/2025, que también le fueron turnadas. &#x0D;\n&#x0D;\n5. Acuerdo recurrido. Mediante acuerdo de nueve de septiembre de dos mil veinticinco, el Ministro instructor Irving Espinosa Betanzo admitió a trámite la controversia constitucional 165/2025. &#x0D;\n&#x0D;\n6. Recurso de reclamación. Inconforme con la admisión de la controversia constitucional, el Poder Ejecutivo Federal interpuso el presente recurso de reclamación. En su único agravio, el recurrente alegó que:&#x0D;\n&#x0D;\n• El Ministro instructor debió desechar de plano la controversia constitucional, porque el municipio actor carece de interés legítimo al no fungir como autoridad garante en materia de transparencia y acceso a la información.&#x0D;\n&#x0D;\n• El artículo 115 constitucional no establece facultad alguna para los municipios sobre esa materia. Incluso, el artículo 3, fracción IV, de la Ley General de Transparencia y Acceso a la Información Pública categoriza como autoridad garante a los órganos encargados de la contraloría u homólogos en el Poder Ejecutivo de las entidades federativas, quienes también conocerán de los recursos en que se impugnen decisiones sobre transparencia y acceso a la información de los municipios.&#x0D;\n&#x0D;\n• Por ello, los municipios únicamente son sujetos obligados, que deben cumplir con las disposiciones de la Ley General mencionada. Tan es así, que el municipio actor solicita que sea incorporado a la Ley General como autoridad garante. &#x0D;\n&#x0D;\n7. Turno. Mediante acuerdo de veinticuatro de octubre de dos mil veinticinco, el Presidente de esta Suprema Corte admitió a trámite el presente recurso de reclamación, y lo turnó al Ministro Arístides Rodrigo Guerrero García para la elaboración del proyecto de sentencia. &#x0D;\n&#x0D;\nII. COMPETENCIA&#x0D;\n&#x0D;\n8. Esta Suprema Corte es competente para conocer del recurso de reclamación, de conformidad con lo dispuesto por los artículos 53 de la Ley Reglamentaria de las Fracciones I y II del Artículo 105 de la Constitución Política de los Estados Unidos Mexicanos, 16, fracción XV de la Ley Orgánica del Poder Judicial de la Federación, así como el Punto Segundo, fracción primera del Acuerdo General 2/2025 (12a.) del Pleno de esta Suprema Corte.(1) Lo anterior, ya que se trata del recurso de reclamación interpuesto contra la admisión de una controversia constitucional. &#x0D;\n&#x0D;\nIII. PROCEDENCIA, OPORTUNIDAD Y LEGITIMACIÓN&#x0D;\n&#x0D;\n9. Procedencia. El recurso es procedente, conforme a lo dispuesto por el artículo 51, fracción I, de la Ley Reglamentaria de las Fracciones I y II del Artículo 105 de la Constitución Política de los Estados Unidos Mexicanos,(2) porque se interpuso en contra del acuerdo que admitió la demanda de controversia constitucional. &#x0D;\n&#x0D;\n10. Oportunidad. El acuerdo recurrido fue notificado por oficio al Poder Ejecutivo Federal el quince de octubre de dos mil veinticinco y surtió efectos el día dieciséis siguiente. Por ello, el plazo de cinco días para interponer el recurso de reclamación transcurrió del diecisiete al veintitrés de octubre del dos mil veinticinco. Como el",
+   "asunto": "RECURSO DE RECLAMACIÓN 132/2025-CA, DERIVADO DE LA CONTROVERSIA CONSTITUCIONAL 165/2025.",
+   "promovente": "Poder Ejecutivo Federal.",
+   "anio": 2026,
+   "mes": "Octubre",
+   "anexos": "E8959_156946_21124.pdf, E8959_156945_21123.pdf",
+   "esSemanario": true,
+   "huellaDigital": "c5345793ae4688bcc4fe27b65a1b4ae1b40c17a37465aba12b38aa9fbd0fa842"
+  }
+ ],
+ "filtros": [
+  {
+   "filtro": "epoca",
+   "orden": 1,
+   "tipo": ".keyword",
+   "nombreFiltro": "Época",
+   "buckets": [
+    {
+     "filtro": "Undécima Época (895)",
+     "filtroId": "Undécima Época",
+     "seleccionado": false
+    },
+    {
+     "filtro": "Octava Época (4)",
+     "filtroId": "Octava Época",
+     "seleccionado": false
+    },
+    {
+     "filtro": "Novena Época (206)",
+     "filtroId": "Novena Época",
+     "seleccionado": false
+    },
+    {
+     "filtro": "Décima Época (892)",
+     "filtroId": "Décima Época",
+     "seleccionado": false
+    },
+    {
+     "filtro": "Duodécima Época (116)",
+     "filtroId": "Duodécima Época",
+     "seleccionado": false
+    }
+   ]
+  },
+  {
+   "filtro": "instancia",
+   "orden": 3,
+   "tipo": ".keyword",
+   "nombreFiltro": "Instancia",
+   "buckets": [
+    {
+     "filtro": "Tribunales Colegiados de Circuito (172)",
+     "filtroId": "Tribunales Colegiados de Circuito",
+     "seleccionado": false
+    },
+    {
+     "filtro": "Suprema Corte de Justicia de la Nación (1653)",
+     "filtroId": "Suprema Corte de Justicia de la Nación",
+     "seleccionado": false
+    },
+    {
+     "filtro": "Plenos de Circuito (167)",
+     "filtroId": "Plenos de Circuito",
+     "seleccionado": false
+    },
+    {
+     "filtro": "Plenos Regionales (121)",
+     "filtroId": "Plenos Regionales",
+     "seleccionado": false
+    }
+   ]
+  },
+  {
+   "filtro": "organoJuris",
+   "orden": 4,
+   "tipo": ".keyword",
+   "nombreFiltro": "Órgano",
+   "buckets": [
+    {
+     "filtro": "Tercera Sala (1)",
+     "filtroId": "Tercera Sala",
+     "seleccionado": false
+    },
+    {
+     "filtro": "Segunda Sala (547)",
+     "filtroId": "Segunda Sala",
+     "seleccionado": false
+    },
+    {
+     "filtro": "Primera Sala (635)",
+     "filtroId": "Primera Sala",
+     "seleccionado": false
+    },
+    {
+     "filtro": "Pleno (470)",
+     "filtroId": "Pleno",
+     "seleccionado": false
+    }
+   ]
+  },
+  {
+   "filtro": "tipoAsunto",
+   "orden": 5,
+   "tipo": ".keyword",
+   "nombreFiltro": "Asunto",
+   "buckets": [
+    {
+     "filtro": "VARIOS (1)",
+     "filtroId": "VARIOS",
+     "seleccionado": false
+    },
+    {
+     "filtro": "SOLICITUD DE SUSTITUCIÓN DE JURISPRUDENCIA (1)",
+     "filtroId": "SOLICITUD DE SUSTITUCIÓN DE JURISPRUDENCIA",
+     "seleccionado": false
+    },
+    {
+     "filtro": "SOLICITUD DE REVOCACIÓN EN LA CONTROVERSIA CONSTITUCIONAL (1)",
+     "filtroId": "SOLICITUD DE REVOCACIÓN EN LA CONTROVERSIA CONSTITUCIONAL",
+     "seleccionado": false
+    },
+    {
+     "filtro": "REVISIÓN EN INCIDENTE DE SUSPENSIÓN (2)",
+     "filtroId": "REVISIÓN EN INCIDENTE DE SUSPENSIÓN",
+     "seleccionado": false
+    },
+    {
+     "filtro": "REVISIÓN DE CONSTITUCIONALIDAD DE LA MATERIA DE LA CONSULTA POPULAR (1)",
+     "filtroId": "REVISIÓN DE CONSTITUCIONALIDAD DE LA MATERIA DE LA CONSULTA POPULAR",
+     "seleccionado": false
+    },
+    {
+     "filtro": "REVISIÓN CONTENCIOSA ADMINISTRATIVA (4)",
+     "filtroId": "REVISIÓN CONTENCIOSA ADMINISTRATIVA",
+     "seleccionado": false
+    },
+    {
+     "filtro": "REVISIÓN ADMINISTRATIVA (2)",
+     "filtroId": "REVISIÓN ADMINISTRATIVA",
+     "seleccionado": false
+    },
+    {
+     "filtro": "RECURSO DE RECLAMACIÓN EN CONTROVERSIAS CONSTITUCIONALES Y EN ACCIONES DE INCONSTITUCIONALIDAD (2)",
+     "filtroId": "RECURSO DE RECLAMACIÓN EN CONTROVERSIAS CONSTITUCIONALES Y EN ACCIONES DE INCONSTITUCIONALIDAD",
+     "seleccionado": false
+    },
+    {
+     "filtro": "RECURSO DE RECLAMACIÓN (63)",
+     "filtroId": "RECURSO DE RECLAMACIÓN",
+     "seleccionado": false
+    },
+    {
+     "filtro": "RECURSO DE INCONFORMIDAD (1)",
+     "filtroId": "RECURSO DE INCONFORMIDAD",
+     "seleccionado": false
+    },
+    {
+     "filtro": "QUEJA (54)",
+     "filtroId": "QUEJA",
+     "seleccionado": false
+    },
+    {
+     "filtro": "INCIDENTE DE SUSPENSIÓN (REVISIÓN) (9)",
+     "filtroId": "INCIDENTE DE SUSPENSIÓN (REVISIÓN)",
+     "seleccionado": false
+    },
+    {
+     "filtro": "INCIDENTE DE INEJECUCIÓN DE SENTENCIA (1)",
+     "filtroId": "INCIDENTE DE INEJECUCIÓN DE SENTENCIA",
+     "seleccionado": false
+    },
+    {
+     "filtro": "INCIDENTE DE INEJECUCIÓN (1)",
+     "filtroId": "INCIDENTE DE INEJECUCIÓN",
+     "seleccionado": false
+    },
+    {
+     "filtro": "FACULTAD DE ATRACCIÓN (1)",
+     "filtroId": "FACULTAD DE ATRACCIÓN",
+     "seleccionado": false
+    },
+    {
+     "filtro": "DECLARATORIA GENERAL DE INCONSTITUCIONALIDAD (2)",
+     "filtroId": "DECLARATORIA GENERAL DE INCONSTITUCIONALIDAD",
+     "seleccionado": false
+    },
+    {
+     "filtro": "CONTROVERSIA CONSTITUCIONAL (1146)",
+     "filtroId": "CONTROVERSIA CONSTITUCIONAL",
+     "seleccionado": false
+    },
+    {
+     "filtro": "CONTROVERSIA (1)",
+     "filtroId": "CONTROVERSIA",
+     "seleccionado": false
+    },
+    {
+     "filtro": "CONTRADICCIÓN DE CRITERIOS (ANTES CONTRADICCIÓN DE TESIS) (474)",
+     "filtroId": "CONTRADICCIÓN DE CRITERIOS (ANTES CONTRADICCIÓN DE TESIS)",
+     "seleccionado": false
+    },
+    {
+     "filtro": "CONFLICTO COMPETENCIAL (2)",
+     "filtroId": "CONFLICTO COMPETENCIAL",
+     "seleccionado": false
+    },
+    {
+     "filtro": "AMPARO EN REVISIÓN (194)",
+     "filtroId": "AMPARO EN REVISIÓN",
+     "seleccionado": false
+    },
+    {
+     "filtro": "AMPARO DIRECTO EN REVISIÓN (53)",
+     "filtroId": "AMPARO DIRECTO EN REVISIÓN",
+     "seleccionado": false
+    },
+    {
+     "filtro": "AMPARO DIRECTO (45)",
+     "filtroId": "AMPARO DIRECTO",
+     "seleccionado": false
+    },
+    {
+     "filtro": "ACLARACIÓN DE JURISPRUDENCIA (2)",
+     "filtroId": "ACLARACIÓN DE JURISPRUDENCIA",
+     "seleccionado": false
+    },
+    {
+     "filtro": "ACCIÓN DE INCONSTITUCIONALIDAD (50)",
+     "filtroId": "ACCIÓN DE INCONSTITUCIONALIDAD",
+     "seleccionado": false
+    }
+   ]
+  },
+  {
+   "filtro": "anio",
+   "orden": 2,
+   "tipo": ".keyword",
+   "nombreFiltro": "Año",
+   "buckets": [
+    {
+     "filtro": "2026 (77)",
+     "filtroId": "2026",
+     "seleccionado": false
+    },
+    {
+     "filtro": "2025 (239)",
+     "filtroId": "2025",
+     "seleccionado": false
+    },
+    {
+     "filtro": "2024 (204)",
+     "filtroId": "2024",
+     "seleccionado": false
+    },
+    {
+     "filtro": "2023 (208)",
+     "filtroId": "2023",
+     "seleccionado": false
+    },
+    {
+     "filtro": "2022 (193)",
+     "filtroId": "2022",
+     "seleccionado": false
+    },
+    {
+     "filtro": "2021 (129)",
+     "filtroId": "2021",
+     "seleccionado": false
+    },
+    {
+     "filtro": "2020 (84)",
+     "filtroId": "2020",
+     "seleccionado": false
+    },
+    {
+     "filtro": "2019 (247)",
+     "filtroId": "2019",
+     "seleccionado": false
+    },
+    {
+     "filtro": "2018 (69)",
+     "filtroId": "2018",
+     "seleccionado": false
+    },
+    {
+     "filtro": "2017 (100)",
+     "filtroId": "2017",
+     "seleccionado": false
+    },
+    {
+     "filtro": "2016 (129)",
+     "filtroId": "2016",
+     "seleccionado": false
+    },
+    {
+     "filtro": "2015 (58)",
+     "filtroId": "2015",
+     "seleccionado": false
+    },
+    {
+     "filtro": "2014 (71)",
+     "filtroId": "2014",
+     "seleccionado": false
+    },
+    {
+     "filtro": "2013 (45)",
+     "filtroId": "2013",
+     "seleccionado": false
+    },
+    {
+     "filtro": "2012 (47)",
+     "filtroId": "2012",
+     "seleccionado": false
+    },
+    {
+     "filtro": "2011 (20)",
+     "filtroId": "2011",
+     "seleccionado": false
+    },
+    {
+     "filtro": "2010 (23)",
+     "filtroId": "2010",
+     "seleccionado": false
+    },
+    {
+     "filtro": "2009 (24)",
+     "filtroId": "2009",
+     "seleccionado": false
+    },
+    {
+     "filtro": "2008 (23)",
+     "filtroId": "2008",
+     "seleccionado": false
+    },
+    {
+     "filtro": "2007 (24)",
+     "filtroId": "2007",
+     "seleccionado": false
+    },
+    {
+     "filtro": "2006 (9)",
+     "filtroId": "2006",
+     "seleccionado": false
+    },
+    {
+     "filtro": "2005 (16)",
+     "filtroId": "2005",
+     "seleccionado": false
+    },
+    {
+     "filtro": "2004 (17)",
+     "filtroId": "2004",
+     "seleccionado": false
+    },
+    {
+     "filtro": "2003 (13)",
+     "filtroId": "2003",
+     "seleccionado": false
+    },
+    {
+     "filtro": "2002 (12)",
+     "filtroId": "2002",
+     "seleccionado": false
+    },
+    {
+     "filtro": "2001 (8)",
+     "filtroId": "2001",
+     "seleccionado": false
+    },
+    {
+     "filtro": "2000 (5)",
+     "filtroId": "2000",
+     "seleccionado": false
+    },
+    {
+     "filtro": "1999 (5)",
+     "filtroId": "1999",
+     "seleccionado": false
+    },
+    {
+     "filtro": "1998 (3)",
+     "filtroId": "1998",
+     "seleccionado": false
+    },
+    {
+     "filtro": "1997 (1)",
+     "filtroId": "1997",
+     "seleccionado": false
+    },
+    {
+     "filtro": "1996 (5)",
+     "filtroId": "1996",
+     "seleccionado": false
+    },
+    {
+     "filtro": "1995 (1)",
+     "filtroId": "1995",
+     "seleccionado": false
+    },
+    {
+     "filtro": "1994 (2)",
+     "filtroId": "1994",
+     "seleccionado": false
+    },
+    {
+     "filtro": "1993 (1)",
+     "filtroId": "1993",
+     "seleccionado": false
+    },
+    {
+     "filtro": "1990 (1)",
+     "filtroId": "1990",
+     "seleccionado": false
+    }
+   ]
+  }
+ ]
+}

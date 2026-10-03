@@ -5,18 +5,31 @@ estadounidense— dentro de Claude, con cita completa y link oficial en cada res
 
 **Sitio:** [kriterius.mx](https://kriterius.mx) · **Endpoint MCP:** `https://mcp.kriterius.mx/mcp`
 
-## Fuentes y herramientas (26)
+## Fuentes y herramientas (28)
 
 | Fuente | Herramientas |
 |---|---|
 | **SJF / SCJN** — Semanario Judicial de la Federación, colección de tesis | `buscar_tesis`, `investigar_criterio`, `ver_tesis` |
 | **SJF / SCJN** — ejecutorias y precedentes (sentencias completas) | `buscar_ejecutorias`, `ver_ejecutoria` |
+| **SIJ / SCJN** — Sistema de Informática Jurídica: la ficha de cada asunto resuelto por la Corte | `buscar_sentencias_scjn`, `ver_sentencia_scjn` |
 | **TFJA** — Tribunal Federal de Justicia Administrativa | `buscar_tesis_tfja`, `ver_tesis_tfja` |
 | **TEPJF** — Tribunal Electoral del PJF, IUS Electoral (snapshot local, sin red) | `buscar_tesis_tepjf`, `ver_tesis_tepjf`, `temas_tepjf` |
 | **DOF** — Diario Oficial de la Federación | `buscar_dof`, `ver_nota_dof`, `indicadores_dof`, `monitorear_dof` |
 | **Corte IDH** — Buscador Jurídico de Derechos Humanos | `buscar_corteidh`, `explorar_corteidh`, `ver_caso_corteidh`, `investigar_criterio_corteidh` |
 | **CourtListener** — jurisprudencia de EE.UU. (requiere llave del usuario) | `ayuda_derecho_eeuu`, `configurar_courtlistener`, `buscar_casos_eeuu`, `ver_caso_eeuu`, `quien_cita_eeuu`, `verificar_citas_eeuu` |
 | Salud del servicio | `estado_conector`, `diagnosticar_conector` |
+
+### El Repositorio de la SCJN: la segunda puerta del Semanario
+
+Desde el 3 de septiembre de 2026 Imperva rechaza a los clientes automatizados en
+`sjf2.scjn.gob.mx`. La Corte publica los mismos documentos en su programa de datos
+abiertos, el [Repositorio de la SCJN](https://bicentenario.scjn.gob.mx/repositorio-scjn),
+con manual para programadores, el mismo registro digital y una huella SHA-256 por
+documento. Cuando sjf2 no contesta, las tools del Semanario lo consultan antes de caer al
+acervo de la Gaceta, y la respuesta dice de dónde salió. El conector se presenta ahí con
+su propio User-Agent. El Repositorio también es la fuente de las sentencias del SIJ:
+expediente, ponente, fecha, resolutivos y votación de los 106 mil asuntos resueltos por la
+SCJN, publicados o no en el Semanario. Detalle del contrato en `repositorio_scjn.py`.
 
 ### El TEPJF no se consulta: se sirve
 
@@ -77,6 +90,7 @@ En claude.ai → *Settings → Connectors → Add custom connector* → pegar
 pip install -r requirements.txt
 python server_http.py          # http://localhost:8000/mcp
 python test_tepjf.py           # fuente TEPJF contra el snapshot real, sin red
+python test_repositorio.py     # Repositorio de la SCJN y SIJ contra documentos reales, sin red
 python test_sincronizar_tepjf.py  # normalización del sincronizador, sin red
 python test_corteidh.py        # parser de la Corte IDH, sin red
 python test_ejecutorias.py     # módulo de ejecutorias, sin red

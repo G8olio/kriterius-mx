@@ -8,6 +8,8 @@ Fuentes:
   TEPJF        IUS Electoral           snapshot local (kriterius_datos/tepjf.jsonl), sin red
   DOF          dof.gob.mx + sidof      scraping, con espejo de SEGOB como respaldo
   Corte IDH    bjdh.org.mx             scraping del Buscador Jurídico de DH
+  Repositorio  bicentenario.scjn.gob.mx API oficial de datos abiertos de la SCJN: segunda
+                                       puerta del Semanario y sentencias del SIJ
 
 API del SJF (no documentado oficialmente):
   POST /services/sjftesismicroservice/api/public/tesis?page=N&size=M
@@ -28,12 +30,13 @@ from mcp.server.transport_security import TransportSecuritySettings
 # La quinta fuente mexicana: el IUS Electoral del TEPJF. Es un módulo propio y sin
 # red —lee el snapshot de kriterius_datos/tepjf.jsonl—, así que importarlo aquí no puede
 # tumbar el arranque aunque el archivo falte: `tepjf.cargar()` no lanza.
+import repositorio_scjn
 import sjf_local
 import tepjf
 
 # Única fuente del número de versión. server_http.py la importa de aquí para que
 # /salud y estado_conector no puedan volver a discrepar.
-VERSION = "2.12.0"
+VERSION = "2.13.0"
 
 BASE = "https://sjf2.scjn.gob.mx/services/sjftesismicroservice/api/public"
 BASE_EJEC = "https://sjf2.scjn.gob.mx/services/sjfejecutoriamicroservice/api/public"
@@ -94,7 +97,7 @@ TTL = {
     "dof_indicadores": 12 * 3600,
 }
 
-CONCURRENCIA = {"sjf": 4, "tfja": 3, "dof": 6, "bjdh": 3}
+CONCURRENCIA = {"sjf": 4, "repo": 3, "tfja": 3, "dof": 6, "bjdh": 3}
 
 
 class _Cache:
@@ -244,6 +247,9 @@ mcp = FastMCP(
         "segunda. Todo lo electoral —paridad, violencia política de género, nulidad de "
         "elecciones, fiscalización de partidos, propaganda— está en el TEPJF "
         "(buscar_tesis_tepjf, ver_tesis_tepjf, temas_tepjf), no en el Semanario. "
+        "La ficha de cada asunto que resolvió la SCJN —expediente, ponente, fecha, "
+        "resolutivos y votación—, publicado o no en el Semanario, está en el Sistema de "
+        "Informática Jurídica (buscar_sentencias_scjn, ver_sentencia_scjn). "
         "Al citar cualquier criterio incluye SIEMPRE la cita completa y su link "
         "oficial. Los resultados no sustituyen la consulta directa a la fuente."
     ),
@@ -455,6 +461,126 @@ def _strip_html(texto: str | None) -> str:
     return html.unescape(texto).strip()
 
 
+# ---- Repositorio de la SCJN: la segunda puerta del Semanario ----
+#
+# Imperva rechaza al servidor en el detalle de sjf2, pero la Corte publica los mismos
+# documentos en su programa de datos abiertos (repositorio_scjn.py), con contrato
+# documentado, el mismo registro digital y además la huella SHA-256. Las tools del
+# Semanario lo consultan cuando sjf2 no contesta, ANTES del acervo de la Gaceta:
+#
+#   sjf2 (dato vivo) → Repositorio (dato vivo, otra puerta) → acervo de la Gaceta
+#
+# No es un respaldo de menor calidad —es la misma Corte y el mismo documento—, así que
+# no lleva el aviso "⚠ ACERVO LOCAL". Pero tampoco se sirve en silencio: la respuesta
+# dice de dónde salió y por qué.
+#
+# Se presenta con un User-Agent propio. Es un API publicado para programadores; no hay
+# página que fingir visitar, y si la Corte quiere medir o limitar a este cliente, que
+# pueda verlo.
+
+REPO_HEADERS = {
+    "Accept": "application/json",
+    "Content-Type": "application/json",
+    "Accept-Language": "es-MX,es;q=0.9",
+    "User-Agent": f"KriteriusMX/{VERSION} (+https://kriterius.mx)",
+}
+
+
+async def _repo_fetch(ruta: str, method: str = "GET", json_body: dict | None = None,
+                      transformar=None):
+    """Una petición al Repositorio, por el mismo freno y la misma caché que el resto.
+
+    `transformar` corre antes de guardar en caché: la búsqueda de ejecutorias trae el
+    texto íntegro de cada sentencia y no tiene caso guardar 2 MB por página."""
+    ttl = TTL["sjf_detalle"] if method == "GET" else TTL["sjf_busqueda"]
+    clave = _clave("repo", method, ruta, json_body)
+
+    async def pedir():
+        async with httpx.AsyncClient(headers=REPO_HEADERS, timeout=45) as client:
+            r = await client.request(method, f"{repositorio_scjn.BASE}{ruta}", json=json_body)
+            datos = _clasificar_respuesta_scjn(r, "Repositorio de la SCJN")
+            return transformar(datos) if (transformar and datos is not None) else datos
+
+    return await _traer("repo", pedir, clave=clave, ttl=ttl)
+
+
+async def _repo_documento(indice: str, id_) -> dict | None:
+    """Un documento por id, o None si no existe. El Repositorio dice "no existe" con
+    HTTP 500, no con 404; un bloqueo o una caída sí se propagan."""
+    try:
+        d = await _repo_fetch(f"/api/v1/{indice}/{id_}")
+    except _BloqueoWAF:
+        raise
+    except _RespuestaHTTP as e:
+        if e.status in (404, 500):
+            return None
+        raise
+    return d if isinstance(d, dict) and d else None
+
+
+class _ConsultaNoInterpretable(RuntimeError):
+    """El Repositorio no pudo leer la consulta (una comilla sin cerrar): responde total
+    null y nada más. No es "sin resultados" ni un bloqueo."""
+
+
+async def _repo_buscar(indice: str, consulta: str, filtros: dict | None, pagina: int,
+                       por_pagina: int, transformar=None) -> tuple[list[dict], int]:
+    cuerpo = repositorio_scjn.cuerpo_busqueda(consulta, indice, pagina, por_pagina, filtros)
+    data = await _repo_fetch("/api/reforma/busqueda", "POST", cuerpo, transformar)
+    if not isinstance(data, dict) or "resultados" not in data:
+        claves = ", ".join(list(data.keys())[:8]) if isinstance(data, dict) else type(data).__name__
+        raise RuntimeError(f"el Repositorio respondió con una estructura inesperada ({claves})")
+    if data.get("total") is None and not data.get("resultados"):
+        raise _ConsultaNoInterpretable(
+            f"el Repositorio de la SCJN no pudo interpretar la consulta {consulta!r}; revisa "
+            f"que las comillas y los paréntesis estén cerrados")
+    return data.get("resultados") or [], int(data.get("total") or 0)
+
+
+def _aviso_repositorio(motivo: str, busqueda: bool = False) -> str:
+    texto = (f"Fuente de esta respuesta: Repositorio de la SCJN, datos abiertos oficiales "
+             f"({repositorio_scjn.BASE}), porque el API del Semanario {motivo}. ")
+    if busqueda:
+        return texto + "Mismos documentos y mismos registros digitales."
+    return texto + "Mismo registro digital y mismo documento."
+
+
+def _motivo_sjf(e: Exception | None) -> str:
+    """El motivo, redactado para seguir a "porque el API del Semanario …"."""
+    if e is None:
+        return "no devolvió ese registro"
+    if isinstance(e, _BloqueoWAF):
+        # Con 200 Imperva entregó su página de verificación en lugar del JSON.
+        como = ("su página de verificación" if getattr(e, "status", 0) == 200
+                else f"HTTP {getattr(e, 'status', '?')}")
+        return f"está bloqueado por el cortafuegos de la SCJN (Imperva, {como})"
+    if isinstance(e, _RespuestaHTTP):
+        return f"respondió HTTP {getattr(e, 'status', '?')}"
+    if isinstance(e, httpx.TimeoutException):
+        return "no respondió a tiempo"
+    return f"falló ({e})"
+
+
+def _total_repo(total: int) -> str:
+    if total >= repositorio_scjn.TOPE_BUSQUEDA:
+        return (f"{repositorio_scjn.TOPE_BUSQUEDA} o más resultados (el Repositorio no "
+                f"informa totales mayores; pide la página siguiente para ver más)")
+    return f"{total} resultado" + ("" if total == 1 else "s")
+
+
+async def _repo_tesis_busqueda(consulta: str, epocas: list[str] | None, tipo: str | None,
+                               pagina: int, por_pagina: int) -> dict | None:
+    """Una página de tesis del Repositorio con la forma de sjf2 ({documents, total}),
+    o None si tampoco contestó."""
+    try:
+        res, total = await _repo_buscar("tesis", consulta,
+                                        repositorio_scjn.filtros_tesis(epocas, tipo),
+                                        pagina, por_pagina)
+    except Exception:
+        return None
+    return {"documents": [repositorio_scjn.tesis_a_sjf(r) for r in res], "total": total}
+
+
 # ---- Jerarquía de criterios del SJF ----
 #
 # Prelación definida por el usuario:
@@ -627,20 +753,25 @@ async def buscar_tesis(
     """
     body = _search_body(consulta, epocas, incluir_precedentes)
     page, size = max(pagina, 1) - 1, min(max(por_pagina, 1), 50)
+    aviso_repo = ""
     try:
         data = await _sjf_fetch(f"/tesis?page={page}&size={size}", method="POST", json_body=body)
     except Exception as e:
-        # Se devuelve como contenido, no como excepción: así llega íntegro y con el
-        # mismo tono que los demás avisos de la tool, no como "Error executing tool".
-        if not _hay_respaldo():
-            if isinstance(e, _RespuestaHTTP):
-                return str(e)
-            raise
-        resultados = sjf_local.buscar(consulta, epocas=epocas, tipo=tipo,
-                                      incluir_precedentes=incluir_precedentes)
-        return sjf_local.formatear_busqueda(resultados, consulta, _motivo_respaldo(e),
-                                            pagina=max(pagina, 1),
-                                            por_pagina=min(max(por_pagina, 1), 50))
+        data = await _repo_tesis_busqueda(consulta, epocas, tipo, max(pagina, 1), size)
+        if data is not None:
+            aviso_repo = _aviso_repositorio(_motivo_sjf(e), busqueda=True)
+        else:
+            # Se devuelve como contenido, no como excepción: así llega íntegro y con el
+            # mismo tono que los demás avisos de la tool, no como "Error executing tool".
+            if not _hay_respaldo():
+                if isinstance(e, _RespuestaHTTP):
+                    return str(e)
+                raise
+            resultados = sjf_local.buscar(consulta, epocas=epocas, tipo=tipo,
+                                          incluir_precedentes=incluir_precedentes)
+            return sjf_local.formatear_busqueda(resultados, consulta, _motivo_respaldo(e),
+                                                pagina=max(pagina, 1),
+                                                por_pagina=min(max(por_pagina, 1), 50))
 
     if data and "documents" not in data and "total" not in data:
         claves = ", ".join(list(data.keys())[:8])
@@ -658,12 +789,15 @@ async def buscar_tesis(
                 or d.get("ta_tj") == (1 if es_j else 0)]
 
     if not docs:
-        return f"Sin resultados para '{consulta}' (total en el sistema: {total})."
+        return ((aviso_repo + "\n\n") if aviso_repo else "") + \
+            f"Sin resultados para '{consulta}' (total en el sistema: {total})."
 
     if orden == "jerarquia":
         docs = _ordenar_por_jerarquia(docs, consulta)
 
-    lineas = [f"Total: {total} resultados. Página {pagina} ({len(docs)} mostrados"
+    lineas = ([aviso_repo, ""] if aviso_repo else []) + [
+              f"Total: {_total_repo(total) if aviso_repo else f'{total} resultados'}. "
+              f"Página {pagina} ({len(docs)} mostrados"
               + (f", filtrados por tipo={tipo}" if tipo else "") + ").",
               "Formato: [RUBRO], [Órgano], [Jurisprudencia/Tesis Aislada], "
               "[Tipo de integración], [Época], [No. de Registro] + link directo "
@@ -719,23 +853,29 @@ async def investigar_criterio(
     ]
 
     body = _search_body(tema, epocas, False)
+    aviso_repo = ""
     try:
         data = await _sjf_fetch("/tesis?page=0&size=50", method="POST", json_body=body) or {}
     except Exception as e:
-        if not _hay_respaldo():
-            if isinstance(e, _RespuestaHTTP):
-                return str(e)
-            raise
-        # El acervo local ya ordena por la misma prelación, así que la investigación
-        # por etapas se reduce a tomar los más vinculantes de esa lista.
-        resultados = sjf_local.buscar(tema, epocas=epocas)[:max(1, int(limite))]
-        return sjf_local.formatear_busqueda(resultados, tema, _motivo_respaldo(e),
-                                            por_pagina=max(1, int(limite)))
+        data = await _repo_tesis_busqueda(tema, epocas, None, 1, 50)
+        if data is not None:
+            aviso_repo = _aviso_repositorio(_motivo_sjf(e), busqueda=True)
+        else:
+            if not _hay_respaldo():
+                if isinstance(e, _RespuestaHTTP):
+                    return str(e)
+                raise
+            # El acervo local ya ordena por la misma prelación, así que la investigación
+            # por etapas se reduce a tomar los más vinculantes de esa lista.
+            resultados = sjf_local.buscar(tema, epocas=epocas)[:max(1, int(limite))]
+            return sjf_local.formatear_busqueda(resultados, tema, _motivo_respaldo(e),
+                                                por_pagina=max(1, int(limite)))
     docs = data.get("documents") or []
     total = data.get("total", 0)
     if not docs:
-        return (f"Sin criterios del SJF sobre '{tema}' (total en el sistema: {total}). "
-                f"Prueba una expresión más general.")
+        return ((aviso_repo + "\n\n") if aviso_repo else "") + (
+            f"Sin criterios del SJF sobre '{tema}' (total en el sistema: {total}). "
+            f"Prueba una expresión más general.")
 
     recolectados: list[dict] = []
     vistos: set = set()
@@ -764,7 +904,9 @@ async def investigar_criterio(
     seleccion = _ordenar_por_jerarquia(recolectados, tema)[:limite]
     lineas = [
         f"INVESTIGACIÓN — SJF: '{tema}'",
-        f"{total} resultados en el sistema · {len(docs)} revisados · "
+        *([aviso_repo] if aviso_repo else []),
+        f"{_total_repo(total) if aviso_repo else f'{total} resultados'} en el sistema · "
+        f"{len(docs)} revisados · "
         f"se presentan los {len(seleccion)} más vinculantes.",
         "Etapas recorridas (de mayor a menor obligatoriedad):",
         *reporte,
@@ -780,78 +922,9 @@ async def investigar_criterio(
     return "\n".join(lineas)
 
 
-@mcp.tool()
-async def ver_tesis(registro_digital: int | str) -> str:
-    """Obtiene el texto íntegro de una tesis del SJF por su número de registro digital
-    o, si el API está caído, por su clave de identificación.
-
-    Args:
-        registro_digital: Número de registro digital (IUS), p. ej. 2032415. También
-            acepta la clave de la tesis —p. ej. "1a./J. 45/2026 (12a.)" o
-            "(IV Región)1o. J/1 A (12a.)"—, que es la única forma de identificarla
-            en el acervo local de la Gaceta: la Gaceta impresa no publica el
-            registro digital, solo la clave.
-
-    Returns:
-        Rubro, localización, clave, materias, texto completo y precedentes. Si el
-        API del SJF no respondió y la tesis se sirvió del acervo local, la respuesta
-        lo dice al principio y la cita indica que el registro digital está pendiente.
-    """
-    # Una clave no es un registro: el API solo resuelve por registro digital, así
-    # que una clave va derecho al acervo local, que es quien las indexa.
-    crudo = str(registro_digital).strip()
-    if not crudo.isdigit():
-        if not _hay_respaldo():
-            return (f"'{crudo}' no es un registro digital y el acervo local de la "
-                    f"Gaceta no está disponible en este despliegue, así que no hay "
-                    f"forma de resolver una clave. Usa buscar_tesis para localizar "
-                    f"la tesis y su registro digital.")
-        hallazgos = sjf_local.obtener(crudo)
-        if not hallazgos:
-            return (f"No se encontró la clave '{crudo}' en el acervo local de la "
-                    f"Gaceta ({sjf_local.cobertura()}). Revisa la clave —van con "
-                    f"su época entre paréntesis, p. ej. '1a./J. 45/2026 (12a.)'— o "
-                    f"usa buscar_tesis.")
-        motivo = ("la búsqueda fue por clave y el API del SJF solo resuelve por "
-                  "registro digital")
-        if len(hallazgos) == 1:
-            return sjf_local.formatear_tesis(hallazgos[0], motivo)
-        # La misma clave en dos libros: reimpresión o corrección de rubro. Se
-        # muestran las dos; quedarse con una sería decidir por el usuario.
-        partes = [sjf_local.formatear_tesis(h, motivo) for h in hallazgos[:3]]
-        return ("\n\n" + "=" * 60 + "\n\n").join(partes)
-
-    # El API exige isSemanal=true para tesis del Semanario en curso y isSemanal=false
-    # para las históricas; el valor equivocado devuelve 404. Se prueban ambos.
-    d, fallos = None, []
-    for semanal in ("true", "false"):
-        try:
-            d = await _sjf_fetch(f"/tesis/{registro_digital}?isSemanal={semanal}&hostName={HOST}")
-            if d and d.get("rubro"):
-                break
-            d = None
-        except _BloqueoWAF as e:
-            # Un bloqueo del WAF no es "no se encontró": el segundo isSemanal va a
-            # fallar igual y decir que el registro no existe sería un falso negativo.
-            # El acervo local tampoco puede ayudar aquí: la Gaceta no imprime el
-            # registro digital, así que no hay por dónde buscar ESTE número. Lo
-            # honesto es decirlo y ofrecer el camino que sí existe, la clave.
-            if _hay_respaldo():
-                return (f"{e}\n\nHay un acervo local de la Gaceta oficial "
-                        f"({sjf_local.cobertura()}), pero no se puede consultar por "
-                        f"registro digital: la Gaceta impresa no lo publica, solo la "
-                        f"clave. Usa buscar_tesis con el tema —cae al acervo local "
-                        f"automáticamente— y luego ver_tesis con la clave que "
-                        f"aparezca, p. ej. ver_tesis(\"1a./J. 45/2026 (12a.)\").")
-            return str(e)
-        except Exception as e:
-            fallos.append(f"isSemanal={semanal}: {e}")
-    if not d:
-        detalle = (" Detalle → " + " | ".join(fallos) + ".") if fallos else ""
-        return (f"No se encontró la tesis con registro digital {registro_digital} "
-                f"(se intentó como tesis del Semanario en curso y como histórica).{detalle} "
-                f"Verifica el registro o consúltala en {HOST}/detalle/tesis/{registro_digital}")
-
+def _formatear_tesis_sjf(d: dict, origen: str = "") -> str:
+    """Presentación de una tesis con los campos de sjf2. Los documentos del Repositorio
+    llegan ya traducidos a esos campos (repositorio_scjn.tesis_a_sjf)."""
     materias = d.get("materias")
     if isinstance(materias, list):
         materias = ", ".join(str(m) for m in materias)
@@ -873,8 +946,129 @@ async def ver_tesis(registro_digital: int | str) -> str:
     if d.get("notasGenericas"):
         partes += ["", "NOTAS:", _strip_html(str(d.get("notasGenericas")))]
     partes += ["", f"Fuente: {HOST}/detalle/tesis/{d.get('ius')}"]
+    if d.get("huellaDigital"):
+        partes.append(f"Huella digital (SHA-256): {d['huellaDigital']}")
+    if origen:
+        partes.append(origen)
     return "\n".join(partes)
 
+
+async def _repo_tesis_por_clave(clave: str) -> list[dict]:
+    """Las tesis del Repositorio con esa clave, ya traducidas. Primero la clave exacta
+    (sin acentos, espacios ni puntuación); si no hay, las que empiezan igual, para la
+    clave escrita sin su época. Vacío si no hay o si el Repositorio no contestó."""
+    try:
+        # Por campo: el Repositorio ordena por registro descendente, así que con la clave
+        # como texto libre las tesis posteriores que la CITAN llenan la página y la
+        # jurisprudencia citada —justo la que importa— queda fuera.
+        resultados, _ = await _repo_buscar("tesis", f'tesis:"{clave.replace(chr(34), "")}"',
+                                           {}, 1, 20)
+    except Exception:
+        return []
+    exactas = [r for r in resultados
+               if repositorio_scjn.coincide_clave(r.get("tesis") or "", clave)]
+    if not exactas:
+        objetivo = repositorio_scjn._sin_espacios(clave)
+        exactas = [r for r in resultados if objetivo and
+                   repositorio_scjn._sin_espacios(r.get("tesis") or "").startswith(objetivo)]
+    return [repositorio_scjn.tesis_a_sjf(r) for r in exactas]
+
+
+@mcp.tool()
+async def ver_tesis(registro_digital: int | str) -> str:
+    """Obtiene el texto íntegro de una tesis del SJF por su número de registro digital
+    o por su clave de identificación.
+
+    Args:
+        registro_digital: Número de registro digital (IUS), p. ej. 2032415. También
+            acepta la clave de la tesis —p. ej. "1a./J. 45/2026 (12a.)" o
+            "(IV Región)1o. J/1 A (12a.)"—; con la clave se resuelve también el
+            registro digital.
+
+    Returns:
+        Rubro, localización, clave, materias, texto completo, precedentes y huella
+        digital. Si el API del Semanario no respondió, la tesis sale del Repositorio de
+        la SCJN (datos abiertos oficiales, mismo registro) y la respuesta lo dice; si
+        tampoco, del acervo local de la Gaceta, con aviso al principio.
+    """
+    crudo = str(registro_digital).strip()
+    if not crudo.isdigit():
+        # El API de sjf2 solo resuelve por registro digital. El Repositorio sí busca
+        # por clave, y de paso devuelve el registro, que la Gaceta no imprime: va
+        # antes que el acervo porque es dato vivo.
+        hallazgos_repo = await _repo_tesis_por_clave(crudo)
+        if hallazgos_repo:
+            origen = (f"Fuente de esta respuesta: Repositorio de la SCJN, datos abiertos "
+                      f"oficiales ({repositorio_scjn.BASE}). La búsqueda fue por clave; el "
+                      f"registro digital sale del propio Repositorio.")
+            partes = [_formatear_tesis_sjf(h, origen) for h in hallazgos_repo[:3]]
+            return ("\n\n" + "=" * 60 + "\n\n").join(partes)
+        if not _hay_respaldo():
+            return (f"'{crudo}' no es un registro digital, el Repositorio de la SCJN no "
+                    f"encontró esa clave y el acervo local de la Gaceta no está disponible "
+                    f"en este despliegue. Usa buscar_tesis para localizar la tesis y su "
+                    f"registro digital.")
+        hallazgos = sjf_local.obtener(crudo)
+        if not hallazgos:
+            return (f"No se encontró la clave '{crudo}' en el acervo local de la "
+                    f"Gaceta ({sjf_local.cobertura()}). Revisa la clave —van con "
+                    f"su época entre paréntesis, p. ej. '1a./J. 45/2026 (12a.)'— o "
+                    f"usa buscar_tesis.")
+        motivo = ("la búsqueda fue por clave, el API del SJF solo resuelve por "
+                  "registro digital y el Repositorio de la SCJN no la entregó")
+        if len(hallazgos) == 1:
+            return sjf_local.formatear_tesis(hallazgos[0], motivo)
+        # La misma clave en dos libros: reimpresión o corrección de rubro. Se
+        # muestran las dos; quedarse con una sería decidir por el usuario.
+        partes = [sjf_local.formatear_tesis(h, motivo) for h in hallazgos[:3]]
+        return ("\n\n" + "=" * 60 + "\n\n").join(partes)
+
+    # El API exige isSemanal=true para tesis del Semanario en curso y isSemanal=false
+    # para las históricas; el valor equivocado devuelve 404. Se prueban ambos.
+    d, fallos, bloqueo = None, [], None
+    for semanal in ("true", "false"):
+        try:
+            d = await _sjf_fetch(f"/tesis/{crudo}?isSemanal={semanal}&hostName={HOST}")
+            if d and d.get("rubro"):
+                break
+            d = None
+        except _BloqueoWAF as e:
+            # Un bloqueo del WAF no es "no se encontró": el segundo isSemanal va a
+            # fallar igual y decir que el registro no existe sería un falso negativo.
+            bloqueo = e
+            break
+        except Exception as e:
+            fallos.append(f"isSemanal={semanal}: {e}")
+    if d:
+        return _formatear_tesis_sjf(d)
+
+    # Segunda puerta: el Repositorio usa el mismo registro digital.
+    try:
+        r = await _repo_documento("tesis", crudo)
+    except Exception as e:
+        r = None
+        fallos.append(f"Repositorio de la SCJN: {_motivo_respaldo(e)}")
+    if r and r.get("rubro"):
+        return _formatear_tesis_sjf(repositorio_scjn.tesis_a_sjf(r),
+                                    _aviso_repositorio(_motivo_sjf(bloqueo)))
+
+    if bloqueo:
+        # El acervo local tampoco puede ayudar aquí: la Gaceta no imprime el registro
+        # digital, así que no hay por dónde buscar ESTE número. Lo honesto es decirlo y
+        # ofrecer el camino que sí existe, la clave.
+        if _hay_respaldo():
+            return (f"{bloqueo}\n\nEl Repositorio de la SCJN tampoco la entregó. Hay un "
+                    f"acervo local de la Gaceta oficial ({sjf_local.cobertura()}), pero no "
+                    f"se puede consultar por registro digital: la Gaceta impresa no lo "
+                    f"publica, solo la clave. Usa buscar_tesis con el tema —cae al acervo "
+                    f"local automáticamente— y luego ver_tesis con la clave que aparezca, "
+                    f"p. ej. ver_tesis(\"1a./J. 45/2026 (12a.)\").")
+        return f"{bloqueo}\n\nEl Repositorio de la SCJN tampoco la entregó."
+    detalle = (" Detalle → " + " | ".join(fallos) + ".") if fallos else ""
+    return (f"No se encontró la tesis con registro digital {crudo} "
+            f"(se intentó como tesis del Semanario en curso, como histórica y en el "
+            f"Repositorio de la SCJN).{detalle} "
+            f"Verifica el registro o consúltala en {HOST}/detalle/tesis/{crudo}")
 
 # ---- SJF: ejecutorias (sentencias, controversias y acciones de inconstitucionalidad) ----
 #
@@ -1062,6 +1256,47 @@ def _ejec_partir(texto: str) -> list[str]:
     return partes or [""]
 
 
+def _fragmento(texto: str, consulta: str, radio: int = 150) -> str:
+    """Unas líneas alrededor de la primera aparición de la consulta, sin distinguir
+    acentos. Si la frase completa no aparece, se prueba con su palabra más larga."""
+    limpia = re.sub(r'["()]', " ", consulta or "").strip()
+    candidatos = [limpia] + sorted((w for w in limpia.split() if len(w) > 4),
+                                   key=len, reverse=True)
+    plano, mapa = _sin_acentos_con_mapa(texto or "")
+    for c in candidatos:
+        aguja, _ = _sin_acentos_con_mapa(c)
+        j = plano.find(aguja) if aguja else -1
+        if j >= 0:
+            a = max(0, mapa[j] - radio)
+            b = min(len(texto), mapa[min(j + len(aguja), len(mapa) - 1)] + radio)
+            return re.sub(r"\s+", " ", texto[a:b]).strip()
+    return ""
+
+
+async def _repo_ejecutorias_busqueda(consulta: str, epocas: list[str] | None,
+                                     pagina: int, por_pagina: int) -> dict | None:
+    """Una página de ejecutorias del Repositorio con la forma de sjf2, o None.
+
+    El Repositorio devuelve el texto íntegro de cada sentencia en la búsqueda. Se
+    usa para sacar el fragmento donde cayó la consulta —lo que sjf2 entrega en el
+    rubro— y se suelta antes de llegar a la caché."""
+    def aligerar(data):
+        for r in (data.get("resultados") or []) if isinstance(data, dict) else []:
+            r["_coincidencia"] = _fragmento(r.get("texto") or "", consulta)
+            r["texto"] = ""
+        return data
+
+    try:
+        res, total = await _repo_buscar("ejecutoria", consulta,
+                                        repositorio_scjn.filtros_epocas(epocas),
+                                        pagina, por_pagina, transformar=aligerar)
+    except Exception:
+        return None
+    return {"documents": [repositorio_scjn.ejecutoria_a_sjf(r, r.get("_coincidencia", ""))
+                          for r in res],
+            "total": total}
+
+
 @mcp.tool()
 async def buscar_ejecutorias(
     consulta: str,
@@ -1097,10 +1332,16 @@ async def buscar_ejecutorias(
     """
     body = _search_body(consulta, epocas, False)
     page, size = max(pagina, 1) - 1, min(max(por_pagina, 1), 50)
+    aviso_repo = ""
     try:
         data = await _ejec_fetch(f"/ejecutorias?page={page}&size={size}", method="POST", json_body=body)
-    except _BloqueoWAF as e:
-        return str(e)
+    except Exception as e:
+        data = await _repo_ejecutorias_busqueda(consulta, epocas, max(pagina, 1), size)
+        if data is None:
+            if isinstance(e, _BloqueoWAF):
+                return str(e)
+            raise
+        aviso_repo = _aviso_repositorio(_motivo_sjf(e), busqueda=True)
 
     if data and "documents" not in data and "total" not in data:
         claves = ", ".join(list(data.keys())[:8])
@@ -1112,15 +1353,18 @@ async def buscar_ejecutorias(
     total = data.get("total", 0)
 
     if not docs:
-        return (f"Sin ejecutorias para '{consulta}' (total en el sistema: {total}). "
-                f"Prueba una expresión más general, o busca el criterio en buscar_tesis.")
+        return ((aviso_repo + "\n\n") if aviso_repo else "") + (
+            f"Sin ejecutorias para '{consulta}' (total en el sistema: {total}). "
+            f"Prueba una expresión más general, o busca el criterio en buscar_tesis.")
 
     if orden == "jerarquia":
         docs = _ejec_ordenar(docs)
 
     lineas = [
         f"EJECUTORIAS Y PRECEDENTES DEL SJF — '{consulta}'",
-        f"Total: {total} resultados. Página {pagina} ({len(docs)} mostrados).",
+        *([aviso_repo] if aviso_repo else []),
+        f"Total: {_total_repo(total) if aviso_repo else f'{total} resultados'}. "
+        f"Página {pagina} ({len(docs)} mostrados).",
         "Colección de sentencias completas: incluye controversias constitucionales, "
         "acciones de inconstitucionalidad, declaratorias generales y contradicciones de criterios.",
         "Formato: [ASUNTO Y NÚMERO], [Órgano], [Promovente], [Fuente], [Época], "
@@ -1164,7 +1408,7 @@ async def ver_ejecutoria(
     # Mismo enredo que en las tesis, y peor: el valor equivocado de isSemanal devuelve
     # 404 en unos registros y 500 en otros, así que se prueban los dos sin confiar en
     # el código de error.
-    d, fallos = None, []
+    d, fallos, bloqueo, origen = None, [], None, ""
     for semanal in ("true", "false"):
         try:
             data = await _ejec_fetch(
@@ -1173,13 +1417,27 @@ async def ver_ejecutoria(
                 d = data
                 break
         except _BloqueoWAF as e:
-            return str(e)
+            bloqueo = e
+            break
         except Exception as e:
             fallos.append(f"isSemanal={semanal}: {e}")
     if not d:
+        # Segunda puerta: idEjecutoria en el Repositorio es el mismo registro de sjf2.
+        try:
+            r = await _repo_documento("ejecutoria", registro_digital)
+        except Exception as e:
+            r = None
+            fallos.append(f"Repositorio de la SCJN: {_motivo_respaldo(e)}")
+        if r and (r.get("texto") or r.get("rubro") or r.get("asunto")):
+            d = repositorio_scjn.ejecutoria_a_sjf(r)
+            origen = _aviso_repositorio(_motivo_sjf(bloqueo))
+    if not d and bloqueo:
+        return str(bloqueo)
+    if not d:
         detalle = (" Detalle → " + " | ".join(fallos) + ".") if fallos else ""
         return (f"No se encontró la ejecutoria con registro digital {registro_digital} "
-                f"(se intentó como sentencia del Semanario en curso y como histórica).{detalle} "
+                f"(se intentó como sentencia del Semanario en curso, como histórica y en el "
+                f"Repositorio de la SCJN).{detalle} "
                 f"Verifica el registro o consúltala en {HOST}/detalle/ejecutoria/{registro_digital}")
 
     asunto = _strip_html(str(d.get("tipoAsunto") or d.get("tipoAsuntoE") or "")).rstrip(".")
@@ -1244,7 +1502,146 @@ async def ver_ejecutoria(
                               f"ver_ejecutoria({registro_digital}, buscar_en_texto='...')]")
 
     partes_out += ["", f"Fuente: {HOST}/detalle/ejecutoria/{d.get('ius') or registro_digital}"]
+    if d.get("huellaDigital"):
+        partes_out.append(f"Huella digital (SHA-256): {d['huellaDigital']}")
+    if origen:
+        partes_out.append(origen)
     return "\n".join(partes_out)
+
+
+# ---- SIJ: las sentencias de la Suprema Corte (Repositorio de la SCJN) ----
+#
+# El Sistema de Informática Jurídica tiene una ficha por cada asunto que resolvió la
+# SCJN —106 mil—, se haya publicado o no en el Semanario: expediente, ponente, fecha,
+# tema, resolutivos, votación y el enlace al documento Word de la versión pública.
+# Ninguna otra fuente del conector tiene esto. El texto de la sentencia vive en ese
+# Word, en www2.scjn.gob.mx, que sí exige el reto de navegador de Imperva; el conector
+# da el enlace y no intenta leerlo.
+
+def _repo_no_contesto(e: Exception) -> str:
+    if isinstance(e, _ConsultaNoInterpretable):
+        return f"No se buscó: {e}."
+    if isinstance(e, _BloqueoWAF):
+        motivo = (f"el cortafuegos de la SCJN (Imperva) rechazó la petición desde la "
+                  f"dirección de este servidor ({_motivo_sjf(e).split('(', 1)[1]}")
+    else:
+        motivo = _motivo_respaldo(e)
+    return (f"El Repositorio de la SCJN no atendió la consulta de sentencias: {motivo}. "
+            f"No es un error de la consulta. Reintenta en unos minutos o consulta directo "
+            f"en {repositorio_scjn.SITIO_SIJ}")
+
+
+@mcp.tool()
+async def buscar_sentencias_scjn(
+    consulta: str,
+    tipo_asunto: str | None = None,
+    organo: str | None = None,
+    anio: int | None = None,
+    pagina: int = 1,
+    por_pagina: int = 20,
+) -> str:
+    """Busca sentencias de la Suprema Corte en su Sistema de Informática Jurídica (SIJ):
+    la ficha de cada asunto que ha resuelto la SCJN, publicado o no en el Semanario.
+
+    ÚSALA cuando el usuario pregunte qué resolvió la Corte en un expediente concreto
+    ("amparo en revisión 93/2026"), quién fue el ponente, cuándo se resolvió o cómo se
+    votó. Cada ficha trae expediente, órgano, ponente, fecha, tema, resolutivos,
+    votación y el enlace al documento de la sentencia. Para leer el razonamiento de una
+    sentencia publicada usa buscar_ejecutorias y ver_ejecutoria; para los criterios
+    que dejó, buscar_tesis.
+
+    Args:
+        consulta: Número de expediente, tema o palabras de los resolutivos. Acepta el
+            asunto completo —"amparo en revisión 93/2026" o "AR 93/2026"—: el tipo de
+            asunto se separa solo y se usa como filtro.
+        tipo_asunto: Filtro opcional, p. ej. "amparo directo en revisión", "acción de
+            inconstitucionalidad", "controversia constitucional", o sus siglas
+            (AR, ADR, AD, AI, CC, CT).
+        organo: Filtro opcional: "Pleno", "Primera Sala" o "Segunda Sala".
+        anio: Filtro opcional: año del asunto.
+        pagina: Página de resultados (desde 1).
+        por_pagina: Resultados por página (máx. 50).
+
+    Returns:
+        Fichas con expediente, órgano, ponente, fecha de resolución, tema, extracto de
+        los resolutivos, id SIJ y enlace al documento. Usa ver_sentencia_scjn(id_sij)
+        para la ficha completa.
+    """
+    size = min(max(por_pagina, 1), 50)
+    q, tipos, nota = repositorio_scjn.armar_consulta_sentencias(consulta, tipo_asunto)
+    notas: list[str] = [nota] if nota else []
+
+    filtros: dict = {}
+    if tipos:
+        filtros["tipoAsunto"] = tipos
+    if organo:
+        organos = repositorio_scjn.resolver_organo(organo)
+        if organos:
+            filtros["pertenencia"] = organos
+        else:
+            notas.append(f"No reconocí el órgano '{organo}' (usa Pleno, Primera Sala o "
+                         f"Segunda Sala); se buscó sin ese filtro.")
+    if anio:
+        filtros["anio"] = [str(anio)]
+
+    try:
+        res, total = await _repo_buscar("engroses", q, filtros, max(pagina, 1), size)
+    except Exception as e:
+        return _repo_no_contesto(e)
+
+    filtros_txt = "; ".join(
+        f"{nombre}: {', '.join(v)}" for nombre, v in (
+            ("tipo de asunto", filtros.get("tipoAsunto")), ("órgano", filtros.get("pertenencia")),
+            ("año", filtros.get("anio"))) if v)
+    if not res:
+        return "\n".join(notas + [
+            f"Sin sentencias de la SCJN para '{consulta}'"
+            + (f" con {filtros_txt}" if filtros_txt else "") + ". Prueba sin filtros, con "
+            f"otra redacción, o busca el criterio en buscar_tesis."])
+
+    etiqueta = tipos[0].capitalize() if len(tipos) == 1 else ""
+    lineas = [
+        f"SENTENCIAS DE LA SCJN — Sistema de Informática Jurídica — '{consulta}'",
+        f"Total: {_total_repo(total)}. Página {max(pagina, 1)} ({len(res)} mostradas)."
+        + (f" Filtros: {filtros_txt}." if filtros_txt else ""),
+        *notas,
+        "Formato: [ASUNTO Y EXPEDIENTE], [Órgano], [Ponente], [Fecha de resolución], "
+        "[Id SIJ] + tema, resolutivos y enlace al documento.",
+        "",
+    ]
+    for r in res:
+        lineas.extend(repositorio_scjn.linea_sentencia(r, etiqueta))
+    lineas += [
+        "Para la ficha completa (resolutivos íntegros y votación): ver_sentencia_scjn(id_sij).",
+        f"Fuente: Repositorio de la SCJN, Sistema de Informática Jurídica "
+        f"({repositorio_scjn.SITIO_SIJ}).",
+    ]
+    return "\n".join(lineas)
+
+
+@mcp.tool()
+async def ver_sentencia_scjn(id_sij: int) -> str:
+    """Ficha completa de una sentencia de la SCJN en el Sistema de Informática Jurídica.
+
+    Args:
+        id_sij: El id SIJ que da buscar_sentencias_scjn, p. ej. 236500. No es el número
+            de expediente ni el registro digital del Semanario.
+
+    Returns:
+        Expediente, órganos, ponente, fecha de resolución, tema, tribunal de origen,
+        resolutivos íntegros, votación, enlace al documento de la sentencia y su huella
+        digital (SHA-256).
+    """
+    try:
+        r = await _repo_documento("engroses", id_sij)
+    except Exception as e:
+        return _repo_no_contesto(e)
+    if not r or not (r.get("expediente") or r.get("resolucion")):
+        return (f"No existe una sentencia con id SIJ {id_sij}. El id SIJ es el que "
+                f"devuelve buscar_sentencias_scjn, no el número de expediente: busca "
+                f"primero el asunto, p. ej. buscar_sentencias_scjn(\"amparo en revisión "
+                f"93/2026\").")
+    return repositorio_scjn.formatear_sentencia(r, id_sij)
 
 
 # ---- TFJA: Sistema General de Consulta de Tesis y Jurisprudencias ----
@@ -3216,6 +3613,8 @@ async def estado_conector() -> str:
         f"{len(await mcp.list_tools())} tools registradas.",
         f"Endpoint SJF tesis: {_SJF_BASE}",
         f"Endpoint SJF ejecutorias: {_EJEC_BASE}",
+        f"Repositorio de la SCJN (datos abiertos): {repositorio_scjn.BASE} — segunda "
+        f"puerta del Semanario y fuente de las sentencias del SIJ",
         _linea_estado_sjf_local(),
         _linea_estado_tepjf(),
         "",
@@ -3281,6 +3680,25 @@ async def diagnosticar_conector() -> str:
         if "TEXTO — parte 1 de" not in r:
             raise RuntimeError("no se entregó el cuerpo de la sentencia por partes")
         return r.split("\n")[3]
+
+    async def _repo_tesis_check():
+        r = await _repo_documento("tesis", 2012594)
+        if not r or "IGUALDAD" not in (r.get("rubro") or "").upper():
+            raise RuntimeError("no regresó el rubro esperado")
+        return f"texto íntegro y huella {str(r.get('huellaDigital') or '')[:12]}…"
+
+    async def _repo_ejec_check():
+        r = await _repo_documento("ejecutoria", 201074)
+        if not r or "267/2024" not in (r.get("asunto") or ""):
+            raise RuntimeError("no regresó el asunto esperado")
+        return f"{len(r.get('texto') or ''):,} caracteres de sentencia"
+
+    async def _repo_sij_check():
+        res, _ = await _repo_buscar("engroses", '"93/2026"',
+                                    {"tipoAsunto": ["AMPARO EN REVISIÓN"]}, 1, 1)
+        if not res or res[0].get("expediente") != "93/2026":
+            raise RuntimeError("la búsqueda no regresó el expediente esperado")
+        return f"id SIJ {res[0].get('engroseId')}, resuelto el {res[0].get('fechaResolucion')}"
 
     async def _tfja_sesion():
         async with httpx.AsyncClient(headers=TFJA_HEADERS, timeout=30, follow_redirects=True) as client:
@@ -3401,6 +3819,9 @@ async def diagnosticar_conector() -> str:
     await check("SJF detalle (tesis 2012594, P./J. 9/2016)", _sjf_detalle)
     await check("SJF ejecutorias búsqueda (API)", _ejec_busqueda)
     await check("SJF ejecutorias detalle (registro 201074, C.C. 267/2024)", _ejec_detalle)
+    await check("Repositorio SCJN tesis (registro 2012594)", _repo_tesis_check)
+    await check("Repositorio SCJN ejecutoria (registro 201074)", _repo_ejec_check)
+    await check("Repositorio SCJN sentencias SIJ (A.R. 93/2026)", _repo_sij_check)
     await check("TFJA sesión y token CSRF", _tfja_sesion)
     await check("TFJA búsqueda (formulario)", _tfja_busqueda)
     await check("TFJA detalle (identificador 48235, IX-P-SS-522)", _tfja_detalle)

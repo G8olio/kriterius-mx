@@ -152,8 +152,11 @@ comprobar("no dice el falso negativo 'no se encontró la tesis'",
 comprobar("explica que la Gaceta no publica el registro digital",
           "no lo publica" in rr or "no se puede consultar por" in rr, rr[:250])
 comprobar("ofrece el camino por clave", "ver_tesis(" in rr and "buscar_tesis" in rr)
-comprobar("gastó un solo intento, no los dos de isSemanal",
-          len([u for u in VISITAS if "/tesis/" in u]) == 1, str(VISITAS))
+comprobar("gastó un solo intento en sjf2, no los dos de isSemanal",
+          len([u for u in VISITAS if "sjf2" in u and "/tesis/" in u]) == 1, str(VISITAS))
+comprobar("y preguntó una vez al Repositorio antes de rendirse",
+          len([u for u in VISITAS if "repositorio-scjn/api/v1/tesis/" in u]) == 1, str(VISITAS))
+comprobar("dice que el Repositorio tampoco la entregó", "Repositorio" in rr, rr[:300])
 
 
 print("\n— Con el API vivo el respaldo no se toca —")

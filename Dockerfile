@@ -8,7 +8,7 @@ RUN pip install --no-cache-dir -r requirements.txt
 
 # Los archivos del servidor. Si se agrega otro módulo, va aquí también: lo que no
 # se copia no existe dentro del contenedor y el arranque truena en el import.
-COPY kriterius_mx.py server_http.py uso.py tepjf.py sjf_local.py ./
+COPY kriterius_mx.py server_http.py uso.py tepjf.py sjf_local.py repositorio_scjn.py ./
 
 # Los datos locales: el snapshot del IUS Electoral (la fuente TEPJF entera) y el
 # acervo de la Gaceta del SJF (respaldo de buscar_tesis y ver_tesis cuando el API de

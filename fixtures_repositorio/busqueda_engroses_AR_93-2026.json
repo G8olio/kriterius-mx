@@ -1,0 +1,86 @@
+{
+ "from": 1,
+ "fromTo": 1,
+ "pagina": 1,
+ "size": 20,
+ "total": 1,
+ "totalPaginas": 1,
+ "resultados": [
+  {
+   "engroseId": 236500,
+   "expediente": "93/2026",
+   "pertenencia": "PLENO",
+   "ministro": "GIOVANNI AZAEL FIGUEROA MEJÍA",
+   "resolucion": "PRIMERO. En la materia de la revisión competencia de este Alto Tribunal, se confirma la sentencia recurrida.\r\nSEGUNDO. La Justicia de la Unión no ampara ni protege a Servicio Barrio Antiguo, Sociedad Anónima de Capital Variable, en contra de los artículos 24, fracción XXVI y 134 Bis, de la Ley Federal de Protección al Consumidor, publicada en el Diario Oficial de la Federación el once de enero de dos mil dieciocho.\r\nTERCERO. Queda sin materia la revisión adhesiva interpuesta por la Presidencia de la República, en relación con el tema de constitucionalidad.\r\nCUARTO. Se reserva jurisdicción al Segundo Tribunal Colegiado en Materia Administrativa del Décimo Sexto Circuito, para los efectos precisados en esta resolución.",
+   "votacion": "Así lo resolvió el Pleno de la Suprema Corte de Justicia de la Nación por unanimidad de nueve votos de las personas Ministras Herrerías Guerra, Espinosa Betanzo, Ríos González, Esquivel Mossa, Batres Guadarrama, Ortiz Ahlf, Figueroa Mejía, Guerrero García y Presidente Aguilar Ortiz.",
+   "urlInternet": "https://www2.scjn.gob.mx/juridica/engroses/3/2026/2/2_363528_7747.doc",
+   "engrose": "\\\\MXRGW.SCJN.PJF.GOB.MX\\fs_SIJ_Engroses\\3\\2026\\2\\2_363528_7747.doc",
+   "tema": "FACULTAD DE LA PROCURADURIA FEDERAL DEL CONSUMIDOR PARA IMPONER MULTAS \r\nARGUMENTA VIOLACIÓN A LOS DERECHOS CONTENIDOS EN LOS ARTÍCULOS 1, 14, 16 Y 17 CONSTITUCIONALES\r\n JOVT/izso",
+   "organoJurisdiccionalOrigen": "TRIBUNAL DE ORIGEN: JUZGADO DECIMOSEGUNDO DE DISTRITO EN EL ESTADO DE GUANAJUATO \r\nTRIBUNAL DE ORIGEN: SEGUNDO TRIBUNAL COLEGIADO EN MATERIA ADMINISTRATIVA DEL DÉCIMO SEXTO CIRCUITO ",
+   "organoResolvio": "PLENO",
+   "huellaDigital": "a4451fb382817168c1e690c19e48fb476547ca13a868f65fb65447f6fb7d912e",
+   "fechaResolucion": "26/05/2026"
+  }
+ ],
+ "filtros": [
+  {
+   "filtro": "pertenencia",
+   "orden": 2,
+   "tipo": ".keyword",
+   "nombreFiltro": "Órgano de radicación",
+   "buckets": [
+    {
+     "filtro": "PLENO (1)",
+     "filtroId": "PLENO",
+     "seleccionado": false
+    }
+   ]
+  },
+  {
+   "filtro": "ministro",
+   "orden": 3,
+   "tipo": ".keyword",
+   "nombreFiltro": "Ponente",
+   "buckets": [
+    {
+     "filtro": "GIOVANNI AZAEL FIGUEROA MEJÍA (1)",
+     "filtroId": "GIOVANNI AZAEL FIGUEROA MEJÍA",
+     "seleccionado": false
+    }
+   ]
+  },
+  {
+   "filtro": "lineaJurisprudencial",
+   "orden": 5,
+   "tipo": ".keyword",
+   "nombreFiltro": "Línea Jurisprudencial",
+   "buckets": []
+  },
+  {
+   "filtro": "tipoAsunto",
+   "orden": 1,
+   "tipo": ".keyword",
+   "nombreFiltro": "Tipo de asunto",
+   "buckets": [
+    {
+     "filtro": "AMPARO EN REVISIÓN (1)",
+     "filtroId": "AMPARO EN REVISIÓN",
+     "seleccionado": true
+    }
+   ]
+  },
+  {
+   "filtro": "anio",
+   "orden": 4,
+   "tipo": ".keyword",
+   "nombreFiltro": "Año",
+   "buckets": [
+    {
+     "filtro": "2026 (1)",
+     "filtroId": "2026",
+     "seleccionado": false
+    }
+   ]
+  }
+ ]
+}
