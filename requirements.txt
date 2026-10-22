@@ -3,3 +3,6 @@
 # No subir a 2.x sin migrar el código primero.
 mcp==1.28.1
 httpx==0.28.1
+# certifi 2026.10.19 retira la confianza en las CA intermedias comprometidas de
+# eMudhra (oct-2026). httpx lo instala sin versión mínima; no bajar de aquí.
+certifi>=2026.10.19
