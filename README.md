@@ -33,7 +33,11 @@ SCJN, publicados o no en el Semanario. Detalle del contrato en `repositorio_scjn
 
 ### Control de tráfico SCJN (2.13.1)
 
-El SJF y el Repositorio se identifican como `KriteriusMX/2.13.1`. Cada fuente admite una
+El SJF y el Repositorio incluyen `KriteriusMX/2.13.2` en su User-Agent. El SJF conserva
+además el formato del cliente web: el 12/11/2026 su API de búsqueda devolvió 403 JSON
+«Acceso denegado: Formato inválido.» con un identificador de aplicación simple; con
+el formato anterior y el identificador explícito de Kriterius respondió 200. Esto
+no elimina los retos de Imperva en las consultas de detalle. Cada fuente admite una
 petición controlada a la vez, con al menos un segundo entre inicios. Cada reintento de
 `_traer` vuelve a consumir el cupo global de 60 operaciones por minuto; el descubrimiento
 del SJF también pasa por esos controles. Son topes propios por proceso, no una cuota

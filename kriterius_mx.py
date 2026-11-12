@@ -36,7 +36,7 @@ import tepjf
 
 # Única fuente del número de versión. server_http.py la importa de aquí para que
 # /salud y estado_conector no puedan volver a discrepar.
-VERSION = "2.13.1"
+VERSION = "2.13.2"
 
 BASE = "https://sjf2.scjn.gob.mx/services/sjftesismicroservice/api/public"
 BASE_EJEC = "https://sjf2.scjn.gob.mx/services/sjfejecutoriamicroservice/api/public"
@@ -54,7 +54,13 @@ HEADERS = {
     "Accept-Language": "es-MX,es;q=0.9",
     "Origin": HOST,
     "Referer": f"{HOST}/busqueda-principal-tesis",
-    "User-Agent": f"KriteriusMX/{VERSION} (+https://kriterius.mx)",
+    # El API de búsqueda exige el formato del cliente web (403 JSON «Formato
+    # inválido» con un UA de aplicación simple). Conservar compatibilidad e
+    # identificar explícitamente Kriterius; esto no resuelve los retos del WAF.
+    "User-Agent": ("Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) "
+                   "AppleWebKit/537.36 (KHTML, like Gecko) "
+                   "Chrome/126.0.0.0 Safari/537.36 "
+                   f"KriteriusMX/{VERSION} (+https://kriterius.mx)"),
 }
 
 # ---- Cuidado de las fuentes: caché, freno de concurrencia y reintentos ----
@@ -1171,8 +1177,8 @@ async def ver_tesis(registro_digital: int | str) -> str:
             if d and d.get("rubro"):
                 break
             d = None
-        except _BloqueoWAF as e:
-            # Un bloqueo del WAF no es "no se encontró": el segundo isSemanal va a
+        except (_BloqueoWAF, _PausaFuente, _CupoAgotado) as e:
+            # Un bloqueo o pausa no es "no se encontró": el segundo isSemanal va a
             # fallar igual y decir que el registro no existe sería un falso negativo.
             bloqueo = e
             break
@@ -1478,7 +1484,7 @@ async def buscar_ejecutorias(
     except Exception as e:
         data = await _repo_ejecutorias_busqueda(consulta, epocas, max(pagina, 1), size)
         if data is None:
-            if isinstance(e, _BloqueoWAF):
+            if isinstance(e, (_BloqueoWAF, _PausaFuente, _CupoAgotado)):
                 return str(e)
             raise
         aviso_repo = _aviso_repositorio(_motivo_sjf(e), busqueda=True)
@@ -1556,7 +1562,7 @@ async def ver_ejecutoria(
             if data and (data.get("texto") or data.get("rubro") or data.get("tipoAsunto")):
                 d = data
                 break
-        except _BloqueoWAF as e:
+        except (_BloqueoWAF, _PausaFuente, _CupoAgotado) as e:
             bloqueo = e
             break
         except Exception as e:

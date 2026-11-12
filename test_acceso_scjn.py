@@ -103,6 +103,25 @@ class AccesoSCJN(unittest.IsolatedAsyncioTestCase):
         self.assertEqual(llamadas, 1)
         self.assertEqual(sum(isinstance(e, k._PausaFuente) for e in resultados), 9)
 
+    async def test_detalles_en_pausa_no_inventan_registro_inexistente(self):
+        for clave in ("sjf:tesis:GET", "sjf:ejecutorias:GET"):
+            k._poner_pausa(clave, 300, 403, "verificación pendiente")
+        with patch.object(k, "_repo_documento", return_value=None), \
+             patch.object(k, "_hay_respaldo", return_value=False), \
+             patch.object(k.httpx, "AsyncClient", side_effect=AssertionError("red inesperada")):
+            for resultado in (await k.ver_tesis(2012594), await k.ver_ejecutoria(201074)):
+                self.assertIn("Consulta en pausa", resultado)
+                self.assertNotIn("No se encontró", resultado)
+        self.assertEqual(len(k._PETICIONES), 0)
+
+    async def test_busqueda_ejecutoria_en_pausa_devuelve_aviso(self):
+        k._poner_pausa("sjf:ejecutorias:POST", 300, 403, "verificación pendiente")
+        with patch.object(k, "_repo_ejecutorias_busqueda", return_value=None), \
+             patch.object(k.httpx, "AsyncClient", side_effect=AssertionError("red inesperada")):
+            resultado = await k.buscar_ejecutorias("amparo")
+        self.assertIn("Consulta en pausa", resultado)
+        self.assertEqual(len(k._PETICIONES), 0)
+
     async def test_consultas_identicas_comparten_peticion(self):
         llamadas = 0
 
