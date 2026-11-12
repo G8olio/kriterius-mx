@@ -31,6 +31,32 @@ su propio User-Agent. El Repositorio también es la fuente de las sentencias del
 expediente, ponente, fecha, resolutivos y votación de los 106 mil asuntos resueltos por la
 SCJN, publicados o no en el Semanario. Detalle del contrato en `repositorio_scjn.py`.
 
+### Control de tráfico SCJN (2.13.1)
+
+El SJF y el Repositorio se identifican como `KriteriusMX/2.13.1`. Cada fuente admite una
+petición controlada a la vez, con al menos un segundo entre inicios. Cada reintento de
+`_traer` vuelve a consumir el cupo global de 60 operaciones por minuto; el descubrimiento
+del SJF también pasa por esos controles. Son topes propios por proceso, no una cuota
+autorizada por la Corte.
+
+Un bloqueo confirmado por la página o redirección de Imperva pausa esa operación durante
+cinco minutos. La pausa separa colección y método para conservar las búsquedas cuando
+solo falla el detalle. Tras vencer, una consulta vuelve a comprobar la ruta; si sigue
+bloqueada, la pausa se renueva. No se ejecutan retos de navegador. Un 302/403 sin huellas
+de Imperva se reporta como respuesta HTTP, sin atribuirle una causa no comprobada.
+
+Las respuestas 429/503 respetan `Retry-After`, tanto en segundos como en fecha HTTP,
+mediante una pausa compartida por fuente. Esperas superiores a cinco segundos se devuelven
+al usuario sin mantener abierta la llamada. Las consultas simultáneas idénticas comparten
+una petición. La caché conserva como máximo 400 entradas y 32 MiB de contenido JSON;
+este último valor no equivale a la memoria total del proceso. Sigue siendo una caché en
+memoria, sin persistir términos de búsqueda en disco.
+
+El Repositorio también puede quedar bloqueado. El respaldo de gacetas declara su cobertura
+y fecha; no debe interpretarse como una copia completa o actualizada de todo el SJF.
+Una excepción de bots o una credencial requiere autorización de la SCJN: estos controles
+no levantan el bloqueo por sí solos.
+
 ### El TEPJF no se consulta: se sirve
 
 Es la única fuente que no sale a la red. Su API ignora el parámetro de búsqueda y devuelve
@@ -95,6 +121,7 @@ python test_sincronizar_tepjf.py  # normalización del sincronizador, sin red
 python test_corteidh.py        # parser de la Corte IDH, sin red
 python test_ejecutorias.py     # módulo de ejecutorias, sin red
 python test_limites.py         # caché, concurrencia y reintentos, sin red
+python -m unittest test_acceso_scjn  # Retry-After, pausas y solicitudes compartidas, sin red
 python test_descubrimiento.py  # freno al auto-descubrimiento de endpoints, sin red
 python test_uso.py             # medición de uso y privacidad de /uso, sin red
 python test_eeuu.py            # CourtListener y aislamiento del llavero, sin red

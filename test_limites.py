@@ -28,6 +28,10 @@ def comprobar(nombre, condicion, detalle=""):
 
 def limpiar():
     """Deja el estado global como recién arrancado."""
+    k._PAUSAS.clear()
+    k._ULTIMA_SCJN.clear()
+    k._SEMAFOROS.clear()
+    k.INTERVALO_SCJN_S = 0
     k._CACHE._datos.clear()
     k._CACHE.acierto = k._CACHE.fallo = 0
     k._PETICIONES.clear()

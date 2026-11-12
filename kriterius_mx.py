@@ -36,7 +36,7 @@ import tepjf
 
 # Única fuente del número de versión. server_http.py la importa de aquí para que
 # /salud y estado_conector no puedan volver a discrepar.
-VERSION = "2.13.0"
+VERSION = "2.13.1"
 
 BASE = "https://sjf2.scjn.gob.mx/services/sjftesismicroservice/api/public"
 BASE_EJEC = "https://sjf2.scjn.gob.mx/services/sjfejecutoriamicroservice/api/public"
@@ -54,9 +54,7 @@ HEADERS = {
     "Accept-Language": "es-MX,es;q=0.9",
     "Origin": HOST,
     "Referer": f"{HOST}/busqueda-principal-tesis",
-    "User-Agent": ("Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) "
-                   "AppleWebKit/537.36 (KHTML, like Gecko) "
-                   "Chrome/126.0.0.0 Safari/537.36"),
+    "User-Agent": f"KriteriusMX/{VERSION} (+https://kriterius.mx)",
 }
 
 # ---- Cuidado de las fuentes: caché, freno de concurrencia y reintentos ----
@@ -83,6 +81,7 @@ import time as _time
 from collections import OrderedDict as _OrderedDict, deque as _deque
 
 CACHE_MAX_ENTRADAS = 400
+CACHE_MAX_BYTES = 32 * 1024 * 1024  # tamaño JSON de los valores, no RSS del proceso
 LIMITE_PETICIONES_MINUTO = 60
 ESPERA_MAX_CUPO_S = 3.0
 
@@ -97,16 +96,23 @@ TTL = {
     "dof_indicadores": 12 * 3600,
 }
 
-CONCURRENCIA = {"sjf": 4, "repo": 3, "tfja": 3, "dof": 6, "bjdh": 3}
+CONCURRENCIA = {"sjf": 1, "repo": 1, "tfja": 3, "dof": 6, "bjdh": 3}
+# Conservadores hasta que la SCJN indique su cuota. No son una cuota autorizada.
+PAUSA_WAF_S = 300
+INTERVALO_SCJN_S = 1.0
+ESPERA_MAX_REINTENTO_S = 5.0
 
 
 class _Cache:
     """Caché en memoria con vencimiento y tope de entradas. Descarta lo más viejo
     cuando se llena, que en 512 MB de RAM es lo que evita un disgusto."""
 
-    def __init__(self, max_entradas: int = CACHE_MAX_ENTRADAS):
+    def __init__(self, max_entradas: int = CACHE_MAX_ENTRADAS,
+                 max_bytes: int = CACHE_MAX_BYTES):
         self._datos: _OrderedDict = _OrderedDict()
         self._max = max_entradas
+        self._max_bytes = max_bytes
+        self._pesos: dict = {}
         self.acierto = 0
         self.fallo = 0
 
@@ -118,6 +124,7 @@ class _Cache:
         valor, vence = item
         if _time.time() > vence:
             del self._datos[clave]
+            self._pesos.pop(clave, None)
             self.fallo += 1
             return None
         self._datos.move_to_end(clave)
@@ -127,20 +134,72 @@ class _Cache:
     def guardar(self, clave: str, valor, ttl: float) -> None:
         if valor is None:
             return
+        # Los textos completos varían mucho de tamaño: 400 sentencias no caben
+        # necesariamente en 512 MB. No retener valores que excedan el presupuesto.
+        try:
+            peso = len(_json.dumps(valor, ensure_ascii=False).encode("utf-8"))
+        except (TypeError, ValueError):
+            return  # un valor no serializable no debe convertir una lectura en fallo
+        if peso > self._max_bytes:
+            self._datos.pop(clave, None)
+            self._pesos.pop(clave, None)
+            return
+        ahora = _time.time()
+        for anterior, (_, vence) in list(self._datos.items()):
+            if vence <= ahora:
+                del self._datos[anterior]
+        self._pesos = {c: p for c, p in self._pesos.items() if c in self._datos}
         self._datos[clave] = (valor, _time.time() + ttl)
+        self._pesos[clave] = peso
         self._datos.move_to_end(clave)
-        while len(self._datos) > self._max:
-            self._datos.popitem(last=False)
+        usados = sum(self._pesos.values())
+        while len(self._datos) > self._max or usados > self._max_bytes:
+            anterior, _ = self._datos.popitem(last=False)
+            usados -= self._pesos.pop(anterior, 0)
 
     def resumen(self) -> str:
         total = self.acierto + self.fallo
         pct = (self.acierto / total * 100) if total else 0
-        return f"{len(self._datos)}/{self._max} entradas · {self.acierto} aciertos de {total} ({pct:.0f}%)"
+        usados = sum(self._pesos.get(c, 0) for c in self._datos)
+        return (f"{len(self._datos)}/{self._max} entradas · "
+                f"{usados / 1048576:.1f}/{self._max_bytes / 1048576:.0f} MiB de datos JSON · "
+                f"{self.acierto} aciertos de {total} ({pct:.0f}%)")
 
 
 _CACHE = _Cache()
 _SEMAFOROS: dict = {}
 _PETICIONES = _deque()
+_PAUSAS: dict = {}
+_ULTIMA_SCJN: dict = {}
+_EN_CURSO: dict = {}
+
+
+def _retry_after(valor: str | None) -> float | None:
+    """Retry-After admite segundos enteros o una fecha HTTP (RFC 9110)."""
+    from email.utils import parsedate_to_datetime
+    if not valor:
+        return None
+    try:
+        if re.fullmatch(r"[0-9]+", valor.strip()):
+            return float(valor.strip())
+        return max(0.0, parsedate_to_datetime(valor).timestamp() - _time.time())
+    except (ValueError, TypeError, OverflowError):
+        return None
+
+
+def _comprobar_pausa(clave: str | None):
+    if clave and clave in _PAUSAS:
+        vence, status, motivo = _PAUSAS[clave]
+        restante = vence - _time.monotonic()
+        if restante > 0:
+            raise _PausaFuente(status, restante, motivo)
+        del _PAUSAS[clave]
+
+
+def _poner_pausa(clave: str, segundos: float, status: int, motivo: str):
+    vence = _time.monotonic() + segundos
+    if vence > _PAUSAS.get(clave, (0,))[0]:
+        _PAUSAS[clave] = (vence, status, motivo)
 
 
 def _semaforo(fuente: str):
@@ -166,7 +225,7 @@ async def _esperar_cupo() -> None:
             _PETICIONES.append(ahora)
             return
         if _time.monotonic() >= limite:
-            raise RuntimeError(
+            raise _CupoAgotado(
                 f"el conector alcanzó su tope de {LIMITE_PETICIONES_MINUTO} consultas por minuto "
                 f"a las fuentes oficiales. Espera unos segundos y vuelve a intentar."
             )
@@ -178,6 +237,10 @@ def _es_pasajero(e: Exception) -> bool:
     # contener "Imperva" o "temporal" (ver _BloqueoWAF) sin que eso vuelva pasajero un
     # bloqueo del WAF. Reintentar tres veces contra un WAF que ya dijo que no solo
     # empeora la reputación de la IP del servidor.
+    if isinstance(e, (_BloqueoWAF, _PausaFuente, _CupoAgotado)):
+        return False
+    if isinstance(e, httpx.HTTPStatusError):
+        return e.response.status_code in (429, 502, 503, 504)
     if isinstance(e, _RespuestaHTTP):
         return e.status in (429, 502, 503, 504)
     if isinstance(e, (httpx.TimeoutException, httpx.ConnectError, httpx.ReadError)):
@@ -186,7 +249,8 @@ def _es_pasajero(e: Exception) -> bool:
     return any(s in m for s in ("429", "502", "503", "504", "imperva", "timeout", "temporal"))
 
 
-async def _traer(fuente: str, hacer, clave: str | None = None, ttl: float | None = None):
+async def _traer(fuente: str, hacer, clave: str | None = None, ttl: float | None = None,
+                 pausa: str | None = None):
     """Punto único de salida a la red: consulta la caché, respeta el tope global,
     limita la concurrencia por fuente y reintenta los fallos pasajeros."""
     if clave:
@@ -194,22 +258,64 @@ async def _traer(fuente: str, hacer, clave: str | None = None, ttl: float | None
         if guardado is not None:
             return guardado
 
-    await _esperar_cupo()
+    # Una consulta idéntica comparte la operación; cancelar un consumidor no
+    # cancela la petición que esperan los demás. El callback retira éxitos y fallos.
+    if clave:
+        pendiente = _EN_CURSO.get(clave)
+        if pendiente is not None:
+            return await _asyncio.shield(pendiente)
 
-    async with _semaforo(fuente):
-        ultimo: Exception | None = None
-        for intento in range(3):
-            try:
-                resultado = await hacer()
-                if clave and ttl:
-                    _CACHE.guardar(clave, resultado, ttl)
-                return resultado
-            except Exception as e:
-                ultimo = e
-                if intento == 2 or not _es_pasajero(e):
-                    raise
-                await _asyncio.sleep(2 ** intento)
-        raise ultimo  # pragma: no cover
+    async def ejecutar():
+        async with _semaforo(fuente):
+            for intento in range(3):
+                _comprobar_pausa(pausa)
+                _comprobar_pausa(f"tasa:{fuente}")
+                if fuente in ("sjf", "repo"):
+                    espera = INTERVALO_SCJN_S - (_time.monotonic() - _ULTIMA_SCJN.get(fuente, 0))
+                    if espera > 0:
+                        await _asyncio.sleep(espera)
+                # Cada reintento consume cupo, después de esperar su turno.
+                await _esperar_cupo()
+                if fuente in ("sjf", "repo"):
+                    _ULTIMA_SCJN[fuente] = _time.monotonic()
+                try:
+                    resultado = await hacer()
+                    if clave and ttl:
+                        _CACHE.guardar(clave, resultado, ttl)
+                    return resultado
+                except Exception as e:
+                    if isinstance(e, _BloqueoWAF) and pausa:
+                        _poner_pausa(pausa, PAUSA_WAF_S, e.status, str(e))
+                    status = getattr(e, "status", None)
+                    espera_servidor = getattr(e, "retry_after", None)
+                    if isinstance(e, httpx.HTTPStatusError):
+                        status = e.response.status_code
+                        espera_servidor = _retry_after(e.response.headers.get("Retry-After"))
+                    if status in (429, 503) and espera_servidor is not None:
+                        _poner_pausa(f"tasa:{fuente}", espera_servidor, status,
+                                     "la fuente solicitó esperar mediante Retry-After")
+                    if intento == 2 or not _es_pasajero(e):
+                        raise
+                    espera = max(2 ** intento, espera_servidor or 0)
+                    # No mantener una tool abierta durante minutos; las siguientes
+                    # consultas respetan la pausa compartida, incluso si esta termina.
+                    if espera > ESPERA_MAX_REINTENTO_S:
+                        raise
+                    await _asyncio.sleep(espera)
+
+    if not clave:
+        return await ejecutar()
+    tarea = _asyncio.create_task(ejecutar())
+    _EN_CURSO[clave] = tarea
+
+    def terminado(t):
+        if _EN_CURSO.get(clave) is t:
+            del _EN_CURSO[clave]
+        if not t.cancelled():
+            t.exception()  # recuperar la excepción aunque se cancelen todos los consumidores
+
+    tarea.add_done_callback(terminado)
+    return await _asyncio.shield(tarea)
 
 
 # El SDK trae protección contra DNS rebinding y la aplica al transporte HTTP:
@@ -278,9 +384,23 @@ class _RespuestaHTTP(RuntimeError):
     bajara la página del SJF con sus dos bundles de JavaScript: tres peticiones
     tiradas por cada tesis vieja."""
 
-    def __init__(self, status: int):
+    def __init__(self, status: int, retry_after: float | None = None):
         self.status = status
+        self.retry_after = retry_after
         super().__init__(f"respondió {status}")
+
+
+class _CupoAgotado(_RespuestaHTTP):
+    def __init__(self, mensaje):
+        super().__init__(429)
+        self.args = (mensaje,)
+
+
+class _PausaFuente(_RespuestaHTTP):
+    def __init__(self, status, segundos, motivo):
+        super().__init__(status)
+        self.args = (f"Consulta en pausa durante {int(segundos) + 1}s: {motivo}. "
+                     "No se envió otra petición a esa ruta.",)
 
 
 # Desde el 3 de septiembre de 2026 sjf2.scjn.gob.mx está detrás de Imperva Incapsula.
@@ -288,7 +408,6 @@ class _RespuestaHTTP(RuntimeError):
 # verificación o lo niega en seco (403); y si se sigue la redirección, entrega su página
 # HTML en lugar del JSON del API. Nada de eso es una respuesta del API ni un registro
 # inexistente, y tampoco un "cambio de API" que amerite re-mapear.
-_CODIGOS_WAF = frozenset({301, 302, 303, 307, 308, 403})
 _HUELLA_WAF = re.compile(r"Incapsula|_Incapsula_Resource|Request unsuccessful", re.I)
 
 
@@ -326,10 +445,11 @@ def _clasificar_respuesta_scjn(r, coleccion: str):
     """Levanta la excepción que corresponde a una respuesta del SJF que no es JSON
     utilizable: bloqueo del WAF (302/403 o su página HTML), código HTTP del API, o
     contenido no-JSON de origen desconocido. Devuelve el JSON o None si vino vacío."""
-    if r.status_code in _CODIGOS_WAF:
-        raise _BloqueoWAF(r.status_code, coleccion)
+    headers = getattr(r, "headers", {})
     if r.status_code != 200:
-        raise _RespuestaHTTP(r.status_code)
+        if _HUELLA_WAF.search(r.text) or _HUELLA_WAF.search(headers.get("location", "")):
+            raise _BloqueoWAF(r.status_code, coleccion)
+        raise _RespuestaHTTP(r.status_code, _retry_after(headers.get("retry-after")))
     if not r.text.strip():
         return None
     try:
@@ -351,16 +471,27 @@ async def _sjf_descubrir_base(coleccion: str = "tesis") -> str | None:
     ejec = coleccion == "ejecutoria"
     patron = r"/services/[A-Za-z0-9_-]+/api/public"
     pagina = "/busqueda-principal-ejecutorias" if ejec else "/busqueda-principal-tesis"
-    async with httpx.AsyncClient(headers=HEADERS, timeout=30, follow_redirects=True) as client:
-        r = await client.get(f"{HOST}{pagina}")
-        rutas = re.findall(patron, r.text)
+    async with httpx.AsyncClient(headers=HEADERS, timeout=30) as client:
+        async def html_de(url):
+            async def pedir():
+                respuesta = await client.get(url)
+                if (_HUELLA_WAF.search(respuesta.text)
+                        or respuesta.status_code != 200):
+                    _clasificar_respuesta_scjn(respuesta, "descubrimiento")
+                return respuesta.text
+            return await _traer("sjf", pedir, pausa="sjf:descubrimiento")
+
+        texto = await html_de(f"{HOST}{pagina}")
+        rutas = re.findall(patron, texto)
         if not rutas:
             scripts = re.findall(r"src=[\"']([^\"']*(?:main|runtime|chunk)[^\"']*\.js)[\"']",
-                                 r.text, flags=re.I)[:4]
+                                 texto, flags=re.I)[:4]
             for s in scripts:
                 try:
-                    js = (await client.get(urljoin(HOST + "/", s))).text
+                    js = await html_de(urljoin(HOST + "/", s))
                     rutas += re.findall(patron, js)
+                except (_BloqueoWAF, _PausaFuente, _CupoAgotado):
+                    raise
                 except Exception:
                     continue
     ruta = next((x for x in rutas if coleccion in x.lower()), None)
@@ -391,7 +522,8 @@ async def _sjf_fetch(path: str, method: str = "GET", json_body: dict | None = No
             return _clasificar_respuesta_scjn(r, "tesis")
 
     async def intento():
-        return await _traer("sjf", pedir, clave=clave, ttl=ttl)
+        return await _traer("sjf", pedir, clave=clave, ttl=ttl,
+                            pausa=f"sjf:tesis:{method}")
 
     try:
         return await intento()
@@ -434,6 +566,8 @@ async def _sjf_fetch(path: str, method: str = "GET", json_body: dict | None = No
 
 def _motivo_respaldo(e: Exception) -> str:
     """Cómo describirle al usuario por qué se está usando el respaldo."""
+    if isinstance(e, (_PausaFuente, _CupoAgotado)):
+        return str(e)
     if isinstance(e, _BloqueoWAF):
         return (f"el cortafuegos de la SCJN (Imperva) rechazó la petición "
                 f"(HTTP {getattr(e, 'status', '?')})")
@@ -501,7 +635,10 @@ async def _repo_fetch(ruta: str, method: str = "GET", json_body: dict | None = N
             datos = _clasificar_respuesta_scjn(r, "Repositorio de la SCJN")
             return transformar(datos) if (transformar and datos is not None) else datos
 
-    return await _traer("repo", pedir, clave=clave, ttl=ttl)
+    # Pausa por operación y colección: un detalle bloqueado no apaga búsquedas.
+    coleccion = ruta.split("/")[3] if ruta.startswith("/api/v1/") else "busqueda"
+    return await _traer("repo", pedir, clave=clave, ttl=ttl,
+                        pausa=f"repo:{coleccion}:{method}")
 
 
 async def _repo_documento(indice: str, id_) -> dict | None:
@@ -549,6 +686,8 @@ def _motivo_sjf(e: Exception | None) -> str:
     """El motivo, redactado para seguir a "porque el API del Semanario …"."""
     if e is None:
         return "no devolvió ese registro"
+    if isinstance(e, (_PausaFuente, _CupoAgotado)):
+        return f"no se consultó: {e}"
     if isinstance(e, _BloqueoWAF):
         # Con 200 Imperva entregó su página de verificación en lugar del JSON.
         como = ("su página de verificación" if getattr(e, "status", 0) == 200
@@ -1118,7 +1257,8 @@ async def _ejec_fetch(path: str, method: str = "GET", json_body: dict | None = N
             return _clasificar_respuesta_scjn(r, "ejecutorias")
 
     async def intento():
-        return await _traer("sjf", pedir, clave=clave, ttl=ttl)
+        return await _traer("sjf", pedir, clave=clave, ttl=ttl,
+                            pausa=f"sjf:ejecutorias:{method}")
 
     try:
         return await intento()
@@ -3622,6 +3762,8 @@ async def estado_conector() -> str:
         f"Peticiones a fuentes en el último minuto: {recientes} de {LIMITE_PETICIONES_MINUTO}",
         f"Concurrencia máxima por fuente: " +
         ", ".join(f"{k} {v}" for k, v in CONCURRENCIA.items()),
+        f"SCJN: separación mínima {INTERVALO_SCJN_S}s; pausa ante WAF {PAUSA_WAF_S}s; "
+        f"{sum(1 for p in _PAUSAS.values() if p[0] > ahora)} pausas activas.",
         "",
         "Si una tool dio timeout pero esta responde, el problema es el sitio de origen "
         "(lento o caído), no el conector. Ejecuta diagnosticar_conector para saber "

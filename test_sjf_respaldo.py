@@ -56,6 +56,7 @@ class _Resp:
     def __init__(self, status, text):
         self.status_code = status
         self.text = text
+        self.headers = {"location": "/_Incapsula_Resource"} if status in (302, 403) else {}
 
     def json(self):
         return json.loads(self.text)
@@ -81,6 +82,10 @@ class _ClienteFalso:
 
 def _preparar(status, texto=""):
     VISITAS.clear()
+    k._PAUSAS.clear()
+    k._ULTIMA_SCJN.clear()
+    k._SEMAFOROS.clear()
+    k.INTERVALO_SCJN_S = 0
     k._CACHE._datos.clear()
     k._PETICIONES.clear()
     _ClienteFalso.guion = _Resp(status, texto)

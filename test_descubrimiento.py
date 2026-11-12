@@ -87,6 +87,10 @@ def _usar(cliente):
 def _preparar(status_o_texto=404, texto=""):
     """Deja el cliente falso listo y borra caché y registro de visitas."""
     VISITAS.clear()
+    k._PAUSAS.clear()
+    k._ULTIMA_SCJN.clear()
+    k._SEMAFOROS.clear()
+    k.INTERVALO_SCJN_S = 0
     k._CACHE._datos.clear()
     if isinstance(status_o_texto, int):
         _ClienteFalso.guion = _Resp(status_o_texto, texto)
