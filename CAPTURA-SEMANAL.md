@@ -12,10 +12,35 @@ Pruebas remotas reales en GitHub Actions (Chromium limpio, Playwright 1.64.1):
 | --- | --- | --- |
 | Ficha 2032910 directa | HTTP 403, texto visible vacío, lote detenido | [Ejecución 43563230794](https://github.com/G8olio/kriterius-mx/actions/runs/43563230794) |
 | Portada `/presentacion` | HTTP 403 antes de buscar, lote detenido | [Ejecución 43563390938](https://github.com/G8olio/kriterius-mx/actions/runs/43563390938) |
+| Reintento de portada, 14 nov. 02:11 CDMX | HTTP 403; pantalla de Imperva `Access denied / Error 15` | [Ejecución 43574555441](https://github.com/G8olio/kriterius-mx/actions/runs/43574555441) |
 
 El lote solicitado fue 2032910, 2032896 y 2032921. **Cero capturas remotas válidas**;
-las dos últimas fichas no se solicitaron tras el rechazo. El 403 demuestra rechazo
-desde ese entorno, pero no identifica por sí solo qué regla o proveedor lo causó.
+las dos últimas fichas no se solicitaron tras el rechazo. El 403 por sí solo no
+identificaba qué regla o proveedor lo causó. En el reintento del 14 de noviembre,
+la captura de pantalla sí mostró explícitamente **Imperva, Error 15** y el mensaje
+`This request was blocked by our security service`.
+
+Detalle verificable del reintento (commit `f5b3cfa`):
+
+- Una navegación principal a `/presentacion`, detenida antes de buscar.
+- HTML de 885 bytes; cabecera `x-iinfo` y marcadores `incapsula`,
+  `_incapsula_resource` y `request unsuccessful`.
+- Incidente mostrado: `10000370911189942-936591440797239663`.
+- Fecha del incidente: 2026-11-14 08:11:15 UTC, equivalente a 02:11:15 en CDMX.
+- IP del trabajador de GitHub mostrada por Imperva: `4.236.95.147` (no es la Mac).
+- [Artefacto de diagnóstico](https://github.com/G8olio/kriterius-mx/actions/runs/43574555441/artifacts/14105422722):
+  `informe.json`, `interrupcion.txt` y `interrupcion.png`.
+- 17 pruebas de captura e integridad aprobadas antes del intento en el trabajador.
+
+Esta evidencia confirma que intervino el servicio de seguridad de Imperva. No
+expone la regla exacta ni demuestra si el motivo fue IP, sesión, automatización
+u otra condición. El identificador permite solicitar al administrador que revise
+el evento concreto; todavía no acredita que sea obligatoria una excepción.
+
+El diagnóstico se obtiene de la respuesta ya recibida, sin peticiones extra.
+Conserva solo cabeceras seleccionadas, tamaño, hash y marcadores; excluye cookies,
+parámetros de consulta y el HTML bruto. No se alteraron la identidad del navegador,
+sesiones ni configuración de red para este intento.
 
 La preparación de Playwright y sus dependencias en la consola temporal de la
 instancia de producción coincidió con la terminación del contenedor y un 504.
