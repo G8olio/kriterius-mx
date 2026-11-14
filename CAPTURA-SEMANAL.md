@@ -13,6 +13,7 @@ Pruebas remotas reales en GitHub Actions (Chromium limpio, Playwright 1.64.1):
 | Ficha 2032910 directa | HTTP 403, texto visible vacío, lote detenido | [Ejecución 43563230794](https://github.com/G8olio/kriterius-mx/actions/runs/43563230794) |
 | Portada `/presentacion` | HTTP 403 antes de buscar, lote detenido | [Ejecución 43563390938](https://github.com/G8olio/kriterius-mx/actions/runs/43563390938) |
 | Reintento de portada, 14 nov. 02:11 CDMX | HTTP 403; pantalla de Imperva `Access denied / Error 15` | [Ejecución 43574555441](https://github.com/G8olio/kriterius-mx/actions/runs/43574555441) |
+| Repetición con la misma versión, 14 nov. 02:29 CDMX | HTTP 403; mismo Error 15, cero fichas | [Segundo intento](https://github.com/G8olio/kriterius-mx/actions/runs/43574555441/attempts/2) |
 
 El lote solicitado fue 2032910, 2032896 y 2032921. **Cero capturas remotas válidas**;
 las dos últimas fichas no se solicitaron tras el rechazo. El 403 por sí solo no
@@ -41,6 +42,45 @@ El diagnóstico se obtiene de la respuesta ya recibida, sin peticiones extra.
 Conserva solo cabeceras seleccionadas, tamaño, hash y marcadores; excluye cookies,
 parámetros de consulta y el HTML bruto. No se alteraron la identidad del navegador,
 sesiones ni configuración de red para este intento.
+
+La repetición solicitada el 14 de noviembre, a las 02:29:46 CDMX, obtuvo el mismo
+rechazo de portada con la misma versión del capturador. El trabajador asignado
+por GitHub mostró IP `9.234.220.199` e incidente
+`2212000061778361281-924838855635632565`. No se seleccionó ni rotó una IP desde el
+código. La respuesta fue HTML de 887 bytes con los mismos marcadores de Incapsula.
+Las 17 pruebas previas al acceso pasaron; no se buscó ni capturó ninguna tesis.
+[Artefacto del segundo intento](https://github.com/G8olio/kriterius-mx/actions/runs/43574555441/artifacts/14105893017).
+
+## Soluciones propuestas
+
+1. **Captura asistida provisional.** Usar la navegación pública ordinaria que ya
+   permitió leer una ficha en la Mac, validar otras tres fichas y preparar su
+   importación al almacén de Kriterius. Mantener fecha y fuente. Solo hay evidencia
+   de una ficha; no está demostrada una captura masiva o desatendida en la Mac.
+2. **Integración acordada con la SCJN.** Presentar los incidentes y solicitar la
+   revisión de la regla, un acceso identificado o un canal oficial de entrega.
+   Proponer consultas de lectura, frecuencia pactada, caché y contacto técnico.
+   Usar IP estable o credenciales si la institución define ese mecanismo. Contratar
+   una IP fija sin ese acuerdo no garantiza solucionar el rechazo.
+3. **Respaldo por publicaciones oficiales.** Evaluar las descargas en formatos
+   abiertos del Repositorio y los tomos de la Gaceta para incorporar novedades.
+   Comprobar primero contenido, completitud y fecha: los rechazos previos del
+   Repositorio y el catálogo consultado de Gaceta hasta octubre impiden prometer
+   que estos canales entreguen hoy las tesis nuevas del 13 de noviembre.
+4. **Capturador separado del servicio MCP.** Ejecutar la obtención en un trabajador
+   aparte y publicar solo fichas validadas. Resuelve el aislamiento de recursos,
+   pero no por sí mismo el rechazo del portal. Ya es la arquitectura del borrador.
+
+La hipótesis de un filtro por cliente/red/sesión es compatible con un rechazo
+antes de buscar, pero no identifica la causa. Imperva documenta señales de
+reputación, cabeceras, IP/ASN, cookies y JavaScript en su
+[guía de seguridad](https://www.imperva.com/learn/application-security/website-security/).
+No se tuvo acceso a los registros de seguridad de la SCJN ni a la regla activada.
+
+Fuentes oficiales para evaluar el respaldo:
+[manual de descarga del Repositorio](https://bicentenario.scjn.gob.mx/manual-usuario-descarga)
+(localizado en el índice de búsqueda; la apertura directa devolvió 403) y
+[catálogo de la Gaceta](https://www.scjn.gob.mx/coordinacion/gaceta).
 
 La preparación de Playwright y sus dependencias en la consola temporal de la
 instancia de producción coincidió con la terminación del contenedor y un 504.
