@@ -20,7 +20,7 @@ jobs:
           python-version: '3.12'
       - run: pip install -r requirements-captura.txt
       - run: python -m playwright install --with-deps --only-shell chromium
-      - run: python capturar_semanal.py 2032910 2032896 2032921
+      - run: python capturar_semanal.py --via-portal 2032910 2032896 2032921
       - uses: actions/upload-artifact@v4
         if: always()
         with:

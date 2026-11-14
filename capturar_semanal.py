@@ -2,6 +2,7 @@
 import argparse
 import asyncio
 import json
+import re
 from pathlib import Path
 
 BASE = "https://sjfsemanal.scjn.gob.mx"
@@ -12,6 +13,7 @@ async def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("registros", nargs="+", type=int)
     parser.add_argument("--salida", default="capturas_semanal")
+    parser.add_argument("--via-portal", action="store_true")
     args = parser.parse_args()
     if not 1 <= len(args.registros) <= 5:
         parser.error("La prueba admite de 1 a 5 registros")
@@ -22,11 +24,32 @@ async def main():
         try:
             context = await browser.new_context(locale="es-MX")
             page = await context.new_page()
+            if args.via_portal:
+                response = await page.goto(f"{BASE}/presentacion", wait_until="domcontentloaded", timeout=60000)
+                (out / "entrada.json").write_text(json.dumps({"url":page.url,"status":response.status if response else None}))
+                if response and response.status >= 400:
+                    (out / "entrada.txt").write_text(await page.locator("body").inner_text())
+                    await page.screenshot(path=str(out / "entrada.png"), full_page=True)
+                    raise RuntimeError(f"La portada del portal rechazó el acceso: HTTP {response.status}; sin reintentos")
+                await page.get_by_text("TESIS", exact=True).click(timeout=30000)
             for i, registro in enumerate(args.registros):
                 if i:
                     await asyncio.sleep(20)
                 url = f"{BASE}/detalle/tesis/{registro}"
-                response = await page.goto(url, wait_until="domcontentloaded", timeout=60000)
+                if args.via_portal:
+                    if i:
+                        await page.goto(f"{BASE}/busqueda-principal-tesis", wait_until="domcontentloaded", timeout=60000)
+                    await page.get_by_text("Búsqueda por número de registro", exact=False).click(timeout=30000)
+                    inputs = page.locator("input:visible:not([type=checkbox]):not([type=radio])")
+                    if await inputs.count() != 1:
+                        (out / "busqueda.txt").write_text(await page.locator("body").inner_text())
+                        raise RuntimeError("La búsqueda no expone un único campo de registro; revisar plantilla")
+                    await inputs.fill(str(registro))
+                    await page.get_by_role("button", name="Buscar", exact=True).click()
+                    await page.get_by_text(re.compile(rf"Registro digital:\s*{registro}")).first.click(timeout=30000)
+                    await page.wait_for_url(url, timeout=30000)
+                else:
+                    response = await page.goto(url, wait_until="domcontentloaded", timeout=60000)
                 try:
                     await page.get_by_text(f"Registro digital: {registro}", exact=False).first.wait_for(timeout=45000)
                 except Exception:
