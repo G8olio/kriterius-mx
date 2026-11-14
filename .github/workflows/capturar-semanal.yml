@@ -1,9 +1,13 @@
+# Manual hasta validar acceso remoto: el 14-11-2026 la portada devolvió 403.
+# No hay cron ni reintentos automáticos contra un origen que ha rechazado acceso.
 name: Capturar tesis del portal semanal
 on:
-  push:
-    branches: [feat/scjn-semanal-captura-20261113]
-    paths: [.github/workflows/capturar-semanal.yml]
   workflow_dispatch:
+    inputs:
+      registros:
+        description: 'Entre 1 y 5 registros digitales separados por espacios'
+        required: true
+        default: '2032910 2032896 2032921'
 permissions:
   contents: read
 concurrency:
@@ -18,11 +22,17 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: '3.12'
-      - run: pip install -r requirements-captura.txt
+      - run: pip install -r requirements.txt -r requirements-captura.txt
+      - name: Validar captura e integración sin red
+        run: python -m unittest test_sjf_semanal test_capturar_semanal
       - run: python -m playwright install --with-deps --only-shell chromium
-      - run: python capturar_semanal.py --via-portal 2032910 2032896 2032921
+      - name: Capturar lote serial
+        env:
+          KRITERIUS_REGISTROS_CAPTURA: ${{ inputs.registros }}
+        run: python capturar_semanal.py
       - uses: actions/upload-artifact@v4
         if: always()
         with:
           name: capturas-semanal
           path: capturas_semanal/
+          retention-days: 30
