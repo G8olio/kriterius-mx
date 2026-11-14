@@ -1,0 +1,28 @@
+name: Capturar tesis del portal semanal
+on:
+  push:
+    branches: [feat/scjn-semanal-captura-20261113]
+    paths: [.github/workflows/capturar-semanal.yml]
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: captura-semanal
+  cancel-in-progress: false
+jobs:
+  capturar:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: pip install -r requirements-captura.txt
+      - run: python -m playwright install --with-deps --only-shell chromium
+      - run: python capturar_semanal.py 2032910 2032896 2032921
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: capturas-semanal
+          path: capturas_semanal/
