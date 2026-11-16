@@ -72,7 +72,7 @@ class Fichas(unittest.TestCase):
             self.assertIsNone(s.obtener(ius))
 
     def test_guardado_atomico_y_lectura(self):
-        with tempfile.TemporaryDirectory() as tmp, patch.dict("os.environ", {"KRITERIUS_SEMANAL_DIR": tmp}):
+        with tempfile.TemporaryDirectory() as tmp, patch.dict("os.environ", {"KRITERIUS_SEMANAL_DIR": tmp}), patch.object(s, "DIRECTORIO_DISTRIBUIDO", Path(tmp) / "sin_snapshot"):
             c = s.empaquetar(VISIBLE, 2032910)
             s.guardar(c, tmp)
             self.assertEqual(list(Path(tmp).iterdir()), [Path(tmp) / "2032910.json"])

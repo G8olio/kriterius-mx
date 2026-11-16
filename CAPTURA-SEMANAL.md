@@ -1,10 +1,42 @@
 # Captura del portal semanal
 
-## Estado de validación — 14 de noviembre de 2026 UTC
+## Estado de validación — 16 de noviembre de 2026
 
-Implementación en revisión, **no desplegada**. No se ha logrado capturar un lote
-de tesis nuevas desde un servidor. La ficha 2032910 sí se leyó completa en Chrome
-en la Mac el 13 de noviembre; esa evidencia no demuestra acceso automatizado.
+Implementación en revisión, **no desplegada en producción**. La captura asistida
+en Chrome obtuvo tres fichas completas del 13 de noviembre y el Repositorio
+oficial permitió contrastar las mismas tres. Se incorporan copias fechadas a la
+distribución de Kriterius. No se ha logrado capturar un lote desde un servidor.
+
+| Registro | Clave | Texto y precedentes | Contraste con Repositorio |
+| --- | --- | ---: | --- |
+| 2032910 | P./J. 222/2026 (12a.) | 3,689 caracteres | Coincide |
+| 2032896 | P. VII/2026 (12a.) | 4,548 caracteres | Coincide |
+| 2032921 | P./J. 228/2026 (12a.) | 3,500 caracteres | Coincide |
+
+Se verificó la VPN antes de navegar. Se usó portada → búsqueda por registros →
+detalle, conservando texto visible, URL, fecha y capturas de pantalla. El canal
+se registra como Chrome mediante CUA; no se atribuye a Playwright remoto.
+
+El [Repositorio](https://bicentenario.scjn.gob.mx/repositorio-scjn/sjf) abrió en
+la misma sesión y la búsqueda `2032910 OR 2032896 OR 2032921` dio tres resultados.
+Su tabla visible contiene cuerpo, precedentes, nota de publicación y huella.
+Coinciden diez comprobaciones por ficha, incluidos rubro, clave, materias y
+texto íntegro. Para comparar se normalizan espacios, se retiran tres separadores
+vacíos al final de precedentes y se ignora el punto final del nombre de la fuente.
+Los originales permanecen intactos. La huella mostrada por el Repositorio se
+conserva como metadato: no se afirma haber verificado su algoritmo o firma.
+
+El botón Descargar no produjo un archivo confirmado por la herramienta; **no se
+declara éxito de CSV/ZIP**. El respaldo obtenido es una captura de la tabla visible,
+conservada en `fixtures_semanal/repositorio-20261116.json`. La pestaña API muestra
+los endpoints documentados de conteo, IDs y detalle; su lectura no demuestra
+que estén accesibles desde un trabajador remoto. El manual permite exportar
+hasta 100 registros y remite a una cita para solicitudes mayores.
+
+La [Gaceta](https://www.scjn.gob.mx/coordinacion/gaceta?epoca_id=1) sigue mostrando
+octubre de 2026 como último libro. No se usa como prueba de las novedades de noviembre.
+
+## Antecedentes de acceso remoto
 
 Pruebas remotas reales en GitHub Actions (Chromium limpio, Playwright 1.64.1):
 
@@ -53,20 +85,17 @@ Las 17 pruebas previas al acceso pasaron; no se buscó ni capturó ninguna tesis
 
 ## Soluciones propuestas
 
-1. **Captura asistida provisional.** Usar la navegación pública ordinaria que ya
-   permitió leer una ficha en la Mac, validar otras tres fichas y preparar su
-   importación al almacén de Kriterius. Mantener fecha y fuente. Solo hay evidencia
-   de una ficha; no está demostrada una captura masiva o desatendida en la Mac.
+1. **Captura asistida provisional: probada.** Tres fichas reales completas,
+   contrastadas e importadas el 16 de noviembre. Mantener fecha y fuente.
+   No está demostrada una captura masiva o desatendida en la Mac.
 2. **Integración acordada con la SCJN.** Presentar los incidentes y solicitar la
    revisión de la regla, un acceso identificado o un canal oficial de entrega.
    Proponer consultas de lectura, frecuencia pactada, caché y contacto técnico.
    Usar IP estable o credenciales si la institución define ese mecanismo. Contratar
    una IP fija sin ese acuerdo no garantiza solucionar el rechazo.
-3. **Respaldo por publicaciones oficiales.** Evaluar las descargas en formatos
-   abiertos del Repositorio y los tomos de la Gaceta para incorporar novedades.
-   Comprobar primero contenido, completitud y fecha: los rechazos previos del
-   Repositorio y el catálogo consultado de Gaceta hasta octubre impiden prometer
-   que estos canales entreguen hoy las tesis nuevas del 13 de noviembre.
+3. **Respaldo por publicaciones oficiales: contenido comprobado.** El Repositorio
+   mostró los tres textos recientes y coincidentes. Falta confirmar el ZIP/CSV y
+   el acceso desde el servidor. La Gaceta mensual aún no cubre noviembre.
 4. **Capturador separado del servicio MCP.** Ejecutar la obtención en un trabajador
    aparte y publicar solo fichas validadas. Resuelve el aislamiento de recursos,
    pero no por sí mismo el rechazo del portal. Ya es la arquitectura del borrador.
@@ -77,9 +106,9 @@ reputación, cabeceras, IP/ASN, cookies y JavaScript en su
 [guía de seguridad](https://www.imperva.com/learn/application-security/website-security/).
 No se tuvo acceso a los registros de seguridad de la SCJN ni a la regla activada.
 
-Fuentes oficiales para evaluar el respaldo:
+Fuentes oficiales consultadas el 16 de noviembre:
 [manual de descarga del Repositorio](https://bicentenario.scjn.gob.mx/manual-usuario-descarga)
-(localizado en el índice de búsqueda; la apertura directa devolvió 403) y
+(abierto correctamente en Chrome; anteriormente había devuelto 403) y
 [catálogo de la Gaceta](https://www.scjn.gob.mx/coordinacion/gaceta).
 
 La preparación de Playwright y sus dependencias en la consola temporal de la
@@ -96,12 +125,38 @@ el navegador. No se cambió su tamaño ni se contrató infraestructura.
   detalle. Produce texto, metadatos, procedencia, hash local y reporte.
 - `sjf_semanal.py`: valida identidad, metadatos, cierre de publicación, fecha y
   correspondencia entre campos y texto. Escritura atómica; lectura sin red.
+- `importar_semanal.py`: importa texto visible y metadatos de una captura asistida;
+  puede exigir contraste con la tabla del Repositorio. Valida todo el lote antes
+  de escribir. Conserva la fecha original: importar no renueva la vigencia.
 - `ver_tesis`: usa primero una captura íntegra con antigüedad máxima de 30 días.
   Indica la URL y fecha de obtención. Si no existe una captura válida, conserva
   los respaldos previos. No inicia Chromium desde una consulta MCP.
 - El texto conserva juntos cuerpo, precedentes y notas anteriores al cierre;
   no se inventa una división jurídica por buscar palabras como `PLENO`.
 - El SHA-256 comprueba integridad local; no se presenta como firma de la SCJN.
+
+## Importación asistida sin consultas judiciales
+
+Cada ficha requiere `REGISTRO.txt` y `REGISTRO.meta.json`, con los campos `url`,
+`capturado_utc` y `canal`. Debe conservarse todo el texto visible hasta la nota
+final de publicación. La tabla de contraste es una captura DOM, no un CSV oficial:
+`url`, `capturado_utc` y `filas` (encabezados y celdas visibles codificadas en JSON).
+
+```sh
+python importar_semanal.py 2032910 2032896 2032921 \
+  --origen /ruta/capturas-asistidas \
+  --repositorio /ruta/capturas-asistidas/repositorio-tabla-visible.json \
+  --salida kriterius_datos/sjf_semanal \
+  --informe /ruta/informe-importacion.json
+python -m unittest test_sjf_semanal test_capturar_semanal test_importar_semanal
+```
+
+El workflow `Validar capturas asistidas sin consultas judiciales` construye e
+instala la rueda en Linux y consulta las tres fichas desde fuera del checkout.
+Bloquea peticiones HTTP salientes durante la consulta y conserva las respuestas
+completas como artefacto. No instala Chromium ni prueba adquisición desde SCJN.
+La comprobación operativa respeta la caducidad de 30 días, por lo que fallará si
+las copias no se renuevan antes de vencer; las pruebas históricas fijan su fecha.
 
 ## Ejecución en un trabajador separado
 
@@ -131,11 +186,11 @@ Para distribuir fichas verificadas, incorporarlas a
 `kriterius_datos/sjf_semanal/` mediante revisión y despliegue normal. Tanto la rueda
 Python como la imagen del servidor incluyen esa carpeta; no incluyen Playwright.
 
-## Validación pendiente para activar
+## Pendientes de automatización y producción
 
 Se necesita acceso aceptado por el portal desde el entorno del capturador. Una
 excepción institucional o un canal de entrega aprobado puede resolverlo; no se
-ha confirmado ninguno. Después hay que comprobar los selectores de búsqueda
-contra la página real, capturar tres fichas actuales completas y compararlas con
-las respuestas de `ver_tesis` en el servidor. No se promete que contratar más RAM
-resuelva el 403.
+ha confirmado ninguno. Las tres capturas asistidas ya están contrastadas, pero
+esto no valida el capturador Playwright ni una sincronización desatendida. Falta
+desplegar la distribución y comprobar las respuestas en el servidor de producción.
+No se promete que contratar más RAM resuelva el 403.

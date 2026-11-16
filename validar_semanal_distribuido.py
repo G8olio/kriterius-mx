@@ -1,0 +1,42 @@
+"""Comprueba las tres capturas instaladas y guarda sus respuestas, sin red.
+
+Ejecutar desde fuera del checkout tras instalar la rueda. No modifica el reloj:
+si las capturas vencen, esta comprobación operativa falla y pide renovarlas.
+"""
+import asyncio
+import hashlib
+import json
+import sys
+from pathlib import Path
+from unittest.mock import patch
+
+import httpx
+import kriterius_mx as k
+import sjf_semanal as s
+
+
+async def validar(destino):
+    destino.mkdir(parents=True, exist_ok=True)
+    fichas = []
+    # Bloquea cualquier petición HTTP saliente durante las consultas del core.
+    with patch.object(httpx.AsyncClient, "send", side_effect=AssertionError("Red no permitida")) as red:
+        for ius in (2032910, 2032896, 2032921):
+            doc = s.obtener(ius)
+            assert doc, f"Captura ausente, inválida o vencida: {ius}"
+            respuesta = await k.ver_tesis(ius)
+            for campo in ("rubro", "texto", "textoPublicacion"):
+                assert doc[campo] in respuesta, f"Falta {campo} completo: {ius}"
+            assert doc["_procedencia"]["url"] in respuesta
+            (destino / f"{ius}.txt").write_text(respuesta, encoding="utf-8")
+            fichas.append({"registro": ius, "texto_completo": True,
+                          "caracteres_texto": len(doc["texto"]),
+                          "sha256_respuesta": hashlib.sha256(respuesta.encode()).hexdigest()})
+        red.assert_not_called()
+    report = {"version": k.VERSION, "consultas_http": 0, "fichas": fichas,
+              "alcance": "Consulta de ver_tesis sin red; no prueba adquisición ni despliegue en producción"}
+    (destino / "informe.json").write_text(json.dumps(report, ensure_ascii=False, indent=2) + "\n")
+    print(json.dumps(report, ensure_ascii=False, indent=2))
+
+
+if __name__ == "__main__":
+    asyncio.run(validar(Path(sys.argv[1])))

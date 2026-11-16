@@ -14,6 +14,7 @@ from pathlib import Path
 BASE = "https://sjfsemanal.scjn.gob.mx"
 MAX_BYTES = 2 * 1024 * 1024
 VIGENCIA = timedelta(days=30)
+DIRECTORIO_DISTRIBUIDO = Path(__file__).parent / "kriterius_datos" / "sjf_semanal"
 
 
 def registro_valido(registro):
@@ -69,12 +70,15 @@ def interpretar(visible, registro):
             "texto": body, "textoPublicacion": publication}
 
 
-def empaquetar(visible, registro, *, capturado=None):
+def empaquetar(visible, registro, *, capturado=None,
+               canal="DOM visible, Chromium mediante Playwright"):
     doc = interpretar(visible, registro)
+    if not isinstance(canal, str) or not canal.strip() or len(canal) > 300:
+        raise ValueError("Canal de captura inválido")
     return {"schema": 1, "documento": doc, "texto_visible": visible,
             "procedencia": {"url": f"{BASE}/detalle/tesis/{doc['ius']}",
                 "capturado_utc": capturado or datetime.now(timezone.utc).isoformat(),
-                "canal": "DOM visible, Chromium mediante Playwright",
+                "canal": canal,
                 "sha256_texto_visible": hashlib.sha256(visible.encode()).hexdigest()}}
 
 
@@ -123,7 +127,7 @@ def obtener(registro):
         return None
     cache = Path(os.environ.get("KRITERIUS_CACHE_DIR", str(Path.home() / ".cache/kriterius")))
     paths = [Path(os.environ.get("KRITERIUS_SEMANAL_DIR", str(cache / "sjf_semanal"))),
-             Path(__file__).parent / "kriterius_datos" / "sjf_semanal"]
+             DIRECTORIO_DISTRIBUIDO]
     for directory in paths:
         try:
             path = directory / f"{registro}.json"

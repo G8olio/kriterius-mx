@@ -1,0 +1,40 @@
+name: Validar capturas asistidas sin consultas judiciales
+on:
+  workflow_dispatch:
+  push:
+    branches: [feat/scjn-semanal-captura-20261113]
+    paths:
+      - 'sjf_semanal.py'
+      - 'importar_semanal.py'
+      - 'test_*semanal.py'
+      - 'validar_semanal_distribuido.py'
+      - 'kriterius_datos/sjf_semanal/**'
+      - 'fixtures_semanal/**'
+      - '.github/workflows/validar-capturas-asistidas.yml'
+permissions:
+  contents: read
+jobs:
+  validar:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: pip install -r requirements.txt
+      - name: Integridad e importación sin red
+        run: python -m unittest test_sjf_semanal test_capturar_semanal test_importar_semanal
+      - name: Construir e instalar distribución
+        run: |
+          python -m pip wheel --no-deps . -w "$RUNNER_TEMP/ruedas"
+          python -m pip install --no-deps "$RUNNER_TEMP"/ruedas/*.whl
+          cp validar_semanal_distribuido.py "$RUNNER_TEMP/validar_semanal_distribuido.py"
+      - name: Consultar las tres fichas desde el core instalado
+        working-directory: ${{ runner.temp }}
+        run: python validar_semanal_distribuido.py respuestas
+      - uses: actions/upload-artifact@v4
+        with:
+          name: respuestas-semanal-sin-red
+          path: ${{ runner.temp }}/respuestas/
+          retention-days: 30
