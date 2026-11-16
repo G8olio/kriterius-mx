@@ -158,6 +158,15 @@ completas como artefacto. No instala Chromium ni prueba adquisición desde SCJN.
 La comprobación operativa respeta la caducidad de 30 días, por lo que fallará si
 las copias no se renuevan antes de vencer; las pruebas históricas fijan su fecha.
 
+Resultado real: [ejecución 43826282835](https://github.com/G8olio/kriterius-mx/actions/runs/43826282835),
+commit `6c954f2`, **correcta** el 16 de noviembre a las 07:47 UTC. Pasaron 23 pruebas
+en Linux, se instaló `kriterius-core-2.14.0` desde la rueda y se devolvieron las tres
+tesis completas con cero llamadas HTTP durante las consultas. Los SHA-256 de las
+tres respuestas coinciden con la ejecución local. El
+[artefacto con respuestas e informe](https://github.com/G8olio/kriterius-mx/actions/runs/43826282835/artifacts/14206772104)
+se conserva 30 días. Es una prueba del core instalado en un trabajador remoto;
+no es una prueba del endpoint HTTP de producción ni de adquisición remota.
+
 ## Ejecución en un trabajador separado
 
 Instalar desde PyPI y los binarios oficiales de Playwright, fuera del contenedor
