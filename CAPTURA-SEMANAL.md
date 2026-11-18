@@ -1,5 +1,28 @@
 # Captura del portal semanal
 
+## Flujo Chrome/CUA — 18 de noviembre de 2026
+
+La detección programable recorrió portada, TESIS y el total de la semana y obtuvo
+los 30 registros publicados el 13 de noviembre. Reconoció las tres copias ya
+existentes y capturó las otras **27 fichas completas** usando el Chrome de la Mac.
+El importador incorporó las 27; al repetirlo devolvió `sin_cambios`. La validación
+local consultó las 30 sin HTTP saliente. Se comprobaron 46 tests de Python, tres
+de Node y la construcción/lectura del índice prevista por el Dockerfile.
+
+Los helpers y la secuencia para el ejecutor local de Codex están en
+[AUTOMATIZACION-CHROME.md](AUTOMATIZACION-CHROME.md). Incluyen comprobación VPN por
+paso, permisos breves de un solo uso, intervalo entre fichas, continuación de
+lotes, importación idempotente y publicación restringida a datos. La periodicidad
+elegida es viernes a las 12:00 de Ciudad de México. La ejecución requiere la Mac,
+Codex y Chrome disponibles; no modifica la configuración del navegador para
+imitar otro cliente.
+
+`/datos/sjf_semanal.json` expone las identidades y huellas válidas instaladas,
+sin tráfico judicial. `verificar_servicio_semanal.py` comprueba ese manifiesto y
+las respuestas reales de `ver_tesis` por MCP HTTP antes de dar por terminada una
+publicación. La adquisición desde Chromium headless remoto sigue sin validarse;
+es un camino distinto del flujo de Chrome/CUA probado el 18 de noviembre.
+
 ## Estado de validación — 16 de noviembre de 2026
 
 Implementación en revisión, **no desplegada en producción**. La captura asistida
@@ -195,7 +218,7 @@ Para distribuir fichas verificadas, incorporarlas a
 `kriterius_datos/sjf_semanal/` mediante revisión y despliegue normal. Tanto la rueda
 Python como la imagen del servidor incluyen esa carpeta; no incluyen Playwright.
 
-## Pendientes de automatización y producción
+## Pendientes del capturador headless remoto (estado del 16 de noviembre)
 
 Se necesita acceso aceptado por el portal desde el entorno del capturador. Una
 excepción institucional o un canal de entrega aprobado puede resolverlo; no se

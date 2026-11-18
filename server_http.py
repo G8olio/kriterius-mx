@@ -29,6 +29,7 @@ from starlette.responses import FileResponse, HTMLResponse, JSONResponse, Respon
 # /salud siguió anunciando la 2.6.0 con la 2.7.0 ya desplegada.
 from kriterius_mx import mcp, VERSION
 import sjf_local
+import sjf_semanal
 import tepjf
 import uso
 
@@ -129,6 +130,12 @@ async def acervo_sjf_huella(request):
             "url": "/datos/sjf_gaceta_nuevos.jsonl",
         }
     return JSONResponse(cuerpo)
+
+
+@mcp.custom_route("/datos/sjf_semanal.json", methods=["GET"])
+async def manifiesto_semanal(request):
+    """Permite verificar un despliegue sin consultar fuentes judiciales."""
+    return JSONResponse(sjf_semanal.manifiesto(), headers={"Cache-Control": "no-store"})
 
 
 @mcp.custom_route("/datos/sjf_gaceta_nuevos.jsonl", methods=["GET"])

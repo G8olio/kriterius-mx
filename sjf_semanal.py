@@ -119,16 +119,19 @@ def leer_captura(captura, registro, *, ahora=None):
     return {**doc, "_procedencia": p}
 
 
+def directorios():
+    cache = Path(os.environ.get("KRITERIUS_CACHE_DIR", str(Path.home() / ".cache/kriterius")))
+    return [Path(os.environ.get("KRITERIUS_SEMANAL_DIR", str(cache / "sjf_semanal"))),
+            DIRECTORIO_DISTRIBUIDO]
+
+
 def obtener(registro):
     """Sin peticiones judiciales ni carga de navegador desde el proceso MCP."""
     try:
         registro = registro_valido(registro)
     except ValueError:
         return None
-    cache = Path(os.environ.get("KRITERIUS_CACHE_DIR", str(Path.home() / ".cache/kriterius")))
-    paths = [Path(os.environ.get("KRITERIUS_SEMANAL_DIR", str(cache / "sjf_semanal"))),
-             DIRECTORIO_DISTRIBUIDO]
-    for directory in paths:
+    for directory in directorios():
         try:
             path = directory / f"{registro}.json"
             if path.stat().st_size > MAX_BYTES:
@@ -137,3 +140,15 @@ def obtener(registro):
         except (OSError, ValueError, KeyError, TypeError, AttributeError):
             continue
     return None
+
+
+def manifiesto():
+    """Solo identidades y huellas de copias que ver_tesis puede servir ahora."""
+    ids = {p.stem for directory in directorios() for p in directory.glob('*.json')}
+    registros = {}
+    for registro in sorted(ids):
+        doc = obtener(registro)
+        if doc:
+            p = doc['_procedencia']
+            registros[registro] = {k: p[k] for k in ('url', 'capturado_utc', 'sha256_texto_visible')}
+    return {'schema': 1, 'total': len(registros), 'registros': registros}

@@ -92,6 +92,15 @@ class Fichas(unittest.TestCase):
             self.assertIn(c["procedencia"]["url"], result)
             self.assertIn("no firma de la SCJN", result)
 
+    def test_manifiesto_excluye_capturas_invalidas_y_no_publica_textos(self):
+        with tempfile.TemporaryDirectory() as tmp, patch.dict("os.environ", {"KRITERIUS_SEMANAL_DIR": tmp}), patch.object(s, "DIRECTORIO_DISTRIBUIDO", Path(tmp)):
+            s.guardar(s.empaquetar(VISIBLE,2032910),tmp)
+            (Path(tmp)/'2032921.json').write_text('{parcial')
+            manifest=s.manifiesto()
+            self.assertEqual(list(manifest['registros']),['2032910'])
+            self.assertNotIn('texto',manifest['registros']['2032910'])
+            self.assertEqual(manifest['total'],1)
+
 
 if __name__ == "__main__":
     unittest.main()

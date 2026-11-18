@@ -2,10 +2,14 @@ name: Validar capturas asistidas sin consultas judiciales
 on:
   workflow_dispatch:
   push:
-    branches: [feat/scjn-semanal-captura-20261113]
+    branches: [main, feat/scjn-semanal-captura-20261113]
     paths:
       - 'sjf_semanal.py'
       - 'importar_semanal.py'
+      - 'flujo_semanal.py'
+      - 'guardia_vpn.py'
+      - 'publicar_semanal.py'
+      - '*chrome.mjs'
       - 'test_*semanal.py'
       - 'validar_semanal_distribuido.py'
       - 'kriterius_datos/sjf_semanal/**'
@@ -24,13 +28,15 @@ jobs:
           python-version: '3.12'
       - run: pip install -r requirements.txt
       - name: Integridad e importación sin red
-        run: python -m unittest test_sjf_semanal test_capturar_semanal test_importar_semanal
+        run: python -m unittest test_sjf_semanal test_capturar_semanal test_importar_semanal test_flujo_semanal test_publicar_semanal
+      - name: Control de Chrome y permisos de VPN sin red
+        run: node --test test_captura_chrome.mjs
       - name: Construir e instalar distribución
         run: |
           python -m pip wheel --no-deps . -w "$RUNNER_TEMP/ruedas"
           python -m pip install --no-deps "$RUNNER_TEMP"/ruedas/*.whl
           cp validar_semanal_distribuido.py "$RUNNER_TEMP/validar_semanal_distribuido.py"
-      - name: Consultar las tres fichas desde el core instalado
+      - name: Consultar las fichas vigentes desde el core instalado
         working-directory: ${{ runner.temp }}
         run: python validar_semanal_distribuido.py respuestas
       - uses: actions/upload-artifact@v4
