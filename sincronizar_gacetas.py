@@ -381,8 +381,8 @@ def actualizar_meta(nuevos: list[dict], metas: list[dict], total_incremental: in
     m["hasta"] = (f"{epoca} Época, Libro {ultimo['libro']}, "
                   f"{ultimo['mes']} de {ultimo['anio']}")
     lim = [x for x in (m.get("limitaciones") or [])
-           if not x.startswith("no incluye tesis publicadas después")]
-    lim.insert(0, f"no incluye tesis publicadas después de {ultimo['mes']} "
+           if not x.startswith(("no incluye tesis publicadas después", "cobertura de Gacetas hasta"))]
+    lim.insert(0, f"cobertura de Gacetas hasta {ultimo['mes']} "
                   f"de {ultimo['anio']}")
     m["limitaciones"] = lim
     ruta.write_text(json.dumps(m, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")

@@ -14,9 +14,9 @@
   "hasta": "Duodécima Época, Libro 14, octubre de 2026",
   "publicacion_sjf_desde": "2013-12-06",
   "publicacion_sjf_hasta": "2026-10-30",
-  "registro_digital": "no disponible: la Gaceta no lo imprime; se llena con resolver_registros.py cuando el API del SJF vuelva",
+  "registro_digital": "La Gaceta no imprime el registro digital. Las capturas del portal semanal sí lo incluyen.",
   "limitaciones": [
-    "no incluye tesis publicadas después de octubre de 2026",
+    "cobertura de Gacetas hasta octubre de 2026; las capturas semanales se reportan por separado",
     "no refleja cambios de vigencia posteriores a la publicación de cada libro",
     "faltan tomos de algunos libros de la Undécima Época (29 sin Tomo II, 36 sin Tomo IV)"
   ],

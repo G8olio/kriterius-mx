@@ -103,3 +103,26 @@ que no haya modificaciones posteriores.
 El módulo existente `capturar_semanal.py` es la alternativa separada de Playwright
 headless, cuyos intentos remotos fueron bloqueados. No forma parte de esta
 automatización sobre Chrome/CUA.
+
+## Permanencia y revisión electoral
+
+Las capturas importadas no caducan. Validar su procedencia e integridad al importar,
+conservar su fecha real y comprobar que el índice común las encuentre. El manifiesto
+`/datos/sjf_gaceta.json` expone `capturas_permanentes`, `publicaciones_semanales` y
+`semanas_pendientes`; no confundir la última fecha disponible con cobertura continua.
+Al 18 de noviembre de 2026 falta comprobar el 6 de noviembre; las Gacetas llegan al
+30 de octubre y el lote del 13 de noviembre contiene 30 fichas.
+
+Revisar además el resultado de Sincronizar TEPJF y su manifiesto `/datos/tepjf.json`.
+Los criterios electorales, incluidos los no vigentes, se conservan permanentemente.
+La API anterior devolvió 503 el 18 de noviembre y el portal actual
+https://sicje.te.gob.mx/IUSE/ mostró error de conexión. La compilación oficial
+https://www.te.gob.mx/iuse_old2025/media/compilacion/compilacion2.htm indicaba corte
+al 3 de septiembre. No cambiar `fecha_snapshot` por la fecha del intento fallido.
+Ante rechazo, conservar los datos y registrar la actualización pendiente. No inferir
+bajas por ausencia del catálogo ni declarar que no hubo publicaciones nuevas.
+
+La app web fija el core en su Dockerfile. Después de una publicación del core
+validada, actualizar ese SHA en un checkout exclusivo de G8olio/kriterius-web,
+conservar la construcción del índice durante el build y verificar CI y `/salud`
+(`version_core`) y `/acervo`. No modificar el checkout `app-web` del usuario.

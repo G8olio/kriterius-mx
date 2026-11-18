@@ -217,6 +217,7 @@ def _construir(db: sqlite3.Connection, rutas: Path | list[Path], capturas=()) ->
     db.executescript(_ESQUEMA)
     n, omitidas = 0, 0
     lote_f, lote_d, incorporadas = [], [], set()
+    por_epoca = {}
 
     def vaciar():
         if lote_f:
@@ -230,6 +231,8 @@ def _construir(db: sqlite3.Connection, rutas: Path | list[Path], capturas=()) ->
     def agregar(r):
         nonlocal n
         n += 1
+        epoca = r.get('epoca') or ''
+        por_epoca[epoca] = por_epoca.get(epoca, 0) + 1
         lote_f.append((n, r.get("rubro") or "", r.get("texto") or "",
             " ".join(r.get("precedentes") or []), r.get("clave") or "",
             r.get("tipo") or "TA", rango_organo(r.get("clave") or "", r.get("nivel") or ""),
@@ -269,6 +272,7 @@ def _construir(db: sqlite3.Connection, rutas: Path | list[Path], capturas=()) ->
     db.execute("INSERT INTO info(k,v) VALUES('semanales',?)", (str(len(semanales)),))
     fechas = sorted({d['publicacion_sjf'] for d in semanales.values()})
     db.execute("INSERT INTO info(k,v) VALUES('semanal_fechas',?)", (json.dumps(fechas),))
+    db.execute("INSERT INTO info(k,v) VALUES('por_epoca',?)", (json.dumps(por_epoca),))
     db.commit()
     return n
 
@@ -280,7 +284,7 @@ def _huella(rutas: Path | list[Path]) -> str:
     solo el base: si llega un incremental nuevo el índice tiene que reconstruirse."""
     if isinstance(rutas, (str, Path)):
         rutas = [Path(rutas)]
-    partes = ["esquema-acervo-2"]
+    partes = ["esquema-acervo-3"]
     for ruta in (Path(x) for x in rutas):
         if not ruta.exists():
             continue
@@ -396,6 +400,7 @@ def cargar(ruta: Path | str = RUTA_DATOS, ruta_meta: Path | str = RUTA_META,
     except Exception:
         registros = {}
     info = dict(db.execute("SELECT k,v FROM info"))
+    meta['por_epoca'] = json.loads(info.get('por_epoca', '{}'))
     meta["capturas_permanentes"] = int(info.get("semanales", 0))
     meta["publicaciones_semanales"] = json.loads(info.get("semanal_fechas", "[]"))
     meta["conservacion_capturas"] = "permanente"
