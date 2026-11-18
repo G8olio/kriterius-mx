@@ -27,7 +27,7 @@ from starlette.responses import FileResponse, HTMLResponse, JSONResponse, Respon
 
 # La versión vive en kriterius_mx.py y solo ahí. Cuando estaba duplicada aquí,
 # /salud siguió anunciando la 2.6.0 con la 2.7.0 ya desplegada.
-from kriterius_mx import mcp, VERSION
+from kriterius_mx import mcp, VERSION, POLITICA_TEXTOS_COMPLETOS
 import sjf_local
 import sjf_semanal
 import tepjf
@@ -99,6 +99,7 @@ async def salud(request):
         "servicio": "KriteriusMX",
         "estado": "vivo",
         "version": VERSION,
+        "textos_completos": POLITICA_TEXTOS_COMPLETOS,
         "endpoint_mcp": "/mcp",
         "segundos_encendido": int((datetime.now(timezone.utc) - ARRANQUE).total_seconds()),
     })

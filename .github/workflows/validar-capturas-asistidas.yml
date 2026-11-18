@@ -10,6 +10,7 @@ on:
       - 'sjf_local.py'
       - 'tepjf.py'
       - 'server_http.py'
+      - 'kriterius_mx.py'
       - 'sincronizar_*.py'
       - 'gacetas/**'
       - 'test_actualizacion_acervo.py'
@@ -61,6 +62,7 @@ jobs:
         run: |
           docker build -t kriterius-acervo .
           docker run --rm --network none kriterius-acervo python -c "import sjf_local, tepjf; n=sjf_local.cargar(); m=sjf_local.meta(); assert n > 34000; assert m['capturas_permanentes'] >= 30; assert tepjf.cargar() >= 2078; print(n, m['publicacion_sjf_hasta'])"
+          docker run --rm --network none -e PYTHONPATH=/app -v "$PWD/validar_semanal_distribuido.py:/tmp/validar.py:ro" kriterius-acervo python /tmp/validar.py /tmp/respuestas
       - uses: actions/upload-artifact@v4
         with:
           name: respuestas-semanal-sin-red

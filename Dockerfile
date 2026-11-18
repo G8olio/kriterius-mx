@@ -11,8 +11,8 @@ RUN pip install --no-cache-dir -r requirements.txt
 COPY kriterius_mx.py server_http.py uso.py tepjf.py sjf_local.py sjf_semanal.py repositorio_scjn.py ./
 
 # Los datos locales: el snapshot del IUS Electoral (la fuente TEPJF entera) y el
-# acervo de la Gaceta del SJF (respaldo de buscar_tesis y ver_tesis cuando el API de
-# la Corte está bloqueado). Sin ellos el servidor arranca, pero esas tools responden
+# acervo de la Gaceta del SJF (primera fuente de ver_tesis y respaldo de las búsquedas
+# cuando el API de la Corte está bloqueado). Sin ellos el servidor arranca, pero esas tools responden
 # "fuente no disponible".
 COPY kriterius_datos/ kriterius_datos/
 
