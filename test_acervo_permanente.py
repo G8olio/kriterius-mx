@@ -63,6 +63,17 @@ class AcervoPermanente(unittest.TestCase):
             self.assertEqual(local.obtener('histórica')[0]['texto'],'conservar')
             self.assertEqual(local.obtener('republicada')[0]['texto'],'corrección')
 
+    def test_huella_resiste_exportar_capas_y_detecta_cambio_mismo_tamano(self):
+        import os
+        with tempfile.TemporaryDirectory() as tmp:
+            path=Path(tmp)/'datos.jsonl';path.write_text('contenido A')
+            inicial=local._huella(path)
+            os.utime(path,(1000000000,1000000000))
+            self.assertEqual(inicial,local._huella(path))
+            path.write_text('contenido B')
+            os.utime(path,(1000000000,1000000000))
+            self.assertNotEqual(inicial,local._huella(path))
+
     def test_agregar_captura_invalida_indice_anterior(self):
         with tempfile.TemporaryDirectory() as tmp:
             root=Path(tmp); base=root/'base.jsonl'; capturas=root/'capturas'; idx=root/'idx.sqlite'

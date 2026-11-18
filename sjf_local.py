@@ -278,22 +278,23 @@ def _construir(db: sqlite3.Connection, rutas: Path | list[Path], capturas=()) ->
 
 
 def _huella(rutas: Path | list[Path]) -> str:
-    """Nombre, tamaño y fecha de cada JSONL de origen. Los tres, no solo la fecha: al
-    copiar un repo todos los archivos quedan con la misma marca de tiempo, y un
-    índice construido de otro archivo pasaría por bueno. Y todos los archivos, no
-    solo el base: si llega un incremental nuevo el índice tiene que reconstruirse."""
+    """Huella del contenido, estable entre build y runtime de Docker.
+
+    Las capas de una imagen pueden redondear mtimes al exportarse. El contenido
+    detecta además correcciones del mismo tamaño hechas dentro del mismo segundo.
+    """
+    import hashlib
     if isinstance(rutas, (str, Path)):
         rutas = [Path(rutas)]
     partes = ["esquema-acervo-3"]
     for ruta in (Path(x) for x in rutas):
         if not ruta.exists():
             continue
-        st = ruta.stat()
-        if ruta.suffix == '.json':
-            import hashlib
-            partes.append(f"{ruta.name}|{hashlib.sha256(ruta.read_bytes()).hexdigest()}")
-        else:
-            partes.append(f"{ruta.name}|{st.st_size}|{st.st_mtime_ns}")
+        digest = hashlib.sha256()
+        with ruta.open('rb') as stream:
+            for bloque in iter(lambda: stream.read(1 << 20), b''):
+                digest.update(bloque)
+        partes.append(f"{ruta.name}|{digest.hexdigest()}")
     return "+".join(partes)
 
 
