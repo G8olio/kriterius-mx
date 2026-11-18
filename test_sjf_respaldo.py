@@ -189,7 +189,7 @@ comprobar("y recargar deja el respaldo listo otra vez",
 print("\n— Estado y diagnóstico —")
 e = corre(k.estado_conector())
 comprobar("estado_conector reporta el acervo propio", "SJF acervo propio:" in e, e[:400])
-comprobar("y dice hasta cuándo llega", "hasta" in e.split("SJF acervo propio:")[1][:300])
+comprobar("y dice hasta cuándo llega", sjf_local.meta()['hasta'] in e)
 comprobar("declara la consulta directa de textos", "Primera fuente de ver_tesis" in e)
 
 print(f"\n{'TODO BIEN' if not fallos else f'{fallos} FALLA(S)'}")

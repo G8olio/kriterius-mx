@@ -3736,8 +3736,7 @@ def _linea_estado_sjf_local() -> str:
         return ("SJF acervo propio: sin índice de Gacetas (falta kriterius_datos/"
                 "sjf_gaceta.jsonl.gz) — si el API se bloquea, buscar_tesis y "
                 "ver_tesis dependen de las capturas semanales disponibles")
-    m = sjf_local.meta()
-    return (f"SJF acervo propio: {m.get('tesis', 0)} tesis; {sjf_local.cobertura()}. "
+    return (f"SJF acervo propio: {sjf_local.cobertura()}. "
             "Primera fuente de ver_tesis, sin red cuando consta la clave o el IUS. "
             "Las búsquedas lo usan como respaldo si falla la fuente oficial.")
 
