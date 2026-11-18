@@ -23,6 +23,16 @@ def registro_valido(registro):
     return valor
 
 
+def _fecha_publicacion(texto):
+    """Lee una fecha real sin confundir el día 6 con su formato 06."""
+    meses = ('enero febrero marzo abril mayo junio julio agosto septiembre '
+             'octubre noviembre diciembre').split()
+    fecha = re.search(r'(\d{1,2}) de ([a-záéíóú]+) de (\d{4})', texto, re.I)
+    if not fecha or fecha[2].lower() not in meses:
+        raise ValueError('Fecha de publicación no reconocida')
+    return datetime(int(fecha[3]), meses.index(fecha[2].lower()) + 1, int(fecha[1])).date()
+
+
 def interpretar(visible, registro):
     """Valida la plantilla visible y conserva todo el contenido hasta el cierre.
 
@@ -54,10 +64,7 @@ def interpretar(visible, registro):
     end = ends[0]
     publication = lines[end]
     # El encabezado y el cierre deben expresar el mismo día; evita mezclar fichas.
-    date_re = r"\d{1,2} de [a-záéíóú]+ de \d{4}"
-    date_head = re.search(date_re, fields[7], re.I)
-    date_end = re.search(date_re, publication, re.I)
-    if not date_head or not date_end or date_head[0].lower() != date_end[0].lower():
+    if _fecha_publicacion(fields[7]) != _fecha_publicacion(publication):
         raise ValueError("Fechas de publicación contradictorias")
     body = "\n\n".join(lines[9:end])
     if len(lines[8]) < 15 or len(body) < 150:
@@ -158,13 +165,8 @@ def manifiesto():
 
 def para_acervo(doc):
     """Adapta una ficha íntegra al índice común, sin inventar datos de Gaceta."""
-    meses = ('enero febrero marzo abril mayo junio julio agosto septiembre '
-             'octubre noviembre diciembre').split()
-    fecha = re.search(r'(\d{1,2}) de ([a-z]+) de (\d{4})', doc['fechaPublicacion'], re.I)
-    if not fecha or fecha[2].lower() not in meses:
-        raise ValueError('Fecha de publicación no reconocida')
-    dia, mes, anio = int(fecha[1]), meses.index(fecha[2].lower()) + 1, int(fecha[3])
-    iso = datetime(anio, mes, dia).date().isoformat()
+    fecha = _fecha_publicacion(doc['fechaPublicacion'])
+    anio, iso = fecha.year, fecha.isoformat()
     epocas = {'Novena Época': '9a', 'Décima Época': '10a',
               'Undécima Época': '11a', 'Duodécima Época': '12a'}
     if doc['epoca'] not in epocas:

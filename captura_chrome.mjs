@@ -96,10 +96,18 @@ export async function capturarFicha(tab, enlace, carpeta, permisoVpn) {
     const estado = await tab.playwright.domSnapshot();
     if (/Access denied|Request unsuccessful|Verify you are human|captcha/i.test(estado.slice(0,3000)))
       throw new Error('Acceso rechazado; no reintentar');
-    await tab.playwright.getByText(`Registro digital: ${registro}`,{exact:true})
-      .filter({visible:true}).waitFor({state:'visible',timeoutMs:20000});
-    await tab.playwright.getByText(/^Esta tesis se publicó/)
-      .filter({visible:true}).waitFor({state:'visible',timeoutMs:20000});
+    try {
+      await tab.playwright.getByText(`Registro digital: ${registro}`,{exact:true})
+        .filter({visible:true}).waitFor({state:'visible',timeoutMs:20000});
+      await tab.playwright.getByText(/^Esta tesis se publicó/)
+        .filter({visible:true}).waitFor({state:'visible',timeoutMs:20000});
+    } catch(error) {
+      // Chrome puede completar la carga justo después de vencer el selector.
+      // Una lectura adicional no vuelve a navegar ni repite solicitudes al portal.
+      // Las comprobaciones de URL, identidad y cierre siguen siendo obligatorias.
+      if(!/selector deadline exceeded|waitFor\(visible\) timed out/.test(String(error))) throw error;
+      await tab.playwright.domSnapshot();
+    }
     if (await tab.url() !== url) throw new Error('La URL cambió fuera de la ficha esperada');
     const visible = await tab.playwright.locator('body').innerText();
     identidad(visible,registro);
