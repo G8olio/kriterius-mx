@@ -10,7 +10,7 @@ estadounidense— dentro de Claude, con cita completa y link oficial en cada res
 | Fuente | Herramientas |
 |---|---|
 | **SJF / SCJN** — Semanario Judicial de la Federación, colección de tesis | `buscar_tesis`, `investigar_criterio`, `ver_tesis` |
-| **SJF / SCJN** — ejecutorias y precedentes (sentencias completas) | `buscar_ejecutorias`, `ver_ejecutoria` |
+| **SJF / SCJN** — ejecutorias y extractos publicados (acervo permanente, sin red por defecto) | `buscar_ejecutorias`, `ver_ejecutoria` |
 | **SIJ / SCJN** — Sistema de Informática Jurídica: la ficha de cada asunto resuelto por la Corte | `buscar_sentencias_scjn`, `ver_sentencia_scjn` |
 | **TFJA** — Tribunal Federal de Justicia Administrativa | `buscar_tesis_tfja`, `ver_tesis_tfja` |
 | **TEPJF** — Tribunal Electoral del PJF, IUS Electoral (snapshot local, sin red) | `buscar_tesis_tepjf`, `ver_tesis_tepjf`, `temas_tepjf` |
@@ -64,6 +64,15 @@ El Repositorio también puede quedar bloqueado. El respaldo de gacetas declara s
 y fecha; no debe interpretarse como una copia completa o actualizada de todo el SJF.
 Una excepción de bots o una credencial requiere autorización de la SCJN: estos controles
 no levantan el bloqueo por sí solos.
+
+### Ejecutorias desde el acervo propio
+
+Las ejecutorias publicadas en las Gacetas también se sirven desde el acervo
+permanente: 10,193 documentos con búsqueda por tema o expediente, texto por
+partes y procedencia hasta el PDF y las páginas. Los extractos se distinguen
+de las resoluciones con cierre. Véase [ACERVO-EJECUTORIAS.md](ACERVO-EJECUTORIAS.md)
+para cobertura, límites, identificadores y reproducción. La opción `fuente="oficial"`
+en las herramientas de ejecutorias solicita expresamente la consulta externa.
 
 ### El TEPJF no se consulta: se sirve
 

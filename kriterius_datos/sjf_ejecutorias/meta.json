@@ -1,0 +1,5923 @@
+{
+  "esquema": 1,
+  "documentos": 10193,
+  "conservacion": "permanente",
+  "archivos_fuente": 451,
+  "por_epoca": {
+    "12a": 740,
+    "10a": 5726,
+    "11a": 3673,
+    "9a": 54
+  },
+  "partes": [
+    {
+      "archivo": "parte-001.jsonl.gz",
+      "documentos": 920,
+      "bytes": 24402498,
+      "sha256": "ab1d8915a45bf221f6f4ffc13d53e5fb931d1f4dc9317d95cbc5a8da5aad788e"
+    },
+    {
+      "archivo": "parte-002.jsonl.gz",
+      "documentos": 904,
+      "bytes": 24320507,
+      "sha256": "14f6144772e35edfe2b4c4f7b43f06ff9228689f53de38e7077f6c3302581ab7"
+    },
+    {
+      "archivo": "parte-003.jsonl.gz",
+      "documentos": 851,
+      "bytes": 24302447,
+      "sha256": "62dc73895a9e2ec02d87052b1cff332ea847b98583398fc7a6d28e485536a953"
+    },
+    {
+      "archivo": "parte-004.jsonl.gz",
+      "documentos": 891,
+      "bytes": 24231795,
+      "sha256": "30f539a4ca67e8914e4576e1b299817705f60a822b5abde63b76e4b74bc4dd4b"
+    },
+    {
+      "archivo": "parte-005.jsonl.gz",
+      "documentos": 918,
+      "bytes": 24442007,
+      "sha256": "17589b006523134a9731ce9a0cbc2d184cac1bd64fe6f8ebb84c9fe4ce8766ab"
+    },
+    {
+      "archivo": "parte-006.jsonl.gz",
+      "documentos": 1067,
+      "bytes": 24229171,
+      "sha256": "0e86c4900b6ec78816717696b78bd00257d5cce871622216062200d38f4ba9a6"
+    },
+    {
+      "archivo": "parte-007.jsonl.gz",
+      "documentos": 820,
+      "bytes": 24177257,
+      "sha256": "9a446ab7d7c4995c8906a3be810d5254006d9142d3bc989c2259cb55e2cea9e4"
+    },
+    {
+      "archivo": "parte-008.jsonl.gz",
+      "documentos": 746,
+      "bytes": 24102780,
+      "sha256": "8ce1dece7054766d2078deeb7feadfb520f196b36d891220ffc572e3e9cfc9bb"
+    },
+    {
+      "archivo": "parte-009.jsonl.gz",
+      "documentos": 792,
+      "bytes": 24260269,
+      "sha256": "9b78dcee7302e865468ff97545fc9787b21b6bd5d33bb6b72b4f4e6117f74bd3"
+    },
+    {
+      "archivo": "parte-010.jsonl.gz",
+      "documentos": 756,
+      "bytes": 24236128,
+      "sha256": "23e1edd15017ac580db9cd29f8e4e39d474a11b87975d58541b90b83bba1dc19"
+    },
+    {
+      "archivo": "parte-011.jsonl.gz",
+      "documentos": 818,
+      "bytes": 24516321,
+      "sha256": "99dae55b78d9c02352953134d76380d9ccbdf7fb7a3618c20c8c604eb600d5a5"
+    },
+    {
+      "archivo": "parte-012.jsonl.gz",
+      "documentos": 706,
+      "bytes": 24350941,
+      "sha256": "2c29e7106f2007453af00d1bc20b1747552a6f1571c01c199e55bb85af958346"
+    },
+    {
+      "archivo": "parte-013.jsonl.gz",
+      "documentos": 4,
+      "bytes": 958677,
+      "sha256": "dc9dc27b9c6aade4af8f945f51142ee08269057e5ff275ef57de760db96d4f16"
+    }
+  ],
+  "fuentes": [
+    {
+      "archivo": "12a-epoca/Libro-012_2026-08_agosto_parte-2.md",
+      "sha256_md": "b1262c252a0782d56711ebd1af9e35868d6902692da37d460f4f8a0ace66445f",
+      "cabeceras": 70,
+      "cierres_sentencia": 66,
+      "extraidas": 68,
+      "rechazos": [
+        {
+          "linea": 1163,
+          "asunto": "AMPARO DIRECTO EN REVISIÓN 4852/2025",
+          "motivo": "limite_sin_cierre_verificable"
+        },
+        {
+          "linea": 117484,
+          "asunto": "CONTRADICCIÓN DE CRITERIOS 70/2026",
+          "motivo": "limite_sin_cierre_verificable"
+        }
+      ]
+    },
+    {
+      "archivo": "12a-epoca/Libro-013_2026-09_septiembre.md",
+      "sha256_md": "bb12f7fe1c17dce5d89dea44030e310b6e808f7cd8377b3265b1643c9452acdb",
+      "cabeceras": 51,
+      "cierres_sentencia": 44,
+      "extraidas": 46,
+      "rechazos": [
+        {
+          "linea": 1447,
+          "asunto": "RECURSO DE RECLAMACIÓN 117/2024-CA",
+          "motivo": "sin_cuerpo_reconocible"
+        },
+        {
+          "linea": 5328,
+          "asunto": "RECURSO DE RECLAMACIÓN 14/2025-CA",
+          "motivo": "sin_cuerpo_reconocible"
+        },
+        {
+          "linea": 26789,
+          "asunto": "RECURSO DE RECLAMACIÓN 70/2025-CA",
+          "motivo": "sin_cuerpo_reconocible"
+        },
+        {
+          "linea": 40371,
+          "asunto": "RECURSO DE RECLAMACIÓN 73/2025-CA",
+          "motivo": "sin_cuerpo_reconocible"
+        },
+        {
+          "linea": 57953,
+          "asunto": "RECURSO DE RECLAMACIÓN 134/2025-CA",
+          "motivo": "sin_cuerpo_reconocible"
+        }
+      ]
+    },
+    {
+      "archivo": "12a-epoca/Libro-014_2026-10_octubre.md",
+      "sha256_md": "749cc2fd60330c52138777a0576d29af03e32673d0a4e599f396e88e7835d6d9",
+      "cabeceras": 117,
+      "cierres_sentencia": 83,
+      "extraidas": 97,
+      "rechazos": [
+        {
+          "linea": 6236,
+          "asunto": "RECURSO DE RECLAMACIÓN 133/2025-CA",
+          "motivo": "sin_cuerpo_reconocible"
+        },
+        {
+          "linea": 6770,
+          "asunto": "RECURSO DE RECLAMACIÓN 131/2025-CA",
+          "motivo": "sin_cuerpo_reconocible"
+        },
+        {
+          "linea": 7259,
+          "asunto": "RECURSO DE RECLAMACIÓN 132/2025-CA",
+          "motivo": "sin_cuerpo_reconocible"
+        },
+        {
+          "linea": 7783,
+          "asunto": "RECURSO DE RECLAMACIÓN 136/2025-CA",
+          "motivo": "sin_cuerpo_reconocible"
+        },
+        {
+          "linea": 8314,
+          "asunto": "RECURSO DE RECLAMACIÓN 137/2025-CA",
+          "motivo": "sin_cuerpo_reconocible"
+        },
+        {
+          "linea": 8805,
+          "asunto": "RECURSO DE RECLAMACIÓN 138/2025-CA",
+          "motivo": "sin_cuerpo_reconocible"
+        },
+        {
+          "linea": 9287,
+          "asunto": "RECURSO DE RECLAMACIÓN 72/2025-CA",
+          "motivo": "sin_cuerpo_reconocible"
+        },
+        {
+          "linea": 33027,
+          "asunto": "RECURSO DE RECLAMACIÓN 109/2025-CA",
+          "motivo": "sin_cuerpo_reconocible"
+        },
+        {
+          "linea": 33930,
+          "asunto": "RECURSO DE RECLAMACIÓN 110/2025-CA",
+          "motivo": "sin_cuerpo_reconocible"
+        },
+        {
+          "linea": 38029,
+          "asunto": "ACCIÓN DE INCONSTITUCIONALIDAD 90/2025",
+          "motivo": "limite_sin_cierre_verificable"
+        },
+        {
+          "linea": 38348,
+          "asunto": "ACCIÓN DE INCONSTITUCIONALIDAD 45/2021",
+          "motivo": "sin_cuerpo_reconocible"
+        },
+        {
+          "linea": 55414,
+          "asunto": "RECURSO DE RECLAMACIÓN 68/2025-CA",
+          "motivo": "sin_cuerpo_reconocible"
+        },
+        {
+          "linea": 56031,
+          "asunto": "RECURSO DE RECLAMACIÓN 69/2025-CA",
+          "motivo": "sin_cuerpo_reconocible"
+        },
+        {
+          "linea": 56670,
+          "asunto": "RECURSO DE RECLAMACIÓN 71/2025-CA",
+          "motivo": "sin_cuerpo_reconocible"
+        },
+        {
+          "linea": 57294,
+          "asunto": "RECURSO DE RECLAMACIÓN 25/2025-CA",
+          "motivo": "sin_cuerpo_reconocible"
+        },
+        {
+          "linea": 84601,
+          "asunto": "RECURSO DE RECLAMACIÓN 118/2025-CA",
+          "motivo": "sin_cuerpo_reconocible"
+        },
+        {
+          "linea": 85222,
+          "asunto": "RECURSO DE RECLAMACIÓN 112/2025-CA",
+          "motivo": "sin_cuerpo_reconocible"
+        },
+        {
+          "linea": 85974,
+          "asunto": "RECURSO DE RECLAMACIÓN 113/2025-CA",
+          "motivo": "sin_cuerpo_reconocible"
+        },
+        {
+          "linea": 86872,
+          "asunto": "RECURSO DE RECLAMACIÓN 117/2025-CA",
+          "motivo": "sin_cuerpo_reconocible"
+        },
+        {
+          "linea": 133202,
+          "asunto": "CONTRADICCIÓN DE CRITERIOS 34/2026",
+          "motivo": "limite_sin_cierre_verificable"
+        }
+      ]
+    },
+    {
+      "archivo": "10a-epoca/Libro-001_2011-10_octubre.md",
+      "sha256_md": "2592ef8ce974577f516545975c8e669a2b0a040d9023d5b92760fa3c5c392e5c",
+      "cabeceras": 42,
+      "cierres_sentencia": 0,
+      "extraidas": 28,
+      "rechazos": [
+        {
+          "linea": 50047,
+          "asunto": "AMPARO EN REVISIÓN 160/2011",
+          "motivo": "limite_sin_cierre_verificable"
+        },
+        {
+          "linea": 50381,
+          "asunto": "AMPARO DIRECTO 176/89",
+          "motivo": "limite_sin_cierre_verificable"
+        },
+        {
+          "linea": 50614,
+          "asunto": "AMPARO EN REVISIÓN 121/2009",
+          "motivo": "limite_sin_cierre_verificable"
+        },
+        {
+          "linea": 51141,
+          "asunto": "AMPARO DIRECTO 710/2011",
+          "motivo": "limite_sin_cierre_verificable"
+        },
+        {
+          "linea": 51773,
+          "asunto": "AMPARO EN REVISIÓN 13/2011",
+          "motivo": "limite_sin_cierre_verificable"
+        },
+        {
+          "linea": 52230,
+          "asunto": "AMPARO DIRECTO 279/2011",
+          "motivo": "limite_sin_cierre_verificable"
+        },
+        {
+          "linea": 54582,
+          "asunto": "AMPARO DIRECTO 1395/2010",
+          "motivo": "limite_sin_cierre_verificable"
+        },
+        {
+          "linea": 54907,
+          "asunto": "AMPARO EN REVISIÓN 228/2011",
+          "motivo": "limite_sin_cierre_verificable"
+        },
+        {
+          "linea": 55187,
+          "asunto": "AMPARO DIRECTO 160/2008",
+          "motivo": "limite_sin_cierre_verificable"
+        },
+        {
+          "linea": 55586,
+          "asunto": "QUEJA 40/2011",
+          "motivo": "limite_sin_cierre_verificable"
+        },
+        {
+          "linea": 55842,
+          "asunto": "RECLAMACIÓN 3/2011",
+          "motivo": "limite_sin_cierre_verificable"
+        },
+        {
+          "linea": 56106,
+          "asunto": "AMPARO DIRECTO 54/2011",
+          "motivo": "limite_sin_cierre_verificable"
+        },
+        {
+          "linea": 58855,
+          "asunto": "AMPARO DIRECTO 336/2011",
+          "motivo": "limite_sin_cierre_verificable"
+        },
+        {
+          "linea": 61931,
+          "asunto": "AMPARO DIRECTO 500/2011",
+          "motivo": "limite_sin_cierre_verificable"
+        }
+      ]
+    },
+    {
+      "archivo": "10a-epoca/Libro-001_2013-12_diciembre.md",
+      "sha256_md": "1e2b0577fd3574e6f424996f4365e79bfa3a14ad24740f4ac2e0fe084ebb14e0",
+      "cabeceras": 27,
+      "cierres_sentencia": 18,
+      "extraidas": 24,
+      "rechazos": [
+        {
+          "linea": 39852,
+          "asunto": "QUEJA 88/2013",
+          "motivo": "limite_sin_cierre_verificable"
+        },
+        {
+          "linea": 47173,
+          "asunto": "AMPARO EN REVISIÓN 49/2013",
+          "motivo": "limite_sin_cierre_verificable"
+        },
+        {
+          "linea": 51035,
+          "asunto": "AMPARO DIRECTO 616/2012",
+          "motivo": "limite_sin_cierre_verificable"
+        }
+      ]
+    },
+    {
+      "archivo": "10a-epoca/Libro-002_2011-11_noviembre.md",
+      "sha256_md": "c6578554688b0f1d919494378d98e67fc860ef8f8d4e2b5899d2ec440372412f",
+      "cabeceras": 20,
+      "cierres_sentencia": 0,
+      "extraidas": 17,
+      "rechazos": [
+        {
+          "linea": 22228,
+          "asunto": "AMPARO DIRECTO 447/2011",
+          "motivo": "limite_sin_cierre_verificable"
+        },
+        {
+          "linea": 23283,
+          "asunto": "AMPARO EN REVISIÓN 20/2011",
+          "motivo": "limite_sin_cierre_verificable"
+        },
+        {
+          "linea": 26006,
+          "asunto": "AMPARO DIRECTO 682/2011",
+          "motivo": "limite_sin_cierre_verificable"
+        }
+      ]
+    },
+    {
+      "archivo": "10a-epoca/Libro-002_2014-01_enero.md",
+      "sha256_md": "b0779c68f26861f05428b0b38fa14f3bd6e5d9ca361685190fa960f9df39a6c0",
+      "cabeceras": 72,
+      "cierres_sentencia": 71,
+      "extraidas": 72,
+      "rechazos": []
+    },
+    {
+      "archivo": "10a-epoca/Libro-003_2011-12_diciembre.md",
+      "sha256_md": "f63d9d6bdf928052e5fcfd37e9cbf6c3c731aedc5667f472256fc60729072dd6",
+      "cabeceras": 58,
+      "cierres_sentencia": 0,
+      "extraidas": 46,
+      "rechazos": [
+        {
+          "linea": 87387,
+          "asunto": "AMPARO DIRECTO EN REVISIÓN 873/2011",
+          "motivo": "sin_cuerpo_reconocible"
+        },
+        {
+          "linea": 124107,
+          "asunto": "CONTRADICCIÓN DE TESIS 200/2011",
+          "motivo": "limite_sin_cierre_verificable"
+        },
+        {
+          "linea": 137834,
+          "asunto": "AMPARO EN REVISIÓN 161/2011",
+          "motivo": "limite_sin_cierre_verificable"
+        },
+        {
+          "linea": 138661,
+          "asunto": "AMPARO DIRECTO 691/2010",
+          "motivo": "limite_sin_cierre_verificable"
+        },
+        {
+          "linea": 138848,
+          "asunto": "AMPARO EN REVISIÓN 286/2011",
+          "motivo": "limite_sin_cierre_verificable"
+        },
+        {
+          "linea": 139725,
+          "asunto": "AMPARO DIRECTO 233/2011",
+          "motivo": "limite_sin_cierre_verificable"
+        },
+        {
+          "linea": 140079,
+          "asunto": "AMPARO EN REVISIÓN 177/2011",
+          "motivo": "limite_sin_cierre_verificable"
+        },
+        {
+          "linea": 141440,
+          "asunto": "AMPARO DIRECTO 286/2009",
+          "motivo": "limite_sin_cierre_verificable"
+        },
+        {
+          "linea": 142178,
+          "asunto": "AMPARO DIRECTO 163/2011",
+          "motivo": "limite_sin_cierre_verificable"
+        },
+        {
+          "linea": 144749,
+          "asunto": "AMPARO EN REVISIÓN 337/2011",
+          "motivo": "limite_sin_cierre_verificable"
+        },
+        {
+          "linea": 145079,
+          "asunto": "AMPARO DIRECTO 561/2009",
+          "motivo": "limite_sin_cierre_verificable"
+        },
+        {
+          "linea": 147682,
+          "asunto": "AMPARO EN REVISIÓN 288/2011",
+          "motivo": "limite_sin_cierre_verificable"
+        }
+      ]
+    },
+    {
+      "archivo": "10a-epoca/Libro-003_2014-02_febrero.md",
+      "sha256_md": "6d1783e97adf127bb040e9f7bb4f6eb7d827aa9e22dd756fdd7b1a1a9e6b78ff",
+      "cabeceras": 66,
+      "cierres_sentencia": 61,
+      "extraidas": 65,
+      "rechazos": [
+        {
+          "linea": 78220,
+          "asunto": "AMPARO EN REVISIÓN 281/2013",
+          "motivo": "sin_cuerpo_reconocible"
+        }
+      ]
+    },
+    {
+      "archivo": "10a-epoca/Libro-004_2012-01_enero_Tomo-I.md",
+      "sha256_md": "85230367d735848bcf5420eb09a93a93abc7a016c991ac5ce7213bbe617b54a4",
+      "cabeceras": 9,
+      "cierres_sentencia": 0,
+      "extraidas": 9,
+      "rechazos": []
+    },
+    {
+      "archivo": "10a-epoca/Libro-004_2012-01_enero_Tomo-II.md",
+      "sha256_md": "bc7c8e34a27326a85c8b389d2f6a6b90f30439e8a31fdf8fc399baaf1cd92164",
+      "cabeceras": 6,
+      "cierres_sentencia": 0,
+      "extraidas": 6,
+      "rechazos": []
+    },
+    {
+      "archivo": "10a-epoca/Libro-004_2012-01_enero_Tomo-III.md",
+      "sha256_md": "f6d3bf3c6d9b01ed4dc259e7a6e20027275e942eac0ea13352d095d5ad13ce43",
+      "cabeceras": 54,
+      "cierres_sentencia": 0,
+      "extraidas": 22,
+      "rechazos": [
+        {
+          "linea": 14043,
+          "asunto": "CONTRADICCIÓN DE TESIS 370/2010",
+          "motivo": "sin_cuerpo_reconocible"
+        },
+        {
+          "linea": 38374,
+          "asunto": "CONTROVERSIA CONSTITUCIONAL 100/2008",
+          "motivo": "sin_cuerpo_reconocible"
+        },
+        {
+          "linea": 38391,
+          "asunto": "CONTROVERSIA CONSTITUCIONAL 101/2008",
+          "motivo": "sin_cuerpo_reconocible"
+        },
+        {
+          "linea": 38410,
+          "asunto": "CONTROVERSIA CONSTITUCIONAL 102/2008",
+          "motivo": "sin_cuerpo_reconocible"
+        },
+        {
+          "linea": 38428,
+          "asunto": "CONTROVERSIA CONSTITUCIONAL 103/2008",
+          "motivo": "sin_cuerpo_reconocible"
+        },
+        {
+          "linea": 38446,
+          "asunto": "CONTROVERSIA CONSTITUCIONAL 104/2008",
+          "motivo": "sin_cuerpo_reconocible"
+        },
+        {
+          "linea": 38464,
+          "asunto": "CONTROVERSIA CONSTITUCIONAL 106/2008",
+          "motivo": "sin_cuerpo_reconocible"
+        },
+        {
+          "linea": 38482,
+          "asunto": "CONTROVERSIA CONSTITUCIONAL 107/2008",
+          "motivo": "sin_cuerpo_reconocible"
+        },
+        {
+          "linea": 38501,
+          "asunto": "CONTROVERSIA CONSTITUCIONAL 108/2008",
+          "motivo": "sin_cuerpo_reconocible"
+        },
+        {
+          "linea": 38518,
+          "asunto": "CONTROVERSIA CONSTITUCIONAL 109/2008",
+          "motivo": "sin_cuerpo_reconocible"
+        },
+        {
+          "linea": 38537,
+          "asunto": "CONTROVERSIA CONSTITUCIONAL 110/2008",
+          "motivo": "sin_cuerpo_reconocible"
+        },
+        {
+          "linea": 38554,
+          "asunto": "CONTROVERSIA CONSTITUCIONAL 111/2008",
+          "motivo": "sin_cuerpo_reconocible"
+        },
+        {
+          "linea": 38573,
+          "asunto": "CONTROVERSIA CONSTITUCIONAL 112/2008",
+          "motivo": "sin_cuerpo_reconocible"
+        },
+        {
+          "linea": 38591,
+          "asunto": "CONTROVERSIA CONSTITUCIONAL 113/2008",
+          "motivo": "sin_cuerpo_reconocible"
+        },
+        {
+          "linea": 38610,
+          "asunto": "CONTROVERSIA CONSTITUCIONAL 114/2008",
+          "motivo": "sin_cuerpo_reconocible"
+        },
+        {
+          "linea": 38628,
+          "asunto": "CONTROVERSIA CONSTITUCIONAL 115/2008",
+          "motivo": "sin_cuerpo_reconocible"
+        },
+        {
+          "linea": 38645,
+          "asunto": "CONTROVERSIA CONSTITUCIONAL 116/2008",
+          "motivo": "sin_cuerpo_reconocible"
+        },
+        {
+          "linea": 38665,
+          "asunto": "CONTROVERSIA CONSTITUCIONAL 117/2008",
+          "motivo": "sin_cuerpo_reconocible"
+        },
+        {
+          "linea": 38682,
+          "asunto": "CONTROVERSIA CONSTITUCIONAL 118/2008",
+          "motivo": "sin_cuerpo_reconocible"
+        },
+        {
+          "linea": 38702,
+          "asunto": "CONTROVERSIA CONSTITUCIONAL 119/2008",
+          "motivo": "sin_cuerpo_reconocible"
+        },
+        {
+          "linea": 38719,
+          "asunto": "CONTROVERSIA CONSTITUCIONAL 120/2008",
+          "motivo": "sin_cuerpo_reconocible"
+        },
+        {
+          "linea": 38738,
+          "asunto": "CONTROVERSIA CONSTITUCIONAL 121/2008",
+          "motivo": "sin_cuerpo_reconocible"
+        },
+        {
+          "linea": 38755,
+          "asunto": "CONTROVERSIA CONSTITUCIONAL 122/2008",
+          "motivo": "sin_cuerpo_reconocible"
+        },
+        {
+          "linea": 38774,
+          "asunto": "CONTROVERSIA CONSTITUCIONAL 123/2008",
+          "motivo": "sin_cuerpo_reconocible"
+        },
+        {
+          "linea": 38792,
+          "asunto": "CONTROVERSIA CONSTITUCIONAL 124/2008",
+          "motivo": "sin_cuerpo_reconocible"
+        },
+        {
+          "linea": 38810,
+          "asunto": "CONTROVERSIA CONSTITUCIONAL 125/2008",
+          "motivo": "sin_cuerpo_reconocible"
+        },
+        {
+          "linea": 38829,
+          "asunto": "CONTROVERSIA CONSTITUCIONAL 126/2008",
+          "motivo": "sin_cuerpo_reconocible"
+        },
+        {
+          "linea": 38847,
+          "asunto": "CONTROVERSIA CONSTITUCIONAL 127/2008",
+          "motivo": "sin_cuerpo_reconocible"
+        },
+        {
+          "linea": 38866,
+          "asunto": "CONTROVERSIA CONSTITUCIONAL 128/2008",
+          "motivo": "sin_cuerpo_reconocible"
+        },
+        {
+          "linea": 38883,
+          "asunto": "CONTROVERSIA CONSTITUCIONAL 129/2008",
+          "motivo": "sin_cuerpo_reconocible"
+        },
+        {
+          "linea": 38902,
+          "asunto": "CONTROVERSIA CONSTITUCIONAL 130/2008",
+          "motivo": "sin_cuerpo_reconocible"
+        },
+        {
+          "linea": 38919,
+          "asunto": "CONTROVERSIA CONSTITUCIONAL 131/2008",
+          "motivo": "sin_cuerpo_reconocible"
+        }
+      ]
+    },
+    {
+      "archivo": "10a-epoca/Libro-004_2012-01_enero_Tomo-IV.md",
+      "sha256_md": "b475cfc5787ca8cf91781f67be90590abf42e2ae0370db146ce36663027ce164",
+      "cabeceras": 26,
+      "cierres_sentencia": 0,
+      "extraidas": 26,
+      "rechazos": []
+    },
+    {
+      "archivo": "10a-epoca/Libro-004_2012-01_enero_Tomo-V.md",
+      "sha256_md": "bb29a40d88b2b44bcd10a92635d6d3b81977c23b61a10a93a5ff2e5bb17b5c9e",
+      "cabeceras": 23,
+      "cierres_sentencia": 0,
+      "extraidas": 7,
+      "rechazos": [
+        {
+          "linea": 3895,
+          "asunto": "AMPARO DIRECTO 221/2011",
+          "motivo": "limite_sin_cierre_verificable"
+        },
+        {
+          "linea": 4341,
+          "asunto": "AMPARO DIRECTO 324/2011",
+          "motivo": "limite_sin_cierre_verificable"
+        },
+        {
+          "linea": 4927,
+          "asunto": "AMPARO DIRECTO 412/2009",
+          "motivo": "limite_sin_cierre_verificable"
+        },
+        {
+          "linea": 7334,
+          "asunto": "AMPARO DIRECTO 819/2011",
+          "motivo": "limite_sin_cierre_verificable"
+        },
+        {
+          "linea": 7782,
+          "asunto": "AMPARO DIRECTO 801/2011",
+          "motivo": "limite_sin_cierre_verificable"
+        },
+        {
+          "linea": 8430,
+          "asunto": "AMPARO DIRECTO 833/2011",
+          "motivo": "limite_sin_cierre_verificable"
+        },
+        {
+          "linea": 8677,
+          "asunto": "AMPARO DIRECTO 757/2011",
+          "motivo": "limite_sin_cierre_verificable"
+        },
+        {
+          "linea": 9922,
+          "asunto": "AMPARO DIRECTO 828/2011",
+          "motivo": "limite_sin_cierre_verificable"
+        },
+        {
+          "linea": 10215,
+          "asunto": "AMPARO DIRECTO 230/2011",
+          "motivo": "limite_sin_cierre_verificable"
+        },
+        {
+          "linea": 11341,
+          "asunto": "AMPARO DIRECTO 465/2011",
+          "motivo": "limite_sin_cierre_verificable"
+        },
+        {
+          "linea": 12054,
+          "asunto": "AMPARO DIRECTO 558/2011",
+          "motivo": "limite_sin_cierre_verificable"
+        },
+        {
+          "linea": 16233,
+          "asunto": "AMPARO DIRECTO 355/2011",
+          "motivo": "limite_sin_cierre_verificable"
+        },
+        {
+          "linea": 17666,
+          "asunto": "AMPARO EN REVISIÓN 674/2011",
+          "motivo": "limite_sin_cierre_verificable"
+        },
+        {
+          "linea": 21296,
+          "asunto": "AMPARO DIRECTO 755/2011",
+          "motivo": "limite_sin_cierre_verificable"
+        },
+        {
+          "linea": 21911,
+          "asunto": "AMPARO EN REVISIÓN 557/2011",
+          "motivo": "limite_sin_cierre_verificable"
+        },
+        {
+          "linea": 26586,
+          "asunto": "AMPARO EN REVISIÓN 78/2011",
+          "motivo": "limite_sin_cierre_verificable"
+        }
+      ]
+    },
+    {
+      "archivo": "10a-epoca/Libro-004_2014-03_marzo.md",
+      "sha256_md": "b7ebf8aa1a6114b75d72b152aa13159a9f0f7db4ed75398918f7d6a730a07853",
+      "cabeceras": 56,
+      "cierres_sentencia": 54,
+      "extraidas": 55,
+      "rechazos": [
+        {
+          "linea": 21570,
+          "asunto": "AMPARO DIRECTO EN REVISIÓN 665/2013",
+          "motivo": "sin_cuerpo_reconocible"
+        }
+      ]
+    },
+    {
+      "archivo": "10a-epoca/Libro-005_2012-02_febrero.md",
+      "sha256_md": "f08795110988c53569af884dce15db0c064d89f9b1e55f88bdcc365a05965ae3",
+      "cabeceras": 58,
+      "cierres_sentencia": 0,
+      "extraidas": 53,
+      "rechazos": [
+        {
+          "linea": 78771,
+          "asunto": "AMPARO DIRECTO 540/2011",
+          "motivo": "limite_sin_cierre_verificable"
+        },
+        {
+          "linea": 83179,
+          "asunto": "INCIDENTE DE INEJECUCIÓN 24/2011",
+          "motivo": "limite_sin_cierre_verificable"
+        },
+        {
+          "linea": 83385,
+          "asunto": "AMPARO DIRECTO 379/2010",
+          "motivo": "limite_sin_cierre_verificable"
+        },
+        {
+          "linea": 86036,
+          "asunto": "AMPARO DIRECTO 607/2011",
+          "motivo": "limite_sin_cierre_verificable"
+        },
+        {
+          "linea": 86360,
+          "asunto": "AMPARO DIRECTO 347/2011",
+          "motivo": "limite_sin_cierre_verificable"
+        }
+      ]
+    },
+    {
+      "archivo": "10a-epoca/Libro-005_2014-04_abril.md",
+      "sha256_md": "f5ec3d0ed8e89d6e193a32607f7804f3583f97d843413e45e936700386f744cd",
+      "cabeceras": 49,
+      "cierres_sentencia": 47,
+      "extraidas": 47,
+      "rechazos": [
+        {
+          "linea": 33387,
+          "asunto": "AMPARO EN REVISIÓN 290/2013",
+          "motivo": "sin_cuerpo_reconocible"
+        },
+        {
+          "linea": 63207,
+          "asunto": "AMPARO DIRECTO 1375/2013",
+          "motivo": "limite_sin_cierre_verificable"
+        }
+      ]
+    },
+    {
+      "archivo": "10a-epoca/Libro-006_2012-03_marzo.md",
+      "sha256_md": "b4cf35c592d7d30a51e3ab83dd2b19c0e5c37acaa9c9d19931ab72afc3d3a1a0",
+      "cabeceras": 46,
+      "cierres_sentencia": 0,
+      "extraidas": 35,
+      "rechazos": [
+        {
+          "linea": 34271,
+          "asunto": "AMPARO DIRECTO 486/2011",
+          "motivo": "limite_sin_cierre_verificable"
+        },
+        {
+          "linea": 35407,
+          "asunto": "AMPARO DIRECTO 507/2011",
+          "motivo": "limite_sin_cierre_verificable"
+        },
+        {
+          "linea": 40704,
+          "asunto": "AMPARO DIRECTO 775/2011",
+          "motivo": "limite_sin_cierre_verificable"
+        },
+        {
+          "linea": 41318,
+          "asunto": "AMPARO DIRECTO 530/2011",
+          "motivo": "limite_sin_cierre_verificable"
+        },
+        {
+          "linea": 41920,
+          "asunto": "AMPARO DIRECTO 890/2011",
+          "motivo": "limite_sin_cierre_verificable"
+        },
+        {
+          "linea": 43044,
+          "asunto": "AMPARO DIRECTO 25/2012",
+          "motivo": "limite_sin_cierre_verificable"
+        },
+        {
+          "linea": 44594,
+          "asunto": "AMPARO DIRECTO 256/2011",
+          "motivo": "limite_sin_cierre_verificable"
+        },
+        {
+          "linea": 52956,
+          "asunto": "AMPARO DIRECTO 1026/2011",
+          "motivo": "limite_sin_cierre_verificable"
+        },
+        {
+          "linea": 53724,
+          "asunto": "AMPARO DIRECTO 1094/2011",
+          "motivo": "limite_sin_cierre_verificable"
+        },
+        {
+          "linea": 55525,
+          "asunto": "AMPARO DIRECTO 1037/2011",
+          "motivo": "limite_sin_cierre_verificable"
+        },
+        {
+          "linea": 59044,
+          "asunto": "AMPARO DIRECTO 1023/2011",
+          "motivo": "limite_sin_cierre_verificable"
+        }
+      ]
+    },
+    {
+      "archivo": "10a-epoca/Libro-006_2014-05_mayo.md",
+      "sha256_md": "e0781e6feb868956b14a070bf9358b928b90ad166fcea185bd65b391c0522595",
+      "cabeceras": 63,
+      "cierres_sentencia": 65,
+      "extraidas": 63,
+      "rechazos": []
+    },
+    {
+      "archivo": "10a-epoca/Libro-007_2012-04_abril.md",
+      "sha256_md": "97086e1990ead5b6c1103d6cb71362fa03258964a18ba2a5b6e2917174eaa2ed",
+      "cabeceras": 56,
+      "cierres_sentencia": 0,
+      "extraidas": 48,
+      "rechazos": [
+        {
+          "linea": 3053,
+          "asunto": "CONTRADICCIÓN DE TESIS 259/2009",
+          "motivo": "sin_cuerpo_reconocible"
+        },
+        {
+          "linea": 53905,
+          "asunto": "AMPARO EN REVISIÓN 599/2011",
+          "motivo": "limite_sin_cierre_verificable"
+        },
+        {
+          "linea": 55716,
+          "asunto": "AMPARO EN REVISIÓN 433/2011",
+          "motivo": "limite_sin_cierre_verificable"
+        },
+        {
+          "linea": 60354,
+          "asunto": "AMPARO DIRECTO 534/2011",
+          "motivo": "limite_sin_cierre_verificable"
+        },
+        {
+          "linea": 61608,
+          "asunto": "AMPARO DIRECTO 29/2012",
+          "motivo": "sin_cuerpo_reconocible"
+        },
+        {
+          "linea": 64019,
+          "asunto": "RECLAMACIÓN 46/2011",
+          "motivo": "limite_sin_cierre_verificable"
+        },
+        {
+          "linea": 68234,
+          "asunto": "AMPARO DIRECTO 931/2011",
+          "motivo": "limite_sin_cierre_verificable"
+        },
+        {
+          "linea": 73991,
+          "asunto": "AMPARO DIRECTO 1222/2011",
+          "motivo": "limite_sin_cierre_verificable"
+        }
+      ]
+    },
+    {
+      "archivo": "10a-epoca/Libro-007_2014-06_junio.md",
+      "sha256_md": "be6c4523dc3c4b844792aa9b7f3ae8e1959d0b674390bc0019dc8b4635de3abb",
+      "cabeceras": 48,
+      "cierres_sentencia": 46,
+      "extraidas": 47,
+      "rechazos": [
+        {
+          "linea": 16232,
+          "asunto": "CONTRADICCIÓN DE TESIS 350/2013",
+          "motivo": "limite_sin_cierre_verificable"
+        }
+      ]
+    },
+    {
+      "archivo": "10a-epoca/Libro-008_2012-05_mayo.md",
+      "sha256_md": "27a150ecc02e255adc0c87513e107c5a22175d16664e42b921ddcbe72910c2e8",
+      "cabeceras": 61,
+      "cierres_sentencia": 0,
+      "extraidas": 50,
+      "rechazos": [
+        {
+          "linea": 60697,
+          "asunto": "AMPARO DIRECTO 56/2012",
+          "motivo": "limite_sin_cierre_verificable"
+        },
+        {
+          "linea": 63403,
+          "asunto": "AMPARO EN REVISIÓN 50/2012",
+          "motivo": "limite_sin_cierre_verificable"
+        },
+        {
+          "linea": 66462,
+          "asunto": "AMPARO DIRECTO 771/2011",
+          "motivo": "limite_sin_cierre_verificable"
+        },
+        {
+          "linea": 66669,
+          "asunto": "QUEJA 4/2012",
+          "motivo": "limite_sin_cierre_verificable"
+        },
+        {
+          "linea": 66940,
+          "asunto": "AMPARO DIRECTO 1301/2011",
+          "motivo": "limite_sin_cierre_verificable"
+        },
+        {
+          "linea": 68063,
+          "asunto": "AMPARO DIRECTO 558/2011",
+          "motivo": "limite_sin_cierre_verificable"
+        },
+        {
+          "linea": 70198,
+          "asunto": "AMPARO EN REVISIÓN 626/2011",
+          "motivo": "limite_sin_cierre_verificable"
+        },
+        {
+          "linea": 70822,
+          "asunto": "AMPARO DIRECTO 1383/2011",
+          "motivo": "limite_sin_cierre_verificable"
+        },
+        {
+          "linea": 71861,
+          "asunto": "AMPARO DIRECTO 1176/2011",
+          "motivo": "limite_sin_cierre_verificable"
+        },
+        {
+          "linea": 75489,
+          "asunto": "AMPARO DIRECTO 584/2011",
+          "motivo": "limite_sin_cierre_verificable"
+        },
+        {
+          "linea": 77832,
+          "asunto": "AMPARO DIRECTO 210/2011",
+          "motivo": "limite_sin_cierre_verificable"
+        }
+      ]
+    },
+    {
+      "archivo": "10a-epoca/Libro-008_2014-07_julio.md",
+      "sha256_md": "3ec50c78ffa3e6e9f3eab3e7ab138f1ccb633840d4f1fa85703cac426c16e722",
+      "cabeceras": 26,
+      "cierres_sentencia": 25,
+      "extraidas": 26,
+      "rechazos": []
+    },
+    {
+      "archivo": "10a-epoca/Libro-009_2012-06_junio.md",
+      "sha256_md": "f850f0240973b9a55672548721abd0ec0de8cb7654d5dcf5bf1d7bf9a9ccb598",
+      "cabeceras": 24,
+      "cierres_sentencia": 0,
+      "extraidas": 14,
+      "rechazos": [
+        {
+          "linea": 6089,
+          "asunto": "CONTRADICCIÓN DE TESIS 466/2011",
+          "motivo": "limite_sin_cierre_verificable"
+        },
+        {
+          "linea": 24799,
+          "asunto": "AMPARO EN REVISIÓN 38/2012",
+          "motivo": "limite_sin_cierre_verificable"
+        },
+        {
+          "linea": 25076,
+          "asunto": "AMPARO DIRECTO 259/2011",
+          "motivo": "limite_sin_cierre_verificable"
+        },
+        {
+          "linea": 25563,
+          "asunto": "COMPETENCIA 16/2011",
+          "motivo": "limite_sin_cierre_verificable"
+        },
+        {
+          "linea": 26133,
+          "asunto": "AMPARO DIRECTO 1055/2011",
+          "motivo": "limite_sin_cierre_verificable"
+        },
+        {
+          "linea": 26955,
+          "asunto": "AMPARO DIRECTO 306/2011",
+          "motivo": "limite_sin_cierre_verificable"
+        },
+        {
+          "linea": 27560,
+          "asunto": "AMPARO DIRECTO 404/2011",
+          "motivo": "limite_sin_cierre_verificable"
+        },
+        {
+          "linea": 28050,
+          "asunto": "AMPARO DIRECTO 214/2010",
+          "motivo": "limite_sin_cierre_verificable"
+        },
+        {
+          "linea": 30429,
+          "asunto": "AMPARO DIRECTO 665/2011",
+          "motivo": "limite_sin_cierre_verificable"
+        },
+        {
+          "linea": 30809,
+          "asunto": "AMPARO DIRECTO 306/2011",
+          "motivo": "limite_sin_cierre_verificable"
+        }
+      ]
+    },
+    {
+      "archivo": "10a-epoca/Libro-009_2014-08_agosto.md",
+      "sha256_md": "2252157c8cde3556417c8451befc829af7afd59657dac19a9d6ebada51a2302c",
+      "cabeceras": 51,
+      "cierres_sentencia": 48,
+      "extraidas": 51,
+      "rechazos": []
+    },
+    {
+      "archivo": "10a-epoca/Libro-010_2012-07_julio.md",
+      "sha256_md": "263bb5e9bf7d6ffaeb9b23b30e27c549d20ded8ad136895e1e32d57b4cb24886",
+      "cabeceras": 53,
+      "cierres_sentencia": 0,
+      "extraidas": 42,
+      "rechazos": [
+        {
+          "linea": 63578,
+          "asunto": "AMPARO EN REVISIÓN 115/2012",
+          "motivo": "limite_sin_cierre_verificable"
+        },
+        {
+          "linea": 64027,
+          "asunto": "AMPARO DIRECTO 1460/2011",
+          "motivo": "limite_sin_cierre_verificable"
+        },
+        {
+          "linea": 64346,
+          "asunto": "AMPARO DIRECTO 1027/2011",
+          "motivo": "limite_sin_cierre_verificable"
+        },
+        {
+          "linea": 64739,
+          "asunto": "AMPARO DIRECTO 1428/2011",
+          "motivo": "limite_sin_cierre_verificable"
+        },
+        {
+          "linea": 65099,
+          "asunto": "AMPARO DIRECTO 77/2009",
+          "motivo": "limite_sin_cierre_verificable"
+        },
+        {
+          "linea": 65477,
+          "asunto": "AMPARO DIRECTO 427/2011",
+          "motivo": "limite_sin_cierre_verificable"
+        },
+        {
+          "linea": 70012,
+          "asunto": "AMPARO DIRECTO 1066/2011",
+          "motivo": "limite_sin_cierre_verificable"
+        },
+        {
+          "linea": 72409,
+          "asunto": "AMPARO DIRECTO 699/2011",
+          "motivo": "limite_sin_cierre_verificable"
+        },
+        {
+          "linea": 75029,
+          "asunto": "AMPARO DIRECTO 1335/2011",
+          "motivo": "limite_sin_cierre_verificable"
+        },
+        {
+          "linea": 76268,
+          "asunto": "AMPARO DIRECTO 675/2011",
+          "motivo": "limite_sin_cierre_verificable"
+        },
+        {
+          "linea": 80612,
+          "asunto": "AMPARO DIRECTO 87/2012",
+          "motivo": "limite_sin_cierre_verificable"
+        }
+      ]
+    },
+    {
+      "archivo": "10a-epoca/Libro-010_2013-07_julio.md",
+      "sha256_md": "9709785db22f05bade75c37ebe4ab7d5341dcfc2884cb718fa9e23e780cdff17",
+      "cabeceras": 53,
+      "cierres_sentencia": 0,
+      "extraidas": 42,
+      "rechazos": [
+        {
+          "linea": 63578,
+          "asunto": "AMPARO EN REVISIÓN 115/2012",
+          "motivo": "limite_sin_cierre_verificable"
+        },
+        {
+          "linea": 64027,
+          "asunto": "AMPARO DIRECTO 1460/2011",
+          "motivo": "limite_sin_cierre_verificable"
+        },
+        {
+          "linea": 64346,
+          "asunto": "AMPARO DIRECTO 1027/2011",
+          "motivo": "limite_sin_cierre_verificable"
+        },
+        {
+          "linea": 64739,
+          "asunto": "AMPARO DIRECTO 1428/2011",
+          "motivo": "limite_sin_cierre_verificable"
+        },
+        {
+          "linea": 65099,
+          "asunto": "AMPARO DIRECTO 77/2009",
+          "motivo": "limite_sin_cierre_verificable"
+        },
+        {
+          "linea": 65477,
+          "asunto": "AMPARO DIRECTO 427/2011",
+          "motivo": "limite_sin_cierre_verificable"
+        },
+        {
+          "linea": 70012,
+          "asunto": "AMPARO DIRECTO 1066/2011",
+          "motivo": "limite_sin_cierre_verificable"
+        },
+        {
+          "linea": 72409,
+          "asunto": "AMPARO DIRECTO 699/2011",
+          "motivo": "limite_sin_cierre_verificable"
+        },
+        {
+          "linea": 75029,
+          "asunto": "AMPARO DIRECTO 1335/2011",
+          "motivo": "limite_sin_cierre_verificable"
+        },
+        {
+          "linea": 76268,
+          "asunto": "AMPARO DIRECTO 675/2011",
+          "motivo": "limite_sin_cierre_verificable"
+        },
+        {
+          "linea": 80612,
+          "asunto": "AMPARO DIRECTO 87/2012",
+          "motivo": "limite_sin_cierre_verificable"
+        }
+      ]
+    },
+    {
+      "archivo": "10a-epoca/Libro-010_2014-09_septiembre.md",
+      "sha256_md": "edfbe1d90cfa8e35196646c21f1bcd19cc4898cf82bd1f69c82238dac476c43a",
+      "cabeceras": 49,
+      "cierres_sentencia": 50,
+      "extraidas": 48,
+      "rechazos": [
+        {
+          "linea": 43156,
+          "asunto": "CONTRADICCIÓN DE TESIS 4/2014",
+          "motivo": "limite_sin_cierre_verificable"
+        }
+      ]
+    },
+    {
+      "archivo": "10a-epoca/Libro-011_2012-08_agosto.md",
+      "sha256_md": "705e34c91c4a742a70a17367016e487d54397464cb6e898d44fbf672daf3e5c3",
+      "cabeceras": 56,
+      "cierres_sentencia": 0,
+      "extraidas": 45,
+      "rechazos": [
+        {
+          "linea": 2767,
+          "asunto": "AMPARO DIRECTO EN REVISIÓN 1039/2012",
+          "motivo": "sin_cuerpo_reconocible"
+        },
+        {
+          "linea": 10665,
+          "asunto": "CONTRADICCIÓN DE TESIS 488/2011",
+          "motivo": "limite_sin_cierre_verificable"
+        },
+        {
+          "linea": 46593,
+          "asunto": "AMPARO DIRECTO 186/2012",
+          "motivo": "limite_sin_cierre_verificable"
+        },
+        {
+          "linea": 47671,
+          "asunto": "AMPARO EN REVISIÓN 676/2011",
+          "motivo": "limite_sin_cierre_verificable"
+        },
+        {
+          "linea": 52878,
+          "asunto": "AMPARO DIRECTO 39/2012",
+          "motivo": "limite_sin_cierre_verificable"
+        },
+        {
+          "linea": 53292,
+          "asunto": "AMPARO DIRECTO 1194/2011",
+          "motivo": "limite_sin_cierre_verificable"
+        },
+        {
+          "linea": 59493,
+          "asunto": "AMPARO DIRECTO 1550/2011",
+          "motivo": "limite_sin_cierre_verificable"
+        },
+        {
+          "linea": 60072,
+          "asunto": "AMPARO DIRECTO 74/2012",
+          "motivo": "limite_sin_cierre_verificable"
+        },
+        {
+          "linea": 60840,
+          "asunto": "AMPARO DIRECTO 345/2012",
+          "motivo": "limite_sin_cierre_verificable"
+        },
+        {
+          "linea": 61570,
+          "asunto": "RECLAMACIÓN 15/2011",
+          "motivo": "limite_sin_cierre_verificable"
+        },
+        {
+          "linea": 71991,
+          "asunto": "AMPARO DIRECTO 21/2012",
+          "motivo": "limite_sin_cierre_verificable"
+        }
+      ]
+    },
+    {
+      "archivo": "10a-epoca/Libro-011_2014-10_octubre.md",
+      "sha256_md": "7288b8bf56272e5bc3e964107e6d98303bd6773a77bdc58148615ab86d16c080",
+      "cabeceras": 62,
+      "cierres_sentencia": 64,
+      "extraidas": 62,
+      "rechazos": []
+    },
+    {
+      "archivo": "10a-epoca/Libro-012_2012-09_septiembre.md",
+      "sha256_md": "b0f0b8c5d2d69d20fd5b8050d17dd6526316d6a624309513f3427c37a3e757f0",
+      "cabeceras": 56,
+      "cierres_sentencia": 0,
+      "extraidas": 47,
+      "rechazos": [
+        {
+          "linea": 3943,
+          "asunto": "CONTROVERSIA CONSTITUCIONAL 54/2010",
+          "motivo": "sin_cuerpo_reconocible"
+        },
+        {
+          "linea": 54495,
+          "asunto": "AMPARO DIRECTO 1378/2010",
+          "motivo": "limite_sin_cierre_verificable"
+        },
+        {
+          "linea": 55299,
+          "asunto": "RECLAMACIÓN 6/2012",
+          "motivo": "limite_sin_cierre_verificable"
+        },
+        {
+          "linea": 56040,
+          "asunto": "AMPARO DIRECTO 790/2010",
+          "motivo": "limite_sin_cierre_verificable"
+        },
+        {
+          "linea": 56816,
+          "asunto": "AMPARO EN REVISIÓN 455/2011",
+          "motivo": "limite_sin_cierre_verificable"
+        },
+        {
+          "linea": 57171,
+          "asunto": "AMPARO EN REVISIÓN 445/2011",
+          "motivo": "limite_sin_cierre_verificable"
+        },
+        {
+          "linea": 59661,
+          "asunto": "AMPARO DIRECTO 252/2012",
+          "motivo": "limite_sin_cierre_verificable"
+        },
+        {
+          "linea": 77472,
+          "asunto": "AMPARO DIRECTO 367/2012",
+          "motivo": "limite_sin_cierre_verificable"
+        },
+        {
+          "linea": 78505,
+          "asunto": "AMPARO EN REVISIÓN 268/2012",
+          "motivo": "limite_sin_cierre_verificable"
+        }
+      ]
+    },
+    {
+      "archivo": "10a-epoca/Libro-012_2014-11_noviembre_Tomo-I.md",
+      "sha256_md": "a59f6c8123de44efcf7dc3f6884f5008b3583dcb8f209fecd9a9b1e2b01bd43f",
+      "cabeceras": 22,
+      "cierres_sentencia": 25,
+      "extraidas": 22,
+      "rechazos": []
+    },
+    {
+      "archivo": "10a-epoca/Libro-012_2014-11_noviembre_Tomo-II.md",
+      "sha256_md": "37e4f55d5960a85c6bdaaa6d3b6783f6d6446d639798b2015d2d439ed36282cf",
+      "cabeceras": 11,
+      "cierres_sentencia": 12,
+      "extraidas": 11,
+      "rechazos": []
+    },
+    {
+      "archivo": "10a-epoca/Libro-012_2014-11_noviembre_Tomo-III.md",
+      "sha256_md": "4940c7d6587b077bc6accc898c24c73af4534d3c8159b4149cecab4b69f77ed0",
+      "cabeceras": 5,
+      "cierres_sentencia": 0,
+      "extraidas": 5,
+      "rechazos": []
+    },
+    {
+      "archivo": "10a-epoca/Libro-012_2014-11_noviembre_Tomo-IV.md",
+      "sha256_md": "5e70d71b8fa8c54373c222e5325d9b4d71ddc8f5c563fd1e0d79a7f600bc9cf6",
+      "cabeceras": 13,
+      "cierres_sentencia": 16,
+      "extraidas": 13,
+      "rechazos": []
+    },
+    {
+      "archivo": "10a-epoca/Libro-013_2012-10_octubre.md",
+      "sha256_md": "dc4b81017e7bb193e16511f28aa7726b3a36481d41faf8decf1a469f50c4ddf7",
+      "cabeceras": 72,
+      "cierres_sentencia": 0,
+      "extraidas": 57,
+      "rechazos": [
+        {
+          "linea": 2399,
+          "asunto": "CONTROVERSIA CONSTITUCIONAL 92/2009",
+          "motivo": "sin_cuerpo_reconocible"
+        },
+        {
+          "linea": 83911,
+          "asunto": "AMPARO DIRECTO 888/2011",
+          "motivo": "limite_sin_cierre_verificable"
+        },
+        {
+          "linea": 85387,
+          "asunto": "AMPARO EN REVISIÓN 85/2012",
+          "motivo": "limite_sin_cierre_verificable"
+        },
+        {
+          "linea": 89581,
+          "asunto": "AMPARO EN REVISIÓN 246/2012",
+          "motivo": "limite_sin_cierre_verificable"
+        },
+        {
+          "linea": 92555,
+          "asunto": "AMPARO DIRECTO 1260/2011",
+          "motivo": "limite_sin_cierre_verificable"
+        },
+        {
+          "linea": 102720,
+          "asunto": "AMPARO DIRECTO 290/2012",
+          "motivo": "limite_sin_cierre_verificable"
+        },
+        {
+          "linea": 103438,
+          "asunto": "AMPARO EN REVISIÓN 89/2012",
+          "motivo": "limite_sin_cierre_verificable"
+        },
+        {
+          "linea": 105175,
+          "asunto": "AMPARO DIRECTO 196/2012",
+          "motivo": "limite_sin_cierre_verificable"
+        },
+        {
+          "linea": 107723,
+          "asunto": "AMPARO DIRECTO 541/2012",
+          "motivo": "limite_sin_cierre_verificable"
+        },
+        {
+          "linea": 109128,
+          "asunto": "AMPARO DIRECTO 522/2011",
+          "motivo": "limite_sin_cierre_verificable"
+        },
+        {
+          "linea": 110003,
+          "asunto": "AMPARO DIRECTO 38/2012",
+          "motivo": "limite_sin_cierre_verificable"
+        },
+        {
+          "linea": 110733,
+          "asunto": "AMPARO DIRECTO 827/2011",
+          "motivo": "limite_sin_cierre_verificable"
+        },
+        {
+          "linea": 112760,
+          "asunto": "AMPARO DIRECTO 320/2012",
+          "motivo": "limite_sin_cierre_verificable"
+        },
+        {
+          "linea": 113690,
+          "asunto": "QUEJA 148/2011",
+          "motivo": "limite_sin_cierre_verificable"
+        },
+        {
+          "linea": 117538,
+          "asunto": "AMPARO DIRECTO 257/2012",
+          "motivo": "limite_sin_cierre_verificable"
+        }
+      ]
+    },
+    {
+      "archivo": "10a-epoca/Libro-013_2014-12_diciembre.md",
+      "sha256_md": "3ca482ba97681966c1b784fb8e4dda168bbd543f238d123fc0cbf7fdf065afd5",
+      "cabeceras": 19,
+      "cierres_sentencia": 17,
+      "extraidas": 19,
+      "rechazos": []
+    },
+    {
+      "archivo": "10a-epoca/Libro-014_2012-11_noviembre.md",
+      "sha256_md": "ef7fa968183a15fe1f6c68c6d4b24fc0ebea2db10a87c4d30b5d4d8a681d2d01",
+      "cabeceras": 65,
+      "cierres_sentencia": 0,
+      "extraidas": 43,
+      "rechazos": [
+        {
+          "linea": 13497,
+          "asunto": "ACCIÓN DE INCONSTITUCIONALIDAD 4/2012",
+          "motivo": "sin_cuerpo_reconocible"
+        },
+        {
+          "linea": 13516,
+          "asunto": "ACCIÓN DE INCONSTITUCIONALIDAD 5/2012",
+          "motivo": "sin_cuerpo_reconocible"
+        },
+        {
+          "linea": 13533,
+          "asunto": "ACCIÓN DE INCONSTITUCIONALIDAD 6/2012",
+          "motivo": "sin_cuerpo_reconocible"
+        },
+        {
+          "linea": 13551,
+          "asunto": "ACCIÓN DE INCONSTITUCIONALIDAD 7/2012",
+          "motivo": "sin_cuerpo_reconocible"
+        },
+        {
+          "linea": 13568,
+          "asunto": "ACCIÓN DE INCONSTITUCIONALIDAD 8/2012",
+          "motivo": "sin_cuerpo_reconocible"
+        },
+        {
+          "linea": 13585,
+          "asunto": "ACCIÓN DE INCONSTITUCIONALIDAD 10/2012",
+          "motivo": "sin_cuerpo_reconocible"
+        },
+        {
+          "linea": 13604,
+          "asunto": "ACCIÓN DE INCONSTITUCIONALIDAD 11/2012",
+          "motivo": "sin_cuerpo_reconocible"
+        },
+        {
+          "linea": 13621,
+          "asunto": "ACCIÓN DE INCONSTITUCIONALIDAD 12/2012",
+          "motivo": "sin_cuerpo_reconocible"
+        },
+        {
+          "linea": 13641,
+          "asunto": "ACCIÓN DE INCONSTITUCIONALIDAD 13/2012",
+          "motivo": "sin_cuerpo_reconocible"
+        },
+        {
+          "linea": 13658,
+          "asunto": "ACCIÓN DE INCONSTITUCIONALIDAD 14/2012",
+          "motivo": "sin_cuerpo_reconocible"
+        },
+        {
+          "linea": 13677,
+          "asunto": "ACCIÓN DE INCONSTITUCIONALIDAD 15/2012",
+          "motivo": "sin_cuerpo_reconocible"
+        },
+        {
+          "linea": 13694,
+          "asunto": "ACCIÓN DE INCONSTITUCIONALIDAD 16/2012",
+          "motivo": "sin_cuerpo_reconocible"
+        },
+        {
+          "linea": 13712,
+          "asunto": "ACCIÓN DE INCONSTITUCIONALIDAD 17/2012",
+          "motivo": "sin_cuerpo_reconocible"
+        },
+        {
+          "linea": 13729,
+          "asunto": "ACCIÓN DE INCONSTITUCIONALIDAD 18/2012",
+          "motivo": "limite_sin_cierre_verificable"
+        },
+        {
+          "linea": 24165,
+          "asunto": "COMPETENCIA 65/2012",
+          "motivo": "limite_sin_cierre_verificable"
+        },
+        {
+          "linea": 67144,
+          "asunto": "COMPETENCIA 9/2012",
+          "motivo": "limite_sin_cierre_verificable"
+        },
+        {
+          "linea": 68479,
+          "asunto": "AMPARO EN REVISIÓN 170/2012",
+          "motivo": "limite_sin_cierre_verificable"
+        },
+        {
+          "linea": 69470,
+          "asunto": "AMPARO EN REVISIÓN 454/2011",
+          "motivo": "limite_sin_cierre_verificable"
+        },
+        {
+          "linea": 69851,
+          "asunto": "AMPARO DIRECTO 867/2011",
+          "motivo": "limite_sin_cierre_verificable"
+        },
+        {
+          "linea": 71348,
+          "asunto": "AMPARO DIRECTO 3/2012",
+          "motivo": "limite_sin_cierre_verificable"
+        },
+        {
+          "linea": 72501,
+          "asunto": "AMPARO DIRECTO 160/2012",
+          "motivo": "limite_sin_cierre_verificable"
+        },
+        {
+          "linea": 78875,
+          "asunto": "AMPARO DIRECTO 123/2012",
+          "motivo": "limite_sin_cierre_verificable"
+        }
+      ]
+    },
+    {
+      "archivo": "10a-epoca/Libro-014_2015-01_enero.md",
+      "sha256_md": "a382c74fcdb527cabecd1c2f09c185b01196c345e6503eb91836dbf6eed0e8c0",
+      "cabeceras": 56,
+      "cierres_sentencia": 47,
+      "extraidas": 53,
+      "rechazos": [
+        {
+          "linea": 21345,
+          "asunto": "CONTRADICCIÓN DE TESIS 472/2013",
+          "motivo": "limite_sin_cierre_verificable"
+        },
+        {
+          "linea": 25317,
+          "asunto": "CONTRADICCIÓN DE TESIS 472/2013",
+          "motivo": "sin_cuerpo_reconocible"
+        },
+        {
+          "linea": 25345,
+          "asunto": "CONTRADICCIÓN DE TESIS 204/2014",
+          "motivo": "limite_sin_cierre_verificable"
+        }
+      ]
+    },
+    {
+      "archivo": "10a-epoca/Libro-015_2012-12_diciembre.md",
+      "sha256_md": "e6a2c3aae2224e98cdf563cf24661789653b697f66b6955c045816ff815a31d2",
+      "cabeceras": 39,
+      "cierres_sentencia": 0,
+      "extraidas": 31,
+      "rechazos": [
+        {
+          "linea": 37154,
+          "asunto": "AMPARO DIRECTO 391/2012",
+          "motivo": "limite_sin_cierre_verificable"
+        },
+        {
+          "linea": 37487,
+          "asunto": "AMPARO EN REVISIÓN 139/2012",
+          "motivo": "limite_sin_cierre_verificable"
+        },
+        {
+          "linea": 38068,
+          "asunto": "COMPETENCIA 15/2012",
+          "motivo": "limite_sin_cierre_verificable"
+        },
+        {
+          "linea": 41202,
+          "asunto": "AMPARO DIRECTO 412/2012",
+          "motivo": "limite_sin_cierre_verificable"
+        },
+        {
+          "linea": 42113,
+          "asunto": "AMPARO DIRECTO 732/2012",
+          "motivo": "limite_sin_cierre_verificable"
+        },
+        {
+          "linea": 48468,
+          "asunto": "AMPARO DIRECTO 1019/2011",
+          "motivo": "limite_sin_cierre_verificable"
+        },
+        {
+          "linea": 49029,
+          "asunto": "AMPARO DIRECTO 946/2011",
+          "motivo": "limite_sin_cierre_verificable"
+        },
+        {
+          "linea": 51043,
+          "asunto": "AMPARO DIRECTO 445/2012",
+          "motivo": "limite_sin_cierre_verificable"
+        }
+      ]
+    },
+    {
+      "archivo": "10a-epoca/Libro-015_2015-02_febrero.md",
+      "sha256_md": "4b9865fa53619c6fe4cbdc2596ecc2a57c683c278b0d175e4027e14c1e62311a",
+      "cabeceras": 59,
+      "cierres_sentencia": 53,
+      "extraidas": 58,
+      "rechazos": [
+        {
+          "linea": 62772,
+          "asunto": "CONTRADICCIÓN DE TESIS 173/2014",
+          "motivo": "sin_cuerpo_reconocible"
+        }
+      ]
+    },
+    {
+      "archivo": "10a-epoca/Libro-016_2013-01_enero.md",
+      "sha256_md": "353153c7ea318bb2b24aea29ed059bac32d7eaabd67883d1dd1062b0c2491c5f",
+      "cabeceras": 60,
+      "cierres_sentencia": 0,
+      "extraidas": 49,
+      "rechazos": [
+        {
+          "linea": 36978,
+          "asunto": "CONTRADICCIÓN DE TESIS 195/2012",
+          "motivo": "sin_cuerpo_reconocible"
+        },
+        {
+          "linea": 37291,
+          "asunto": "CONTRADICCIÓN DE TESIS 319/2012",
+          "motivo": "sin_cuerpo_reconocible"
+        },
+        {
+          "linea": 74262,
+          "asunto": "AMPARO DIRECTO 509/2012",
+          "motivo": "limite_sin_cierre_verificable"
+        },
+        {
+          "linea": 74479,
+          "asunto": "AMPARO EN REVISIÓN 134/2012",
+          "motivo": "limite_sin_cierre_verificable"
+        },
+        {
+          "linea": 77483,
+          "asunto": "AMPARO DIRECTO 264/2012",
+          "motivo": "limite_sin_cierre_verificable"
+        },
+        {
+          "linea": 78620,
+          "asunto": "AMPARO DIRECTO 663/2012",
+          "motivo": "limite_sin_cierre_verificable"
+        },
+        {
+          "linea": 80464,
+          "asunto": "AMPARO DIRECTO 467/2012",
+          "motivo": "limite_sin_cierre_verificable"
+        },
+        {
+          "linea": 82704,
+          "asunto": "AMPARO EN REVISIÓN 261/2012",
+          "motivo": "limite_sin_cierre_verificable"
+        },
+        {
+          "linea": 84629,
+          "asunto": "IMPEDIMENTO 30/2012",
+          "motivo": "limite_sin_cierre_verificable"
+        },
+        {
+          "linea": 85323,
+          "asunto": "AMPARO EN REVISIÓN 194/2012",
+          "motivo": "limite_sin_cierre_verificable"
+        },
+        {
+          "linea": 89799,
+          "asunto": "AMPARO EN REVISIÓN 163/2012",
+          "motivo": "limite_sin_cierre_verificable"
+        }
+      ]
+    },
+    {
+      "archivo": "10a-epoca/Libro-016_2015-03_marzo.md",
+      "sha256_md": "1c3fcda05d92632809fa8bebd1e252d0880ee425f2f5f04f2d944d5d294b38e2",
+      "cabeceras": 50,
+      "cierres_sentencia": 47,
+      "extraidas": 50,
+      "rechazos": []
+    },
+    {
+      "archivo": "10a-epoca/Libro-017_2013-02_febrero.md",
+      "sha256_md": "90b3995e3449b872e99bf0bf6dae2a6ca5a79c4a3128959a7d878c3eb084d357",
+      "cabeceras": 41,
+      "cierres_sentencia": 0,
+      "extraidas": 33,
+      "rechazos": [
+        {
+          "linea": 9558,
+          "asunto": "ACCIÓN DE INCONSTITUCIONALIDAD 22/2012",
+          "motivo": "limite_sin_cierre_verificable"
+        },
+        {
+          "linea": 32083,
+          "asunto": "CONTRADICCIÓN DE TESIS 63/2011",
+          "motivo": "sin_cuerpo_reconocible"
+        },
+        {
+          "linea": 32112,
+          "asunto": "CONTRADICCIÓN DE TESIS 135/2011",
+          "motivo": "limite_sin_cierre_verificable"
+        },
+        {
+          "linea": 49504,
+          "asunto": "AMPARO EN REVISIÓN 377/2012",
+          "motivo": "limite_sin_cierre_verificable"
+        },
+        {
+          "linea": 53206,
+          "asunto": "AMPARO DIRECTO 156/2012",
+          "motivo": "limite_sin_cierre_verificable"
+        },
+        {
+          "linea": 53915,
+          "asunto": "AMPARO EN REVISIÓN 152/2012",
+          "motivo": "limite_sin_cierre_verificable"
+        },
+        {
+          "linea": 56720,
+          "asunto": "AMPARO DIRECTO 274/2012",
+          "motivo": "limite_sin_cierre_verificable"
+        },
+        {
+          "linea": 58534,
+          "asunto": "AMPARO EN REVISIÓN 44/2012",
+          "motivo": "limite_sin_cierre_verificable"
+        }
+      ]
+    },
+    {
+      "archivo": "10a-epoca/Libro-017_2015-04_abril.md",
+      "sha256_md": "9567d80b68ea8e2eca51a4f3d4f436474fc9ebdacaf9dfc7239086f8892f105b",
+      "cabeceras": 41,
+      "cierres_sentencia": 39,
+      "extraidas": 40,
+      "rechazos": [
+        {
+          "linea": 33325,
+          "asunto": "CONTRADICCIÓN DE TESIS 94/2014",
+          "motivo": "sin_cuerpo_reconocible"
+        }
+      ]
+    },
+    {
+      "archivo": "10a-epoca/Libro-018_2013-03_marzo.md",
+      "sha256_md": "97f299c165b8b93bd1224b5fb18d844ca5a0f1ec3b85858d500558d4f33a2f1d",
+      "cabeceras": 60,
+      "cierres_sentencia": 0,
+      "extraidas": 49,
+      "rechazos": [
+        {
+          "linea": 35752,
+          "asunto": "CONTRADICCIÓN DE TESIS 143/2011",
+          "motivo": "sin_cuerpo_reconocible"
+        },
+        {
+          "linea": 35775,
+          "asunto": "CONTRADICCIÓN DE TESIS 180/2011",
+          "motivo": "sin_cuerpo_reconocible"
+        },
+        {
+          "linea": 35803,
+          "asunto": "CONTRADICCIÓN DE TESIS 471/2012",
+          "motivo": "sin_cuerpo_reconocible"
+        },
+        {
+          "linea": 37840,
+          "asunto": "CONTROVERSIA CONSTITUCIONAL 40/2012",
+          "motivo": "sin_cuerpo_reconocible"
+        },
+        {
+          "linea": 71661,
+          "asunto": "AMPARO DIRECTO 719/2012",
+          "motivo": "limite_sin_cierre_verificable"
+        },
+        {
+          "linea": 72937,
+          "asunto": "AMPARO DIRECTO 1262/2012",
+          "motivo": "limite_sin_cierre_verificable"
+        },
+        {
+          "linea": 73178,
+          "asunto": "AMPARO DIRECTO 195/2012",
+          "motivo": "limite_sin_cierre_verificable"
+        },
+        {
+          "linea": 74929,
+          "asunto": "QUEJA 47/2012",
+          "motivo": "limite_sin_cierre_verificable"
+        },
+        {
+          "linea": 75342,
+          "asunto": "AMPARO EN REVISIÓN 511/2012",
+          "motivo": "limite_sin_cierre_verificable"
+        },
+        {
+          "linea": 75976,
+          "asunto": "AMPARO DIRECTO 887/2012",
+          "motivo": "limite_sin_cierre_verificable"
+        },
+        {
+          "linea": 76674,
+          "asunto": "AMPARO DIRECTO 1276/2012",
+          "motivo": "limite_sin_cierre_verificable"
+        }
+      ]
+    },
+    {
+      "archivo": "10a-epoca/Libro-018_2015-05_mayo.md",
+      "sha256_md": "982342d69e8df78b4150f7a917732a878954beb6e52f4a81154affce2ad155c3",
+      "cabeceras": 47,
+      "cierres_sentencia": 45,
+      "extraidas": 46,
+      "rechazos": [
+        {
+          "linea": 2391,
+          "asunto": "CONTRADICCIÓN DE TESIS 38/2014",
+          "motivo": "limite_sin_cierre_verificable"
+        }
+      ]
+    },
+    {
+      "archivo": "10a-epoca/Libro-019_2013-04_abril.md",
+      "sha256_md": "97f7d07758f8fbf3917d1c27aa537fe0e5140649cd057d6f2db1d6b81d78ec65",
+      "cabeceras": 58,
+      "cierres_sentencia": 0,
+      "extraidas": 48,
+      "rechazos": [
+        {
+          "linea": 3728,
+          "asunto": "ACCIÓN DE INCONSTITUCIONALIDAD 50/2012",
+          "motivo": "limite_sin_cierre_verificable"
+        },
+        {
+          "linea": 45339,
+          "asunto": "CONTRADICCIÓN DE TESIS 397/2012",
+          "motivo": "limite_sin_cierre_verificable"
+        },
+        {
+          "linea": 65638,
+          "asunto": "SOLICITUD DE MODIFICACIÓN DE JURISPRUDENCIA 18/2012",
+          "motivo": "limite_sin_cierre_verificable"
+        },
+        {
+          "linea": 70715,
+          "asunto": "AMPARO EN REVISIÓN 25/2013",
+          "motivo": "limite_sin_cierre_verificable"
+        },
+        {
+          "linea": 73486,
+          "asunto": "AMPARO EN REVISIÓN 493/2012",
+          "motivo": "limite_sin_cierre_verificable"
+        },
+        {
+          "linea": 74783,
+          "asunto": "AMPARO DIRECTO 1298/2012",
+          "motivo": "limite_sin_cierre_verificable"
+        },
+        {
+          "linea": 78555,
+          "asunto": "QUEJA 71/2012",
+          "motivo": "limite_sin_cierre_verificable"
+        },
+        {
+          "linea": 78925,
+          "asunto": "AMPARO DIRECTO 1166/2012",
+          "motivo": "limite_sin_cierre_verificable"
+        },
+        {
+          "linea": 86921,
+          "asunto": "AMPARO DIRECTO 1167/2012",
+          "motivo": "limite_sin_cierre_verificable"
+        },
+        {
+          "linea": 87752,
+          "asunto": "AMPARO DIRECTO 527/2012",
+          "motivo": "limite_sin_cierre_verificable"
+        }
+      ]
+    },
+    {
+      "archivo": "10a-epoca/Libro-019_2015-06_junio.md",
+      "sha256_md": "854364ea53728e716b4c6ef0fc7a3bdca4b4484b2a2765fbb2facac127f8388d",
+      "cabeceras": 62,
+      "cierres_sentencia": 59,
+      "extraidas": 61,
+      "rechazos": [
+        {
+          "linea": 69877,
+          "asunto": "AMPARO DIRECTO 555/2014",
+          "motivo": "sin_cuerpo_reconocible"
+        }
+      ]
+    },
+    {
+      "archivo": "10a-epoca/Libro-020_2013-05_mayo.md",
+      "sha256_md": "8c9d0f1e7959ef2aeaddc3bf5b693e979e2b3b84d26400c65d56a459ddd4bbb4",
+      "cabeceras": 60,
+      "cierres_sentencia": 0,
+      "extraidas": 43,
+      "rechazos": [
+        {
+          "linea": 39130,
+          "asunto": "CONTRADICCIÓN DE TESIS 345/2012",
+          "motivo": "sin_cuerpo_reconocible"
+        },
+        {
+          "linea": 41436,
+          "asunto": "AMPARO DIRECTO 13/2013",
+          "motivo": "limite_sin_cierre_verificable"
+        },
+        {
+          "linea": 42979,
+          "asunto": "AMPARO DIRECTO 700/2012",
+          "motivo": "limite_sin_cierre_verificable"
+        },
+        {
+          "linea": 43872,
+          "asunto": "AMPARO DIRECTO 506/2012",
+          "motivo": "limite_sin_cierre_verificable"
+        },
+        {
+          "linea": 45544,
+          "asunto": "AMPARO DIRECTO 790/2012",
+          "motivo": "limite_sin_cierre_verificable"
+        },
+        {
+          "linea": 51338,
+          "asunto": "AMPARO DIRECTO 4/2013",
+          "motivo": "limite_sin_cierre_verificable"
+        },
+        {
+          "linea": 55293,
+          "asunto": "AMPARO EN REVISIÓN 23/2013",
+          "motivo": "limite_sin_cierre_verificable"
+        },
+        {
+          "linea": 56431,
+          "asunto": "AMPARO EN REVISIÓN 44/2013",
+          "motivo": "limite_sin_cierre_verificable"
+        },
+        {
+          "linea": 58175,
+          "asunto": "AMPARO EN REVISIÓN 356/2012",
+          "motivo": "limite_sin_cierre_verificable"
+        },
+        {
+          "linea": 58730,
+          "asunto": "AMPARO EN REVISIÓN 6/2013",
+          "motivo": "limite_sin_cierre_verificable"
+        },
+        {
+          "linea": 64523,
+          "asunto": "AMPARO DIRECTO 15/2013",
+          "motivo": "limite_sin_cierre_verificable"
+        },
+        {
+          "linea": 69374,
+          "asunto": "AMPARO DIRECTO 530/2011",
+          "motivo": "limite_sin_cierre_verificable"
+        },
+        {
+          "linea": 70052,
+          "asunto": "AMPARO DIRECTO 41/2013",
+          "motivo": "limite_sin_cierre_verificable"
+        },
+        {
+          "linea": 77893,
+          "asunto": "AMPARO DIRECTO 1511/2012",
+          "motivo": "limite_sin_cierre_verificable"
+        },
+        {
+          "linea": 78769,
+          "asunto": "AMPARO DIRECTO 960/2012",
+          "motivo": "limite_sin_cierre_verificable"
+        },
+        {
+          "linea": 80651,
+          "asunto": "AMPARO DIRECTO 1158/2011",
+          "motivo": "limite_sin_cierre_verificable"
+        },
+        {
+          "linea": 81560,
+          "asunto": "AMPARO DIRECTO 1345/2012",
+          "motivo": "limite_sin_cierre_verificable"
+        }
+      ]
+    },
+    {
+      "archivo": "10a-epoca/Libro-020_2015-07_julio.md",
+      "sha256_md": "2da70a323fbc03656c8bb3671bf14826afacd927fa5975402c06a2473d2fb02a",
+      "cabeceras": 35,
+      "cierres_sentencia": 36,
+      "extraidas": 34,
+      "rechazos": [
+        {
+          "linea": 67323,
+          "asunto": "AMPARO EN REVISIÓN 69/2015",
+          "motivo": "limite_sin_cierre_verificable"
+        }
+      ]
+    },
+    {
+      "archivo": "10a-epoca/Libro-021_2013-06_junio.md",
+      "sha256_md": "c8234b805f821085cdb8be3e767325fd8d9bdab0a1ca61d6691018ccfa5026c3",
+      "cabeceras": 30,
+      "cierres_sentencia": 0,
+      "extraidas": 27,
+      "rechazos": [
+        {
+          "linea": 20863,
+          "asunto": "CONTRADICCIÓN DE TESIS 333/2012",
+          "motivo": "limite_sin_cierre_verificable"
+        },
+        {
+          "linea": 22848,
+          "asunto": "INCONFORMIDAD 168/2013",
+          "motivo": "limite_sin_cierre_verificable"
+        },
+        {
+          "linea": 53976,
+          "asunto": "AMPARO DIRECTO 272/2013",
+          "motivo": "limite_sin_cierre_verificable"
+        }
+      ]
+    },
+    {
+      "archivo": "10a-epoca/Libro-021_2015-08_agosto_Tomo-I.md",
+      "sha256_md": "366dce522557a7a64559e1dfbcee30aea7e333c490e134055ab0e5a06678f758",
+      "cabeceras": 20,
+      "cierres_sentencia": 21,
+      "extraidas": 19,
+      "rechazos": [
+        {
+          "linea": 60867,
+          "asunto": "AMPARO DIRECTO EN REVISIÓN 5334/2014",
+          "motivo": "sin_cuerpo_reconocible"
+        }
+      ]
+    },
+    {
+      "archivo": "10a-epoca/Libro-021_2015-08_agosto_Tomo-II.md",
+      "sha256_md": "a9081b3ab4a0f2639ea8b80bcb81b2251055f0f90a7a846606a05047f2e9542e",
+      "cabeceras": 30,
+      "cierres_sentencia": 30,
+      "extraidas": 30,
+      "rechazos": []
+    },
+    {
+      "archivo": "10a-epoca/Libro-021_2015-08_agosto_Tomo-III_parte-1.md",
+      "sha256_md": "69ea4e2de3e959cac56c9fd42609bbb108318ebe22ff4755b51a92048cf4e305",
+      "cabeceras": 2,
+      "cierres_sentencia": 0,
+      "extraidas": 0,
+      "rechazos": [
+        {
+          "linea": 688,
+          "asunto": "AMPARO DIRECTO 733/2014",
+          "motivo": "limite_sin_cierre_verificable"
+        },
+        {
+          "linea": 2785,
+          "asunto": "AMPARO EN REVISIÓN 200/2014",
+          "motivo": "limite_sin_cierre_verificable"
+        }
+      ]
+    },
+    {
+      "archivo": "10a-epoca/Libro-021_2015-08_agosto_Tomo-III_parte-2.md",
+      "sha256_md": "2b9987cd56d0cd1942a77454a76b5ebb0ccc9178fed635fd8520aa39d93247ff",
+      "cabeceras": 1,
+      "cierres_sentencia": 2,
+      "extraidas": 1,
+      "rechazos": []
+    },
+    {
+      "archivo": "10a-epoca/Libro-021_2015-08_agosto_Tomo-III_parte-3.md",
+      "sha256_md": "c34b05fb4b12583b8ffa59382f0d98f5323ab0a59d451c756da51626fa550b80",
+      "cabeceras": 3,
+      "cierres_sentencia": 3,
+      "extraidas": 3,
+      "rechazos": []
+    },
+    {
+      "archivo": "10a-epoca/Libro-022_2015-09_septiembre.md",
+      "sha256_md": "48fc38daa61d7477022a9c6aabd8f7f06335c46c78f5540395e224a350080fcb",
+      "cabeceras": 53,
+      "cierres_sentencia": 54,
+      "extraidas": 53,
+      "rechazos": []
+    },
+    {
+      "archivo": "10a-epoca/Libro-023_2013-08_agosto.md",
+      "sha256_md": "112505f6fdd094aa6088a4fd92ef93001ffad6044f2d62dec5ee5dee968540b6",
+      "cabeceras": 48,
+      "cierres_sentencia": 0,
+      "extraidas": 43,
+      "rechazos": [
+        {
+          "linea": 55582,
+          "asunto": "AMPARO DIRECTO 420/2013",
+          "motivo": "limite_sin_cierre_verificable"
+        },
+        {
+          "linea": 55844,
+          "asunto": "AMPARO DIRECTO 67/2013",
+          "motivo": "limite_sin_cierre_verificable"
+        },
+        {
+          "linea": 58379,
+          "asunto": "AMPARO EN REVISIÓN 148/2013",
+          "motivo": "limite_sin_cierre_verificable"
+        },
+        {
+          "linea": 59289,
+          "asunto": "AMPARO DIRECTO 440/2013",
+          "motivo": "limite_sin_cierre_verificable"
+        },
+        {
+          "linea": 60027,
+          "asunto": "AMPARO DIRECTO 228/2013",
+          "motivo": "limite_sin_cierre_verificable"
+        }
+      ]
+    },
+    {
+      "archivo": "10a-epoca/Libro-023_2015-10_octubre_Tomo-I.md",
+      "sha256_md": "15a15cecda8b73c7ef7e98196abb6f0633c592d4b2e7c2fb8fb95f02a373dc05",
+      "cabeceras": 17,
+      "cierres_sentencia": 7,
+      "extraidas": 16,
+      "rechazos": [
+        {
+          "linea": 11488,
+          "asunto": "CONTRADICCIÓN DE TESIS 549/2012",
+          "motivo": "limite_sin_cierre_verificable"
+        }
+      ]
+    },
+    {
+      "archivo": "10a-epoca/Libro-023_2015-10_octubre_Tomo-II.md",
+      "sha256_md": "e29975bf8466df79829082b853c33752e57b4a011b815e973f3dbd7bb9bc4159",
+      "cabeceras": 24,
+      "cierres_sentencia": 25,
+      "extraidas": 24,
+      "rechazos": []
+    },
+    {
+      "archivo": "10a-epoca/Libro-023_2015-10_octubre_Tomo-III.md",
+      "sha256_md": "780275cc558d52085e35c90d1e6a24dc79f20d9cbfc0f4f55a294af34da59149",
+      "cabeceras": 26,
+      "cierres_sentencia": 26,
+      "extraidas": 26,
+      "rechazos": []
+    },
+    {
+      "archivo": "10a-epoca/Libro-023_2015-10_octubre_Tomo-IV.md",
+      "sha256_md": "48588b35148a88f80bc7e583c680870409d298290c3c23c91b6cc4cdd7fb9dc2",
+      "cabeceras": 15,
+      "cierres_sentencia": 16,
+      "extraidas": 15,
+      "rechazos": []
+    },
+    {
+      "archivo": "10a-epoca/Libro-024_2013-09_septiembre.md",
+      "sha256_md": "ffbfdbfb818d345e7adef24837ad4914dbe29cc266baeda6a59a00df498a5317",
+      "cabeceras": 64,
+      "cierres_sentencia": 0,
+      "extraidas": 61,
+      "rechazos": [
+        {
+          "linea": 99356,
+          "asunto": "AMPARO DIRECTO 170/2013",
+          "motivo": "limite_sin_cierre_verificable"
+        },
+        {
+          "linea": 105484,
+          "asunto": "AMPARO DIRECTO 96/2013",
+          "motivo": "limite_sin_cierre_verificable"
+        },
+        {
+          "linea": 107032,
+          "asunto": "QUEJA 55/2012",
+          "motivo": "limite_sin_cierre_verificable"
+        }
+      ]
+    },
+    {
+      "archivo": "10a-epoca/Libro-024_2015-11_noviembre_Tomo-I.md",
+      "sha256_md": "cfb5e3e96d00d1caa944b23f44ac09e28683038e002eb0dd8004c50668457cad",
+      "cabeceras": 19,
+      "cierres_sentencia": 13,
+      "extraidas": 18,
+      "rechazos": [
+        {
+          "linea": 3230,
+          "asunto": "CONTRADICCIÓN DE TESIS 492/2013",
+          "motivo": "limite_sin_cierre_verificable"
+        }
+      ]
+    },
+    {
+      "archivo": "10a-epoca/Libro-024_2015-11_noviembre_Tomo-II.md",
+      "sha256_md": "1cabc0ba262e828fee3f73749280f02ae60280b2d3d18047992d8be7c1e36bd6",
+      "cabeceras": 23,
+      "cierres_sentencia": 23,
+      "extraidas": 23,
+      "rechazos": []
+    },
+    {
+      "archivo": "10a-epoca/Libro-024_2015-11_noviembre_Tomo-III.md",
+      "sha256_md": "ddfa0af4f092dd14b1e236b21c28279ab33443f6e3fe28d6f30dd9098a7000ff",
+      "cabeceras": 19,
+      "cierres_sentencia": 21,
+      "extraidas": 19,
+      "rechazos": []
+    },
+    {
+      "archivo": "10a-epoca/Libro-024_2015-11_noviembre_Tomo-IV.md",
+      "sha256_md": "e2c98c0216f393375ab003c620c2d19ccd7f459d5e5f6578d568cda4096d8d1b",
+      "cabeceras": 16,
+      "cierres_sentencia": 18,
+      "extraidas": 16,
+      "rechazos": []
+    },
+    {
+      "archivo": "10a-epoca/Libro-025_2013-10_octubre.md",
+      "sha256_md": "5d7b4f58323cf123b0ba1e3e4d7b6cb119c87488febbcf9f00ea5e003c6cfa16",
+      "cabeceras": 36,
+      "cierres_sentencia": 0,
+      "extraidas": 31,
+      "rechazos": [
+        {
+          "linea": 913,
+          "asunto": "ACCIÓN DE INCONSTITUCIONALIDAD 57/2012",
+          "motivo": "sin_cuerpo_reconocible"
+        },
+        {
+          "linea": 70937,
+          "asunto": "IMPEDIMENTO 8/2013",
+          "motivo": "limite_sin_cierre_verificable"
+        },
+        {
+          "linea": 72914,
+          "asunto": "AMPARO DIRECTO 81/2013",
+          "motivo": "limite_sin_cierre_verificable"
+        },
+        {
+          "linea": 76575,
+          "asunto": "AMPARO EN REVISIÓN 92/2013",
+          "motivo": "limite_sin_cierre_verificable"
+        },
+        {
+          "linea": 79902,
+          "asunto": "AMPARO DIRECTO 285/2013",
+          "motivo": "limite_sin_cierre_verificable"
+        }
+      ]
+    },
+    {
+      "archivo": "10a-epoca/Libro-025_2015-12_diciembre.md",
+      "sha256_md": "754522d3cda55415aab868c54beb3d6143e11770688bcb86d5172105179bb8a2",
+      "cabeceras": 31,
+      "cierres_sentencia": 32,
+      "extraidas": 31,
+      "rechazos": []
+    },
+    {
+      "archivo": "10a-epoca/Libro-026_2013-11_noviembre.md",
+      "sha256_md": "f56600cedb971251f79fd593e28f1224d7f367a6638c440f339ab0ef420f920c",
+      "cabeceras": 38,
+      "cierres_sentencia": 0,
+      "extraidas": 30,
+      "rechazos": [
+        {
+          "linea": 25659,
+          "asunto": "CONTRADICCIÓN DE TESIS 163/2012",
+          "motivo": "sin_cuerpo_reconocible"
+        },
+        {
+          "linea": 31728,
+          "asunto": "AMPARO DIRECTO 229/2013",
+          "motivo": "limite_sin_cierre_verificable"
+        },
+        {
+          "linea": 32480,
+          "asunto": "AMPARO DIRECTO 653/2013",
+          "motivo": "limite_sin_cierre_verificable"
+        },
+        {
+          "linea": 32961,
+          "asunto": "AMPARO DIRECTO 404/2013",
+          "motivo": "limite_sin_cierre_verificable"
+        },
+        {
+          "linea": 37504,
+          "asunto": "AMPARO EN REVISIÓN 214/2013",
+          "motivo": "limite_sin_cierre_verificable"
+        },
+        {
+          "linea": 38315,
+          "asunto": "AMPARO DIRECTO 536/2012",
+          "motivo": "limite_sin_cierre_verificable"
+        },
+        {
+          "linea": 40045,
+          "asunto": "AMPARO DIRECTO 116/2013",
+          "motivo": "limite_sin_cierre_verificable"
+        },
+        {
+          "linea": 40885,
+          "asunto": "AMPARO EN REVISIÓN 266/2013",
+          "motivo": "limite_sin_cierre_verificable"
+        }
+      ]
+    },
+    {
+      "archivo": "10a-epoca/Libro-026_2016-01_enero_Tomo-I.md",
+      "sha256_md": "954872f0b2206d9b2e3a063e0899cd7c9e2907fcbf8aac324046f56e07cd483f",
+      "cabeceras": 9,
+      "cierres_sentencia": 9,
+      "extraidas": 9,
+      "rechazos": []
+    },
+    {
+      "archivo": "10a-epoca/Libro-026_2016-01_enero_Tomo-II.md",
+      "sha256_md": "1d7a5adc62c8681bf50672da1aae32b6b0064d20be581b67199ba93be240b690",
+      "cabeceras": 21,
+      "cierres_sentencia": 21,
+      "extraidas": 21,
+      "rechazos": []
+    },
+    {
+      "archivo": "10a-epoca/Libro-026_2016-01_enero_Tomo-III.md",
+      "sha256_md": "841c76932206e256b3dacc9953fbcebd427eb059c532d1efe43916d1c4eae989",
+      "cabeceras": 14,
+      "cierres_sentencia": 14,
+      "extraidas": 14,
+      "rechazos": []
+    },
+    {
+      "archivo": "10a-epoca/Libro-026_2016-01_enero_Tomo-IV.md",
+      "sha256_md": "50f9d2abe4ba9a6ecdb2a303fd4a2526ed902d17a7914539aae7861312e77b79",
+      "cabeceras": 22,
+      "cierres_sentencia": 23,
+      "extraidas": 22,
+      "rechazos": []
+    },
+    {
+      "archivo": "10a-epoca/Libro-027_2016-02_febrero_Tomo-I.md",
+      "sha256_md": "2163b1aa01f296d87c2844444538844365f70a6e9b16f427338df1e8e4f3a2a2",
+      "cabeceras": 20,
+      "cierres_sentencia": 16,
+      "extraidas": 19,
+      "rechazos": [
+        {
+          "linea": 29590,
+          "asunto": "AMPARO DIRECTO EN REVISIÓN 199/2015",
+          "motivo": "limite_sin_cierre_verificable"
+        }
+      ]
+    },
+    {
+      "archivo": "10a-epoca/Libro-027_2016-02_febrero_Tomo-II.md",
+      "sha256_md": "fdb7b3bb3d95635d417f718fe7b635d562e23be59fa9229c6a9e14c02159e33e",
+      "cabeceras": 20,
+      "cierres_sentencia": 21,
+      "extraidas": 20,
+      "rechazos": []
+    },
+    {
+      "archivo": "10a-epoca/Libro-027_2016-02_febrero_Tomo-III.md",
+      "sha256_md": "47cefd71855238ad1e6a185f2fa9c222a803b8d94a274bf363257cfbc2b4b6b0",
+      "cabeceras": 7,
+      "cierres_sentencia": 9,
+      "extraidas": 7,
+      "rechazos": []
+    },
+    {
+      "archivo": "10a-epoca/Libro-028_2016-03_marzo.md",
+      "sha256_md": "29ac961c849d49b72343d2ec68578579e6be77bbf44c216a467eb811a43d9fbf",
+      "cabeceras": 29,
+      "cierres_sentencia": 30,
+      "extraidas": 29,
+      "rechazos": []
+    },
+    {
+      "archivo": "10a-epoca/Libro-029_2016-04_abril_Tomo-I.md",
+      "sha256_md": "c641e0635ff2ebfdad0924126f6f1313e45437951156eca9c70c08ab0f4ee192",
+      "cabeceras": 7,
+      "cierres_sentencia": 7,
+      "extraidas": 7,
+      "rechazos": []
+    },
+    {
+      "archivo": "10a-epoca/Libro-029_2016-04_abril_Tomo-II.md",
+      "sha256_md": "649fd0a3cbed7a6eda8eaff358c21a870c26c5f48ad17efaa6290391e7095836",
+      "cabeceras": 27,
+      "cierres_sentencia": 23,
+      "extraidas": 27,
+      "rechazos": []
+    },
+    {
+      "archivo": "10a-epoca/Libro-029_2016-04_abril_Tomo-III.md",
+      "sha256_md": "97d4a16e40710dc4943db46a2258b83e8dcef63fcbcb9fb0fe64d40b22a6c1a4",
+      "cabeceras": 19,
+      "cierres_sentencia": 18,
+      "extraidas": 18,
+      "rechazos": [
+        {
+          "linea": 17123,
+          "asunto": "AMPARO EN REVISIÓN 238/2014",
+          "motivo": "limite_sin_cierre_verificable"
+        }
+      ]
+    },
+    {
+      "archivo": "10a-epoca/Libro-030_2016-05_mayo.md",
+      "sha256_md": "63e15c6310f4255c340818efeaf2cfac122924bac9fe91402e44f0b4444ad04e",
+      "cabeceras": 53,
+      "cierres_sentencia": 49,
+      "extraidas": 52,
+      "rechazos": [
+        {
+          "linea": 86897,
+          "asunto": "AMPARO DIRECTO 583/2015",
+          "motivo": "limite_sin_cierre_verificable"
+        }
+      ]
+    },
+    {
+      "archivo": "10a-epoca/Libro-031_2016-06_junio_Tomo-I.md",
+      "sha256_md": "6e41ee9baf8edb23694b18200e7b915e0758f8ac4df3734d45de81935d68bc26",
+      "cabeceras": 13,
+      "cierres_sentencia": 11,
+      "extraidas": 13,
+      "rechazos": []
+    },
+    {
+      "archivo": "10a-epoca/Libro-031_2016-06_junio_Tomo-II.md",
+      "sha256_md": "34f7da0732778470010bb323b92c8f0664b33423111668f9fe9b3ddd632b6c59",
+      "cabeceras": 17,
+      "cierres_sentencia": 16,
+      "extraidas": 17,
+      "rechazos": []
+    },
+    {
+      "archivo": "10a-epoca/Libro-031_2016-06_junio_Tomo-III.md",
+      "sha256_md": "5f893c73da39ba037926f15bb4f27e8b961e018bbadb4c23f749aeeb7f29b166",
+      "cabeceras": 21,
+      "cierres_sentencia": 21,
+      "extraidas": 21,
+      "rechazos": []
+    },
+    {
+      "archivo": "10a-epoca/Libro-031_2016-06_junio_Tomo-IV.md",
+      "sha256_md": "301dc1f52b6c81cbccfb8fd805603efde085da60cf8175b13c0e7922732824c5",
+      "cabeceras": 22,
+      "cierres_sentencia": 22,
+      "extraidas": 22,
+      "rechazos": []
+    },
+    {
+      "archivo": "10a-epoca/Libro-032_2016-07_julio.md",
+      "sha256_md": "5e5b6da3362d82cac25c946e5765a2c681a40a08de3ee65a0a1c253e02e9a4c8",
+      "cabeceras": 52,
+      "cierres_sentencia": 53,
+      "extraidas": 51,
+      "rechazos": [
+        {
+          "linea": 45771,
+          "asunto": "CONTRADICCIÓN DE TESIS 16/2015",
+          "motivo": "sin_cuerpo_reconocible"
+        }
+      ]
+    },
+    {
+      "archivo": "10a-epoca/Libro-033_2016-08_agosto_Tomo-I.md",
+      "sha256_md": "f29778ee2d0c9b2ebea9df736f8a142737a6b212471288a934d447219796e035",
+      "cabeceras": 9,
+      "cierres_sentencia": 9,
+      "extraidas": 9,
+      "rechazos": []
+    },
+    {
+      "archivo": "10a-epoca/Libro-033_2016-08_agosto_Tomo-II.md",
+      "sha256_md": "989df97e5b2a7d6883c7a5337ee3734ff403a4fcf08ff4d199a21bc5dd6c8426",
+      "cabeceras": 21,
+      "cierres_sentencia": 21,
+      "extraidas": 21,
+      "rechazos": []
+    },
+    {
+      "archivo": "10a-epoca/Libro-033_2016-08_agosto_Tomo-III.md",
+      "sha256_md": "e780feea8d47c53c700cdd0d7daa4fc10e133e69643810485be1937ec52c7e45",
+      "cabeceras": 15,
+      "cierres_sentencia": 15,
+      "extraidas": 14,
+      "rechazos": [
+        {
+          "linea": 33526,
+          "asunto": "CONTRADICCIÓN DE TESIS 1/2016",
+          "motivo": "limite_sin_cierre_verificable"
+        }
+      ]
+    },
+    {
+      "archivo": "10a-epoca/Libro-033_2016-08_agosto_Tomo-IV.md",
+      "sha256_md": "2b6d5219a7ed508d3427b91b00d3ea34329ce1fe4f25354d52a1acdb6e9ec279",
+      "cabeceras": 19,
+      "cierres_sentencia": 22,
+      "extraidas": 19,
+      "rechazos": []
+    },
+    {
+      "archivo": "10a-epoca/Libro-034_2016-09_septiembre_Tomo-I.md",
+      "sha256_md": "d66fdec1e9e5606635a7d0551f59fd079de330ebd1561a20b606441e1d4bb78c",
+      "cabeceras": 21,
+      "cierres_sentencia": 21,
+      "extraidas": 21,
+      "rechazos": []
+    },
+    {
+      "archivo": "10a-epoca/Libro-034_2016-09_septiembre_Tomo-II.md",
+      "sha256_md": "a766fdf5deeb0158a03168ad01e59167ffdac3c776b799b603fb6c3cc0cb3269",
+      "cabeceras": 12,
+      "cierres_sentencia": 13,
+      "extraidas": 12,
+      "rechazos": []
+    },
+    {
+      "archivo": "10a-epoca/Libro-034_2016-09_septiembre_Tomo-III.md",
+      "sha256_md": "b4c098186f6c0c565f834f4f27ed1f79720a1924f85231bd327778c604d08939",
+      "cabeceras": 15,
+      "cierres_sentencia": 16,
+      "extraidas": 14,
+      "rechazos": [
+        {
+          "linea": 4281,
+          "asunto": "CONTRADICCIÓN DE TESIS 4/2016",
+          "motivo": "limite_sin_cierre_verificable"
+        }
+      ]
+    },
+    {
+      "archivo": "10a-epoca/Libro-035_2016-10_octubre_Tomo-I.md",
+      "sha256_md": "d7f986d75fd3c6179d60c793fcc1f94e0b546a9c52ffef9750d5084f0896fdf8",
+      "cabeceras": 25,
+      "cierres_sentencia": 23,
+      "extraidas": 25,
+      "rechazos": []
+    },
+    {
+      "archivo": "10a-epoca/Libro-035_2016-10_octubre_Tomo-II.md",
+      "sha256_md": "0d52f56bb1ebcee0134cdf3ee615b42888e7be03bcc8164917afce4100952bab",
+      "cabeceras": 11,
+      "cierres_sentencia": 11,
+      "extraidas": 11,
+      "rechazos": []
+    },
+    {
+      "archivo": "10a-epoca/Libro-035_2016-10_octubre_Tomo-III.md",
+      "sha256_md": "2301f8a76b7dcdba29ea8f82d2728ac31467b22f84047980c468f788d39a7945",
+      "cabeceras": 14,
+      "cierres_sentencia": 14,
+      "extraidas": 14,
+      "rechazos": []
+    },
+    {
+      "archivo": "10a-epoca/Libro-035_2016-10_octubre_Tomo-IV.md",
+      "sha256_md": "dc8e10da0970c7869d47ef5e59e464db504e6748b916862b1d06ccb8bb061dd4",
+      "cabeceras": 20,
+      "cierres_sentencia": 26,
+      "extraidas": 20,
+      "rechazos": []
+    },
+    {
+      "archivo": "10a-epoca/Libro-036_2016-11_noviembre.md",
+      "sha256_md": "f4bb43c5879b10db5b4abfd82cdc9406b4f35cbb6cacb2b2f0bd9f7662e25558",
+      "cabeceras": 52,
+      "cierres_sentencia": 51,
+      "extraidas": 52,
+      "rechazos": []
+    },
+    {
+      "archivo": "10a-epoca/Libro-037_2016-12_diciembre.md",
+      "sha256_md": "0daf8065d18dbdf0588b509f7ff685ef1820bfcf01b21a6570bc49f2b28986a3",
+      "cabeceras": 37,
+      "cierres_sentencia": 32,
+      "extraidas": 37,
+      "rechazos": []
+    },
+    {
+      "archivo": "10a-epoca/Libro-038_2017-01_enero_Tomo-I.md",
+      "sha256_md": "23fff51f4f211d8eb3d53916fa45e333bfca1849e2fc891f213cc36c767c78b9",
+      "cabeceras": 22,
+      "cierres_sentencia": 19,
+      "extraidas": 21,
+      "rechazos": [
+        {
+          "linea": 21627,
+          "asunto": "CONTRADICCIÓN DE TESIS 21/2016",
+          "motivo": "sin_cuerpo_reconocible"
+        }
+      ]
+    },
+    {
+      "archivo": "10a-epoca/Libro-038_2017-01_enero_Tomo-II.md",
+      "sha256_md": "d748f254ac8a3335b9e366092d762a0e5def1f6ab70f9b143686288b26a2c016",
+      "cabeceras": 4,
+      "cierres_sentencia": 4,
+      "extraidas": 4,
+      "rechazos": []
+    },
+    {
+      "archivo": "10a-epoca/Libro-038_2017-01_enero_Tomo-III.md",
+      "sha256_md": "f22563a1abd7c79d1713174f295d0d4b7f731c733bef9d9a602a921787a2e17b",
+      "cabeceras": 16,
+      "cierres_sentencia": 16,
+      "extraidas": 16,
+      "rechazos": []
+    },
+    {
+      "archivo": "10a-epoca/Libro-038_2017-01_enero_Tomo-IV.md",
+      "sha256_md": "2248903353b603383d4f9be520ac2ea7982f6e7526b551e635924547c118b849",
+      "cabeceras": 21,
+      "cierres_sentencia": 24,
+      "extraidas": 21,
+      "rechazos": []
+    },
+    {
+      "archivo": "10a-epoca/Libro-039_2017-02_febrero.md",
+      "sha256_md": "fd8c16e9a7861c0fe08bf198540668e2327511c0545902a39b7fe6cdec713e96",
+      "cabeceras": 58,
+      "cierres_sentencia": 57,
+      "extraidas": 58,
+      "rechazos": []
+    },
+    {
+      "archivo": "10a-epoca/Libro-040_2017-03_marzo_Tomo-I.md",
+      "sha256_md": "10e4a40466042682dc215b4effcbaff6fffd9a4977c6dc272d86b4b75f9492b3",
+      "cabeceras": 16,
+      "cierres_sentencia": 9,
+      "extraidas": 16,
+      "rechazos": []
+    },
+    {
+      "archivo": "10a-epoca/Libro-040_2017-03_marzo_Tomo-II.md",
+      "sha256_md": "04f738b7eaf4f33d7e9a58cb3b30ad767425e4b1e95fd13b31d0dc7ba0608416",
+      "cabeceras": 14,
+      "cierres_sentencia": 13,
+      "extraidas": 14,
+      "rechazos": []
+    },
+    {
+      "archivo": "10a-epoca/Libro-040_2017-03_marzo_Tomo-III.md",
+      "sha256_md": "239f8625e3e72765cb9ea2437f0289670556ef0cad29503ae9ff98aa9ae6d295",
+      "cabeceras": 8,
+      "cierres_sentencia": 13,
+      "extraidas": 8,
+      "rechazos": []
+    },
+    {
+      "archivo": "10a-epoca/Libro-040_2017-03_marzo_Tomo-IV.md",
+      "sha256_md": "0d92fd43de33c2cd5c99e8f2a79f6a62ba88ec4d3da36d9bbab319af5e304dc8",
+      "cabeceras": 24,
+      "cierres_sentencia": 26,
+      "extraidas": 24,
+      "rechazos": []
+    },
+    {
+      "archivo": "10a-epoca/Libro-041_2017-04_abril.md",
+      "sha256_md": "bf86e3fcc1e7ccd378715bdf93d2e7898d4c3c704e934a5d286f79d7bc591ccd",
+      "cabeceras": 36,
+      "cierres_sentencia": 32,
+      "extraidas": 36,
+      "rechazos": []
+    },
+    {
+      "archivo": "10a-epoca/Libro-042_2017-05_mayo.md",
+      "sha256_md": "0ae64415b5cf22f9a99f35077898b43779ac70eb5486038bad8695d72b2c6aa2",
+      "cabeceras": 53,
+      "cierres_sentencia": 57,
+      "extraidas": 53,
+      "rechazos": []
+    },
+    {
+      "archivo": "10a-epoca/Libro-043_2017-06_junio_Tomo-I.md",
+      "sha256_md": "c8497751409d93bcdc2f17d4842d426cbcaef8d9ad46d23cacb6efb30080f129",
+      "cabeceras": 12,
+      "cierres_sentencia": 10,
+      "extraidas": 11,
+      "rechazos": [
+        {
+          "linea": 1961,
+          "asunto": "CONTRADICCIÓN DE TESIS 237/2014",
+          "motivo": "limite_sin_cierre_verificable"
+        }
+      ]
+    },
+    {
+      "archivo": "10a-epoca/Libro-043_2017-06_junio_Tomo-II.md",
+      "sha256_md": "1caad66907fe2fa714e9d1a787a1007bb1831774d99f7b37216a60166e425dcc",
+      "cabeceras": 25,
+      "cierres_sentencia": 25,
+      "extraidas": 22,
+      "rechazos": [
+        {
+          "linea": 8163,
+          "asunto": "CONTRADICCIÓN DE TESIS 387/2016",
+          "motivo": "limite_sin_cierre_verificable"
+        },
+        {
+          "linea": 13887,
+          "asunto": "CONTRADICCIÓN DE TESIS 195/2016",
+          "motivo": "limite_sin_cierre_verificable"
+        },
+        {
+          "linea": 25495,
+          "asunto": "CONTRADICCIÓN DE TESIS 399/2016",
+          "motivo": "limite_sin_cierre_verificable"
+        }
+      ]
+    },
+    {
+      "archivo": "10a-epoca/Libro-043_2017-06_junio_Tomo-III.md",
+      "sha256_md": "9d300927ef33295a08f4a988964f8222bcc0705d81f2146e1bf4f8d47625068d",
+      "cabeceras": 18,
+      "cierres_sentencia": 18,
+      "extraidas": 18,
+      "rechazos": []
+    },
+    {
+      "archivo": "10a-epoca/Libro-043_2017-06_junio_Tomo-IV.md",
+      "sha256_md": "5031e4db7a90ef667fc8d12bc5537bd5c05000f62b15f647ea9b2d7472be5c3c",
+      "cabeceras": 22,
+      "cierres_sentencia": 24,
+      "extraidas": 22,
+      "rechazos": []
+    },
+    {
+      "archivo": "10a-epoca/Libro-044_2017-07_julio.md",
+      "sha256_md": "49e1e2c6d19f3c82c2c95d1c40eee2052fa82f8cdb9de05677ef120ecfd76d88",
+      "cabeceras": 28,
+      "cierres_sentencia": 29,
+      "extraidas": 27,
+      "rechazos": [
+        {
+          "linea": 9999,
+          "asunto": "CONTRADICCIÓN DE TESIS 46/2017",
+          "motivo": "sin_cuerpo_reconocible"
+        }
+      ]
+    },
+    {
+      "archivo": "10a-epoca/Libro-045_2017-08_agosto_Tomo-I.md",
+      "sha256_md": "6e10f3e65991dc3eb1d593b999fab0ff53641effd5e2e6c865eb600a2c9eb460",
+      "cabeceras": 12,
+      "cierres_sentencia": 13,
+      "extraidas": 12,
+      "rechazos": []
+    },
+    {
+      "archivo": "10a-epoca/Libro-045_2017-08_agosto_Tomo-II.md",
+      "sha256_md": "787a404250c1651a9f34a20f4b938ace821a38c9cf9373b4a97061d5e4f9f7f3",
+      "cabeceras": 17,
+      "cierres_sentencia": 17,
+      "extraidas": 17,
+      "rechazos": []
+    },
+    {
+      "archivo": "10a-epoca/Libro-045_2017-08_agosto_Tomo-III.md",
+      "sha256_md": "72a551a333f42aba0612a4d0a01707bfbafef69062dc1171f4b0efea1b66c03b",
+      "cabeceras": 18,
+      "cierres_sentencia": 18,
+      "extraidas": 18,
+      "rechazos": []
+    },
+    {
+      "archivo": "10a-epoca/Libro-045_2017-08_agosto_Tomo-IV.md",
+      "sha256_md": "c422d02f6f5e3dfff2a6393f791a146a3c2fa86c51303365b2109b406c4dc9e9",
+      "cabeceras": 14,
+      "cierres_sentencia": 16,
+      "extraidas": 14,
+      "rechazos": []
+    },
+    {
+      "archivo": "10a-epoca/Libro-046_2017-09_septiembre.md",
+      "sha256_md": "2d3260de36b7bec79469ce5a1e0086211e77f89e967e67c5d5a791ff4d871686",
+      "cabeceras": 52,
+      "cierres_sentencia": 52,
+      "extraidas": 52,
+      "rechazos": []
+    },
+    {
+      "archivo": "10a-epoca/Libro-047_2017-10_octubre_Tomo-I.md",
+      "sha256_md": "92792cc34e9aa0a3e2ed5fb478f0c00194e2fd2649b9d053a13b5cc4b9657fbd",
+      "cabeceras": 14,
+      "cierres_sentencia": 14,
+      "extraidas": 14,
+      "rechazos": []
+    },
+    {
+      "archivo": "10a-epoca/Libro-047_2017-10_octubre_Tomo-II.md",
+      "sha256_md": "5f20a755f203b7f258cc7041e28f86d2abaa04e1af0de32e2b4316b7b5f792a8",
+      "cabeceras": 15,
+      "cierres_sentencia": 15,
+      "extraidas": 15,
+      "rechazos": []
+    },
+    {
+      "archivo": "10a-epoca/Libro-047_2017-10_octubre_Tomo-III.md",
+      "sha256_md": "9dd945d51cd6bb460b45af4fd37de15ee446d4e78a5777570583b79d8e9d42e8",
+      "cabeceras": 18,
+      "cierres_sentencia": 19,
+      "extraidas": 18,
+      "rechazos": []
+    },
+    {
+      "archivo": "10a-epoca/Libro-047_2017-10_octubre_Tomo-IV.md",
+      "sha256_md": "800fb0fa1273c17e2056586050fc1d44dcae2e31e19ad93da7272578de3cb644",
+      "cabeceras": 10,
+      "cierres_sentencia": 11,
+      "extraidas": 10,
+      "rechazos": []
+    },
+    {
+      "archivo": "10a-epoca/Libro-048_2017-11_noviembre_Tomo-I.md",
+      "sha256_md": "5c4e24eec6c45c2e3b47e7f03726b6e59bb373af08fa337f4c664509358bae36",
+      "cabeceras": 18,
+      "cierres_sentencia": 18,
+      "extraidas": 18,
+      "rechazos": []
+    },
+    {
+      "archivo": "10a-epoca/Libro-048_2017-11_noviembre_Tomo-II.md",
+      "sha256_md": "63ea501667f31a91b017023e6ec886ca98880b6f1cdd17cbf8a3469b9a02467d",
+      "cabeceras": 18,
+      "cierres_sentencia": 18,
+      "extraidas": 17,
+      "rechazos": [
+        {
+          "linea": 32514,
+          "asunto": "CONTRADICCIÓN DE TESIS 3/2017",
+          "motivo": "sin_cuerpo_reconocible"
+        }
+      ]
+    },
+    {
+      "archivo": "10a-epoca/Libro-048_2017-11_noviembre_Tomo-III.md",
+      "sha256_md": "a988fd3d215cf1f631a602270b8f2f7f34d1b3d182a29f33eddd51ff52395160",
+      "cabeceras": 18,
+      "cierres_sentencia": 20,
+      "extraidas": 18,
+      "rechazos": []
+    },
+    {
+      "archivo": "10a-epoca/Libro-049_2017-12_diciembre_Tomo-I.md",
+      "sha256_md": "74697eda40dd0688afb081028a22541f23c91b36b228b3690f5df743e4bbaec1",
+      "cabeceras": 23,
+      "cierres_sentencia": 23,
+      "extraidas": 22,
+      "rechazos": [
+        {
+          "linea": 20198,
+          "asunto": "CONTRADICCIÓN DE TESIS 257/2017",
+          "motivo": "sin_cuerpo_reconocible"
+        }
+      ]
+    },
+    {
+      "archivo": "10a-epoca/Libro-049_2017-12_diciembre_Tomo-II.md",
+      "sha256_md": "b247055cf355f4b12e54af1b2d1f0ea65be10e1478af6b3b6651f344dd5eaed5",
+      "cabeceras": 12,
+      "cierres_sentencia": 12,
+      "extraidas": 12,
+      "rechazos": []
+    },
+    {
+      "archivo": "10a-epoca/Libro-049_2017-12_diciembre_Tomo-III.md",
+      "sha256_md": "b0d0edc407dd537c1b357775c36c5dc6c63084714dd8761c8fcba8ef0e06f42d",
+      "cabeceras": 17,
+      "cierres_sentencia": 17,
+      "extraidas": 17,
+      "rechazos": []
+    },
+    {
+      "archivo": "10a-epoca/Libro-049_2017-12_diciembre_Tomo-IV.md",
+      "sha256_md": "19636077dc665f3bb434beca7900120132285aeddbd557800686414bbd51b8bb",
+      "cabeceras": 0,
+      "cierres_sentencia": 0,
+      "extraidas": 0,
+      "rechazos": []
+    },
+    {
+      "archivo": "10a-epoca/Libro-050_2018-01_enero_Tomo-I.md",
+      "sha256_md": "461e0c0b4c3350233924e834ca13af8cbaffc146190ec4ad8eb3f8c842d04041",
+      "cabeceras": 17,
+      "cierres_sentencia": 12,
+      "extraidas": 17,
+      "rechazos": []
+    },
+    {
+      "archivo": "10a-epoca/Libro-050_2018-01_enero_Tomo-II.md",
+      "sha256_md": "f4a3c5290ca630c7ef297a79a9225983ce7c013a1cd1179814b5fc622ce2570a",
+      "cabeceras": 14,
+      "cierres_sentencia": 14,
+      "extraidas": 14,
+      "rechazos": []
+    },
+    {
+      "archivo": "10a-epoca/Libro-050_2018-01_enero_Tomo-III.md",
+      "sha256_md": "6b2427fd5c5906d7ebe4d68de5e4ff60295bfc030ce821b1f871e01af3c16330",
+      "cabeceras": 9,
+      "cierres_sentencia": 9,
+      "extraidas": 9,
+      "rechazos": []
+    },
+    {
+      "archivo": "10a-epoca/Libro-050_2018-01_enero_Tomo-IV.md",
+      "sha256_md": "6cfdfa32cb627bd44d4225ed1a25838b60ff9a98d2e5293269195209176d7b27",
+      "cabeceras": 9,
+      "cierres_sentencia": 12,
+      "extraidas": 9,
+      "rechazos": []
+    },
+    {
+      "archivo": "10a-epoca/Libro-051_2018-02_febrero_Tomo-I.md",
+      "sha256_md": "0c025700b5f4c3478fa38244cc44ddcc56a830afeec032c82496b13e85f62918",
+      "cabeceras": 28,
+      "cierres_sentencia": 17,
+      "extraidas": 18,
+      "rechazos": [
+        {
+          "linea": 18324,
+          "asunto": "CONTROVERSIA CONSTITUCIONAL 59/2017",
+          "motivo": "limite_sin_cierre_verificable"
+        },
+        {
+          "linea": 18396,
+          "asunto": "CONTROVERSIA CONSTITUCIONAL 60/2017",
+          "motivo": "limite_sin_cierre_verificable"
+        },
+        {
+          "linea": 18468,
+          "asunto": "CONTROVERSIA CONSTITUCIONAL 61/2017",
+          "motivo": "limite_sin_cierre_verificable"
+        },
+        {
+          "linea": 18539,
+          "asunto": "CONTROVERSIA CONSTITUCIONAL 70/2017",
+          "motivo": "limite_sin_cierre_verificable"
+        },
+        {
+          "linea": 18607,
+          "asunto": "CONTROVERSIA CONSTITUCIONAL 71/2017",
+          "motivo": "limite_sin_cierre_verificable"
+        },
+        {
+          "linea": 18679,
+          "asunto": "CONTROVERSIA CONSTITUCIONAL 72/2017",
+          "motivo": "limite_sin_cierre_verificable"
+        },
+        {
+          "linea": 18753,
+          "asunto": "CONTROVERSIA CONSTITUCIONAL 73/2017",
+          "motivo": "limite_sin_cierre_verificable"
+        },
+        {
+          "linea": 18827,
+          "asunto": "CONTROVERSIA CONSTITUCIONAL 74/2017",
+          "motivo": "limite_sin_cierre_verificable"
+        },
+        {
+          "linea": 18899,
+          "asunto": "CONTROVERSIA CONSTITUCIONAL 75/2017",
+          "motivo": "limite_sin_cierre_verificable"
+        },
+        {
+          "linea": 18973,
+          "asunto": "CONTROVERSIA CONSTITUCIONAL 76/2017",
+          "motivo": "limite_sin_cierre_verificable"
+        }
+      ]
+    },
+    {
+      "archivo": "10a-epoca/Libro-051_2018-02_febrero_Tomo-II.md",
+      "sha256_md": "27475494efd7c58f121d3932d4bec634492f51dec4653ae8a6f821345822e88c",
+      "cabeceras": 10,
+      "cierres_sentencia": 10,
+      "extraidas": 10,
+      "rechazos": []
+    },
+    {
+      "archivo": "10a-epoca/Libro-052_2018-03_marzo_Tomo-I.md",
+      "sha256_md": "fc6df3b116d446ce30aea0a4a5fbca029687d4c2de8951eaacf47912869be07d",
+      "cabeceras": 28,
+      "cierres_sentencia": 22,
+      "extraidas": 28,
+      "rechazos": []
+    },
+    {
+      "archivo": "10a-epoca/Libro-052_2018-03_marzo_Tomo-II.md",
+      "sha256_md": "31962d6d534e11d3e41ba0b1ef55b7c49e6275730b196465a6c5acddef89c6e0",
+      "cabeceras": 19,
+      "cierres_sentencia": 19,
+      "extraidas": 19,
+      "rechazos": []
+    },
+    {
+      "archivo": "10a-epoca/Libro-052_2018-03_marzo_Tomo-III.md",
+      "sha256_md": "27a0be2b9bd521a0807a71148d0434f0e94d4e709cfd1b8d487f7cc488aef731",
+      "cabeceras": 11,
+      "cierres_sentencia": 11,
+      "extraidas": 11,
+      "rechazos": []
+    },
+    {
+      "archivo": "10a-epoca/Libro-052_2018-03_marzo_Tomo-IV.md",
+      "sha256_md": "cd86e1339dafac3c2da99e92f63f719075de8e1bb17b69d78ea157dd1146c98d",
+      "cabeceras": 19,
+      "cierres_sentencia": 17,
+      "extraidas": 18,
+      "rechazos": [
+        {
+          "linea": 11381,
+          "asunto": "AMPARO DIRECTO 191/2017",
+          "motivo": "limite_sin_cierre_verificable"
+        }
+      ]
+    },
+    {
+      "archivo": "10a-epoca/Libro-053_2018-04_abril_Tomo-I.md",
+      "sha256_md": "2442bc3c6ade5a899d28e14691f9646fe1b184768a34d4584af0372b218c4a3f",
+      "cabeceras": 24,
+      "cierres_sentencia": 21,
+      "extraidas": 24,
+      "rechazos": []
+    },
+    {
+      "archivo": "10a-epoca/Libro-053_2018-04_abril_Tomo-II.md",
+      "sha256_md": "889b30af72c43d2dd6aa00be3fe2409f7ffcc683c0c42bd2d5739af55d9d129a",
+      "cabeceras": 13,
+      "cierres_sentencia": 13,
+      "extraidas": 13,
+      "rechazos": []
+    },
+    {
+      "archivo": "10a-epoca/Libro-053_2018-04_abril_Tomo-III.md",
+      "sha256_md": "dcfa16f258e78be34eb2ae1bdf46db4bb994e802d618e3eb203c4c5f5c17e8f8",
+      "cabeceras": 21,
+      "cierres_sentencia": 19,
+      "extraidas": 20,
+      "rechazos": [
+        {
+          "linea": 7971,
+          "asunto": "AMPARO DIRECTO 374/2014",
+          "motivo": "limite_sin_cierre_verificable"
+        }
+      ]
+    },
+    {
+      "archivo": "10a-epoca/Libro-054_2018-05_mayo.md",
+      "sha256_md": "33de80d824acc94915be1606014c25f221317dfb47dc5e881fb75b33710b3f62",
+      "cabeceras": 56,
+      "cierres_sentencia": 57,
+      "extraidas": 56,
+      "rechazos": []
+    },
+    {
+      "archivo": "10a-epoca/Libro-055_2018-06_junio_Tomo-I.md",
+      "sha256_md": "195abd492fc9c2af10154ded74959202cfd38bb690c314fcd926acb095d31d5e",
+      "cabeceras": 4,
+      "cierres_sentencia": 4,
+      "extraidas": 4,
+      "rechazos": []
+    },
+    {
+      "archivo": "10a-epoca/Libro-055_2018-06_junio_Tomo-II.md",
+      "sha256_md": "bc9a94382e7331db09119a40bfa4ec4b3e631c0bcd7739a20a0dbc9cfa35a4a5",
+      "cabeceras": 18,
+      "cierres_sentencia": 16,
+      "extraidas": 18,
+      "rechazos": []
+    },
+    {
+      "archivo": "10a-epoca/Libro-055_2018-06_junio_Tomo-III.md",
+      "sha256_md": "6f2238d0b3bffe496e429b047e3e1de60777c3f09b04916d5e7e81e264e7e9c2",
+      "cabeceras": 16,
+      "cierres_sentencia": 15,
+      "extraidas": 15,
+      "rechazos": [
+        {
+          "linea": 37472,
+          "asunto": "SOLICITUD DE SUSTITUCIÓN DE JURISPRUDENCIA 1/2017",
+          "motivo": "limite_sin_cierre_verificable"
+        }
+      ]
+    },
+    {
+      "archivo": "10a-epoca/Libro-055_2018-06_junio_Tomo-IV.md",
+      "sha256_md": "7e5807d7df1a25367af294bc4d2c7b4d8207bf176fb2fdbca7848d9097f9a4c8",
+      "cabeceras": 21,
+      "cierres_sentencia": 22,
+      "extraidas": 21,
+      "rechazos": []
+    },
+    {
+      "archivo": "10a-epoca/Libro-055_2018-06_junio_Tomo-V.md",
+      "sha256_md": "e4a1bc6e9f7d0fe30656df1da848b970afd3ced05a9bae27e19e59e45ed3119f",
+      "cabeceras": 0,
+      "cierres_sentencia": 0,
+      "extraidas": 0,
+      "rechazos": []
+    },
+    {
+      "archivo": "10a-epoca/Libro-056_2018-07_julio_Tomo-I.md",
+      "sha256_md": "5cf25b39a5c4c34e33da44a121110efc8bf15528259c4b84243a2861d75f7dc5",
+      "cabeceras": 21,
+      "cierres_sentencia": 21,
+      "extraidas": 21,
+      "rechazos": []
+    },
+    {
+      "archivo": "10a-epoca/Libro-056_2018-07_julio_Tomo-II.md",
+      "sha256_md": "b7c2d84e7c939f2fbaf1b54dfcf50ea25117ffbccb2af71a0237ccaa723a9bce",
+      "cabeceras": 15,
+      "cierres_sentencia": 14,
+      "extraidas": 14,
+      "rechazos": [
+        {
+          "linea": 22738,
+          "asunto": "SOLICITUD DE SUSTITUCIÓN DE JURISPRUDENCIA 1/2018",
+          "motivo": "limite_sin_cierre_verificable"
+        }
+      ]
+    },
+    {
+      "archivo": "10a-epoca/Libro-057_2018-08_agosto_Tomo-I.md",
+      "sha256_md": "1afa4b04099f6dc76b876a80c3f466791e71c7dacdd4c942a907725fd52013ba",
+      "cabeceras": 34,
+      "cierres_sentencia": 18,
+      "extraidas": 34,
+      "rechazos": []
+    },
+    {
+      "archivo": "10a-epoca/Libro-057_2018-08_agosto_Tomo-II.md",
+      "sha256_md": "83432d21018c240d7c4d315901772af692acfa0a758b2b2d47e40474249c26c6",
+      "cabeceras": 20,
+      "cierres_sentencia": 20,
+      "extraidas": 20,
+      "rechazos": []
+    },
+    {
+      "archivo": "10a-epoca/Libro-057_2018-08_agosto_Tomo-III.md",
+      "sha256_md": "dece3c1b5fe149ad5f959e14199459295027468d5efdb1dd65f5f49d390cb7cd",
+      "cabeceras": 25,
+      "cierres_sentencia": 27,
+      "extraidas": 25,
+      "rechazos": []
+    },
+    {
+      "archivo": "10a-epoca/Libro-058_2018-09_septiembre.md",
+      "sha256_md": "cd9f8daf9d3418ac6e4397fa7038457990196007e4c4d1b9bb672d78c6085741",
+      "cabeceras": 64,
+      "cierres_sentencia": 56,
+      "extraidas": 62,
+      "rechazos": [
+        {
+          "linea": 49764,
+          "asunto": "CONTRADICCIÓN DE TESIS 10/2017",
+          "motivo": "sin_cuerpo_reconocible"
+        },
+        {
+          "linea": 57238,
+          "asunto": "CONTRADICCIÓN DE TESIS 6/2017",
+          "motivo": "sin_cuerpo_reconocible"
+        }
+      ]
+    },
+    {
+      "archivo": "10a-epoca/Libro-059_2018-10_octubre_Tomo-I.md",
+      "sha256_md": "feb771180886ee07375af2e50ee1c58ccef948a98e0a51147225f797be1c23df",
+      "cabeceras": 22,
+      "cierres_sentencia": 17,
+      "extraidas": 21,
+      "rechazos": [
+        {
+          "linea": 30895,
+          "asunto": "CONTRADICCIÓN DE TESIS 140/2017",
+          "motivo": "sin_cuerpo_reconocible"
+        }
+      ]
+    },
+    {
+      "archivo": "10a-epoca/Libro-059_2018-10_octubre_Tomo-II.md",
+      "sha256_md": "9c4be99a476422c152f9f91dd6274059e1de95ff1ff5cd9926ed5653008fbf28",
+      "cabeceras": 18,
+      "cierres_sentencia": 18,
+      "extraidas": 18,
+      "rechazos": []
+    },
+    {
+      "archivo": "10a-epoca/Libro-059_2018-10_octubre_Tomo-III.md",
+      "sha256_md": "a00781e94023f8c295e486acc6d1778e55f2d2d07c8f922ccfbdd463b2bae6d5",
+      "cabeceras": 19,
+      "cierres_sentencia": 19,
+      "extraidas": 19,
+      "rechazos": []
+    },
+    {
+      "archivo": "10a-epoca/Libro-060_2018-11_noviembre.md",
+      "sha256_md": "4d326b1e7a1a5fd622cc7379a617d170f031e7c3441a62152cfbd451776d3c7c",
+      "cabeceras": 56,
+      "cierres_sentencia": 61,
+      "extraidas": 55,
+      "rechazos": [
+        {
+          "linea": 84420,
+          "asunto": "AMPARO DIRECTO 101/2017",
+          "motivo": "limite_sin_cierre_verificable"
+        }
+      ]
+    },
+    {
+      "archivo": "10a-epoca/Libro-061_2018-12_diciembre.md",
+      "sha256_md": "59295372e73af632257cd89a7f469786fbf9cd747b5c0ef5fcbe8783ba779ce3",
+      "cabeceras": 29,
+      "cierres_sentencia": 28,
+      "extraidas": 28,
+      "rechazos": [
+        {
+          "linea": 9264,
+          "asunto": "AMPARO DIRECTO EN REVISIÓN 6090/2017",
+          "motivo": "sin_cuerpo_reconocible"
+        }
+      ]
+    },
+    {
+      "archivo": "10a-epoca/Libro-062_2019-01_enero.md",
+      "sha256_md": "190ddf57f4dc20f11b1817bab09e2948b3fc3d71d1ce1a00da35bd855baa7c56",
+      "cabeceras": 59,
+      "cierres_sentencia": 58,
+      "extraidas": 59,
+      "rechazos": []
+    },
+    {
+      "archivo": "10a-epoca/Libro-063_2019-02_febrero_Tomo-I.md",
+      "sha256_md": "8783e56da5bd028998b41f777b5838edd425fdcbcff8e947e8aa6894d1d376e4",
+      "cabeceras": 28,
+      "cierres_sentencia": 19,
+      "extraidas": 28,
+      "rechazos": []
+    },
+    {
+      "archivo": "10a-epoca/Libro-063_2019-02_febrero_Tomo-II.md",
+      "sha256_md": "6c93004b6afd77ccbca4ae47cf4e2f3b41de28039cf9434a0c922019cce9e6bc",
+      "cabeceras": 23,
+      "cierres_sentencia": 23,
+      "extraidas": 23,
+      "rechazos": []
+    },
+    {
+      "archivo": "10a-epoca/Libro-063_2019-02_febrero_Tomo-III.md",
+      "sha256_md": "41f5b6774a5a84d3bb5ba40ef3c41e217d7f2347341b63c278f1c09c2cddf625",
+      "cabeceras": 23,
+      "cierres_sentencia": 24,
+      "extraidas": 23,
+      "rechazos": []
+    },
+    {
+      "archivo": "10a-epoca/Libro-064_2019-03_marzo.md",
+      "sha256_md": "7b08bd7e972c47cc4a2324b1f1fb45d27ac38a4571e2b20d6f87210e170a812e",
+      "cabeceras": 69,
+      "cierres_sentencia": 48,
+      "extraidas": 66,
+      "rechazos": [
+        {
+          "linea": 58458,
+          "asunto": "CONTRADICCIÓN DE TESIS 141/2018",
+          "motivo": "limite_sin_cierre_verificable"
+        },
+        {
+          "linea": 67277,
+          "asunto": "CONTRADICCIÓN DE TESIS 294/2018",
+          "motivo": "limite_sin_cierre_verificable"
+        },
+        {
+          "linea": 75483,
+          "asunto": "CONTRADICCIÓN DE TESIS 293/2018",
+          "motivo": "limite_sin_cierre_verificable"
+        }
+      ]
+    },
+    {
+      "archivo": "10a-epoca/Libro-065_2019-04_abril.md",
+      "sha256_md": "48af41626d7be94111292a6c7ae5c7753fe35bca62bb60c35d42231c424bcc64",
+      "cabeceras": 163,
+      "cierres_sentencia": 153,
+      "extraidas": 163,
+      "rechazos": []
+    },
+    {
+      "archivo": "10a-epoca/Libro-066_2019-05_mayo.md",
+      "sha256_md": "fcdb469b41db3873ec2c604d803a55ba0ee5dea6370e2c3d89909d2f8de6032c",
+      "cabeceras": 68,
+      "cierres_sentencia": 68,
+      "extraidas": 67,
+      "rechazos": [
+        {
+          "linea": 96307,
+          "asunto": "AMPARO DIRECTO 494/2011",
+          "motivo": "sin_cuerpo_reconocible"
+        }
+      ]
+    },
+    {
+      "archivo": "10a-epoca/Libro-067_2019-06_junio_Tomo-I.md",
+      "sha256_md": "54795ccff2cce2a50930499ba46aa9868206f54c6aee24b63d0b5b5f2dc23765",
+      "cabeceras": 14,
+      "cierres_sentencia": 10,
+      "extraidas": 14,
+      "rechazos": []
+    },
+    {
+      "archivo": "10a-epoca/Libro-067_2019-06_junio_Tomo-II.md",
+      "sha256_md": "b9bb0ece8ba36b486f1914ffc75cdf890fabd65b76cf0823a3d4f2f2b698e4c8",
+      "cabeceras": 31,
+      "cierres_sentencia": 31,
+      "extraidas": 31,
+      "rechazos": []
+    },
+    {
+      "archivo": "10a-epoca/Libro-067_2019-06_junio_Tomo-III.md",
+      "sha256_md": "e98691463f4d317be33b9999581b232d00877758a5c157a8323fa5d075839086",
+      "cabeceras": 29,
+      "cierres_sentencia": 28,
+      "extraidas": 29,
+      "rechazos": []
+    },
+    {
+      "archivo": "10a-epoca/Libro-067_2019-06_junio_Tomo-IV.md",
+      "sha256_md": "640fff84292ff601637cd4fe46dc3b6a09cce73efa1cd337eba8633249c3a81a",
+      "cabeceras": 18,
+      "cierres_sentencia": 18,
+      "extraidas": 18,
+      "rechazos": []
+    },
+    {
+      "archivo": "10a-epoca/Libro-067_2019-06_junio_Tomo-V.md",
+      "sha256_md": "89bd51edb1546b535bb1654f0fe52dcd756eb658101fee36e2629e15e033cb81",
+      "cabeceras": 20,
+      "cierres_sentencia": 21,
+      "extraidas": 19,
+      "rechazos": [
+        {
+          "linea": 27354,
+          "asunto": "CONTRADICCIÓN DE TESIS 3/2018",
+          "motivo": "limite_sin_cierre_verificable"
+        }
+      ]
+    },
+    {
+      "archivo": "10a-epoca/Libro-067_2019-06_junio_Tomo-VI.md",
+      "sha256_md": "418378ece760e262a0e9195ab4c31044dd4315f1beb9d966419ffb8ce4f7a8ea",
+      "cabeceras": 16,
+      "cierres_sentencia": 16,
+      "extraidas": 16,
+      "rechazos": []
+    },
+    {
+      "archivo": "10a-epoca/Libro-067_2019-06_junio_Tomo-VII.md",
+      "sha256_md": "7f8e4fecd61a017db3250b557b9967ff729b694d2ab8ec993dd788d1ea3dc37d",
+      "cabeceras": 0,
+      "cierres_sentencia": 0,
+      "extraidas": 0,
+      "rechazos": []
+    },
+    {
+      "archivo": "10a-epoca/Libro-068_2019-07_julio.md",
+      "sha256_md": "a016f250e7b10a1cd014294d01186215132ec802791bd628d9a4e94e5dcf976a",
+      "cabeceras": 58,
+      "cierres_sentencia": 58,
+      "extraidas": 57,
+      "rechazos": [
+        {
+          "linea": 42498,
+          "asunto": "CONTRADICCIÓN DE TESIS 318/2018",
+          "motivo": "limite_sin_cierre_verificable"
+        }
+      ]
+    },
+    {
+      "archivo": "10a-epoca/Libro-069_2019-08_agosto_Tomo-I.md",
+      "sha256_md": "5dc93bcd77eee996b05dfd9ed706c1442605049f5eae646cdcf915bce07c30fc",
+      "cabeceras": 6,
+      "cierres_sentencia": 6,
+      "extraidas": 6,
+      "rechazos": []
+    },
+    {
+      "archivo": "10a-epoca/Libro-069_2019-08_agosto_Tomo-III.md",
+      "sha256_md": "1037315924cda4ac5f8241567776824c392fd5f18b012c9e02ec71d4c1b01b64",
+      "cabeceras": 40,
+      "cierres_sentencia": 39,
+      "extraidas": 40,
+      "rechazos": []
+    },
+    {
+      "archivo": "10a-epoca/Libro-069_2019-08_agosto_Tomo-IV.md",
+      "sha256_md": "87982d0f38a3af3075acaea87f0fd45f9021050ee5bfa244a07d350c59e0aab2",
+      "cabeceras": 30,
+      "cierres_sentencia": 30,
+      "extraidas": 29,
+      "rechazos": [
+        {
+          "linea": 33933,
+          "asunto": "AMPARO DIRECTO 367/2012",
+          "motivo": "limite_sin_cierre_verificable"
+        }
+      ]
+    },
+    {
+      "archivo": "10a-epoca/Libro-069_2019-08_agosto_Tomo-V.md",
+      "sha256_md": "b1a909159f926d6416bb71fe1af77a1b0ac02a2280bb8b827f01f7caf55b3316",
+      "cabeceras": 0,
+      "cierres_sentencia": 0,
+      "extraidas": 0,
+      "rechazos": []
+    },
+    {
+      "archivo": "10a-epoca/Libro-070_2019-09_septiembre_Tomo-I.md",
+      "sha256_md": "33f4f256d2f525c0b3a63692bb4afc38871e6d4a9aca4f63bcba94343dde8d9e",
+      "cabeceras": 20,
+      "cierres_sentencia": 20,
+      "extraidas": 20,
+      "rechazos": []
+    },
+    {
+      "archivo": "10a-epoca/Libro-070_2019-09_septiembre_Tomo-II.md",
+      "sha256_md": "d5a8bc70e15a4016118ac4f794e4e0356073365a9afb3fb1fb76d67dfe7a8324",
+      "cabeceras": 19,
+      "cierres_sentencia": 19,
+      "extraidas": 19,
+      "rechazos": []
+    },
+    {
+      "archivo": "10a-epoca/Libro-070_2019-09_septiembre_Tomo-III.md",
+      "sha256_md": "d4f2eaa970fd984ae558023891b15dbd47443b5871ce32abf3251f671120492f",
+      "cabeceras": 10,
+      "cierres_sentencia": 10,
+      "extraidas": 10,
+      "rechazos": []
+    },
+    {
+      "archivo": "10a-epoca/Libro-071_2019-10_octubre_Tomo-I.md",
+      "sha256_md": "badca981da0867c512d98aba76bce45a7ca8814319b5010d0e71edeacb092946",
+      "cabeceras": 21,
+      "cierres_sentencia": 21,
+      "extraidas": 21,
+      "rechazos": []
+    },
+    {
+      "archivo": "10a-epoca/Libro-071_2019-10_octubre_Tomo-II.md",
+      "sha256_md": "2fc6cc83115aa4f6beaee3764d9d59af0ca59888b380ada67e4eba95859736c6",
+      "cabeceras": 24,
+      "cierres_sentencia": 23,
+      "extraidas": 24,
+      "rechazos": []
+    },
+    {
+      "archivo": "10a-epoca/Libro-071_2019-10_octubre_Tomo-III.md",
+      "sha256_md": "3c60f3d5bdc2ba7819ce9aa5e577befc36fbae2e03e8696c734410ab181ea1c0",
+      "cabeceras": 24,
+      "cierres_sentencia": 25,
+      "extraidas": 24,
+      "rechazos": []
+    },
+    {
+      "archivo": "10a-epoca/Libro-071_2019-10_octubre_Tomo-IV.md",
+      "sha256_md": "a5f763a7d713cfec1b6404047c0dee1ac1c2467b9026898970ebcef2122d2900",
+      "cabeceras": 12,
+      "cierres_sentencia": 13,
+      "extraidas": 12,
+      "rechazos": []
+    },
+    {
+      "archivo": "10a-epoca/Libro-072_2019-11_noviembre_Tomo-I.md",
+      "sha256_md": "bd41e73ed99aea47dfb110c5fc1a0316c9406f7f445467c01e921fa515f878fc",
+      "cabeceras": 23,
+      "cierres_sentencia": 21,
+      "extraidas": 23,
+      "rechazos": []
+    },
+    {
+      "archivo": "10a-epoca/Libro-072_2019-11_noviembre_Tomo-II.md",
+      "sha256_md": "0e0346cc6ace014dc932896f293da51c5c7f822c4d43a5dcacb1b35c93ce5cfa",
+      "cabeceras": 18,
+      "cierres_sentencia": 18,
+      "extraidas": 18,
+      "rechazos": []
+    },
+    {
+      "archivo": "10a-epoca/Libro-072_2019-11_noviembre_Tomo-III.md",
+      "sha256_md": "2714888d4343d9d16280afc0f96b4840c378e185b22882cd0b220c0adc0b5c13",
+      "cabeceras": 18,
+      "cierres_sentencia": 19,
+      "extraidas": 18,
+      "rechazos": []
+    },
+    {
+      "archivo": "10a-epoca/Libro-072_2019-11_noviembre_Tomo-IV.md",
+      "sha256_md": "1d7175dfc6bfc37615022e35d55c2385bf91abdb090fa1e98e13347c02155641",
+      "cabeceras": 0,
+      "cierres_sentencia": 0,
+      "extraidas": 0,
+      "rechazos": []
+    },
+    {
+      "archivo": "10a-epoca/Libro-073_2019-12_diciembre_Tomo-I.md",
+      "sha256_md": "3e7c7c0241f24c1f49998f55bbd097ba7411bbc67284b5637fa022561b4389a6",
+      "cabeceras": 26,
+      "cierres_sentencia": 26,
+      "extraidas": 26,
+      "rechazos": []
+    },
+    {
+      "archivo": "10a-epoca/Libro-073_2019-12_diciembre_Tomo-II.md",
+      "sha256_md": "aad32e7b51d641c8b01a293b29d78493be6470bed885328d19bbb578da2a4182",
+      "cabeceras": 10,
+      "cierres_sentencia": 10,
+      "extraidas": 10,
+      "rechazos": []
+    },
+    {
+      "archivo": "10a-epoca/Libro-073_2019-12_diciembre_Tomo-III.md",
+      "sha256_md": "c8c8b71fa8a69b19fa98beee00e6cc87f7c112d8ead7ccbb716f48e19add3f7d",
+      "cabeceras": 0,
+      "cierres_sentencia": 0,
+      "extraidas": 0,
+      "rechazos": []
+    },
+    {
+      "archivo": "10a-epoca/Libro-074_2020-01_enero_Tomo-I.md",
+      "sha256_md": "2892cab4391e4442bb59c704b53b37a882e3da8f307652ad623c605eec46062d",
+      "cabeceras": 28,
+      "cierres_sentencia": 26,
+      "extraidas": 28,
+      "rechazos": []
+    },
+    {
+      "archivo": "10a-epoca/Libro-074_2020-01_enero_Tomo-II.md",
+      "sha256_md": "3154f817b94730f7a453b0afa41a52d8cff917567b7bd6d372974ac393cb31a5",
+      "cabeceras": 21,
+      "cierres_sentencia": 21,
+      "extraidas": 20,
+      "rechazos": [
+        {
+          "linea": 38823,
+          "asunto": "CONTRADICCIÓN DE TESIS 18/2019",
+          "motivo": "limite_sin_cierre_verificable"
+        }
+      ]
+    },
+    {
+      "archivo": "10a-epoca/Libro-074_2020-01_enero_Tomo-III.md",
+      "sha256_md": "cc4598a4c5246fd2c874b0e42571437e040bc890d799a94011e6c261e458aaed",
+      "cabeceras": 15,
+      "cierres_sentencia": 15,
+      "extraidas": 15,
+      "rechazos": []
+    },
+    {
+      "archivo": "10a-epoca/Libro-075_2020-02_febrero_Tomo-I.md",
+      "sha256_md": "07a35e244b9adb103e3f72668c92363a3e91729de55e9254ab2101fbc23d26b9",
+      "cabeceras": 26,
+      "cierres_sentencia": 21,
+      "extraidas": 26,
+      "rechazos": []
+    },
+    {
+      "archivo": "10a-epoca/Libro-075_2020-02_febrero_Tomo-II.md",
+      "sha256_md": "e18b6c31bc00e56a7609bf0e6630b30af58a71e5914ebc4dd7cf522e51dba7e6",
+      "cabeceras": 18,
+      "cierres_sentencia": 18,
+      "extraidas": 18,
+      "rechazos": []
+    },
+    {
+      "archivo": "10a-epoca/Libro-075_2020-02_febrero_Tomo-III.md",
+      "sha256_md": "4743b0519b955e36c4d1eaabb57a999d5d961aa6984d315ad0c477f92b95e1af",
+      "cabeceras": 10,
+      "cierres_sentencia": 11,
+      "extraidas": 9,
+      "rechazos": [
+        {
+          "linea": 5842,
+          "asunto": "AMPARO EN REVISIÓN 110/2019",
+          "motivo": "limite_sin_cierre_verificable"
+        }
+      ]
+    },
+    {
+      "archivo": "10a-epoca/Libro-076_2020-03_marzo_Tomo-I.md",
+      "sha256_md": "61d8257d9c022e3527139b5a42549def1af798d37856e49f0de460f40ada0cd4",
+      "cabeceras": 14,
+      "cierres_sentencia": 11,
+      "extraidas": 14,
+      "rechazos": []
+    },
+    {
+      "archivo": "10a-epoca/Libro-076_2020-03_marzo_Tomo-II.md",
+      "sha256_md": "2accbcdfd893916c24a2e3210c264793fab95c3bc0b6412167642edfddf72c29",
+      "cabeceras": 14,
+      "cierres_sentencia": 14,
+      "extraidas": 14,
+      "rechazos": []
+    },
+    {
+      "archivo": "10a-epoca/Libro-077_2020-08_agosto_Tomo-I.md",
+      "sha256_md": "d6dd0447ab4cbe57b50e5839d3e1f817b0225abee304c63f807e2627448e3c6c",
+      "cabeceras": 13,
+      "cierres_sentencia": 13,
+      "extraidas": 13,
+      "rechazos": []
+    },
+    {
+      "archivo": "10a-epoca/Libro-077_2020-08_agosto_Tomo-II.md",
+      "sha256_md": "809d857eb86a85a4bec30ebf84d5935917453e05193274727814e3b64a84f1e8",
+      "cabeceras": 20,
+      "cierres_sentencia": 20,
+      "extraidas": 20,
+      "rechazos": []
+    },
+    {
+      "archivo": "10a-epoca/Libro-077_2020-08_agosto_Tomo-III.md",
+      "sha256_md": "eb0c592d6f4cc1d04b136f11ef0add578ff0bb1fd49c9d1ce950c7334475a1a6",
+      "cabeceras": 18,
+      "cierres_sentencia": 19,
+      "extraidas": 18,
+      "rechazos": []
+    },
+    {
+      "archivo": "10a-epoca/Libro-077_2020-08_agosto_Tomo-IV.md",
+      "sha256_md": "cb769340bc5e96cddacc502cd6a63765159b62a85d87c63ac955619e8bc7db7a",
+      "cabeceras": 31,
+      "cierres_sentencia": 31,
+      "extraidas": 31,
+      "rechazos": []
+    },
+    {
+      "archivo": "10a-epoca/Libro-077_2020-08_agosto_Tomo-V.md",
+      "sha256_md": "8f49fadf5047ad7b85f5530e028268e277787e6f12496a138ebc1b188c115e28",
+      "cabeceras": 13,
+      "cierres_sentencia": 13,
+      "extraidas": 13,
+      "rechazos": []
+    },
+    {
+      "archivo": "10a-epoca/Libro-077_2020-08_agosto_Tomo-VI.md",
+      "sha256_md": "fff779f0b8cc9517841396d5e9b27c4e522ea686c669669076ea9b9f4aed2fb0",
+      "cabeceras": 24,
+      "cierres_sentencia": 24,
+      "extraidas": 24,
+      "rechazos": []
+    },
+    {
+      "archivo": "10a-epoca/Libro-077_2020-08_agosto_Tomo-VII.md",
+      "sha256_md": "84b2807f7abacaf44de49a9ddedbbc866bfa9cf4cb06b56062f74eae1f3e027f",
+      "cabeceras": 0,
+      "cierres_sentencia": 0,
+      "extraidas": 0,
+      "rechazos": []
+    },
+    {
+      "archivo": "10a-epoca/Libro-078_2020-09_septiembre_Tomo-I.md",
+      "sha256_md": "efa118ac0809e83668c4db78525efd1310fc9b1678b7caa7d85ef19bcd4db823",
+      "cabeceras": 20,
+      "cierres_sentencia": 20,
+      "extraidas": 20,
+      "rechazos": []
+    },
+    {
+      "archivo": "10a-epoca/Libro-078_2020-09_septiembre_Tomo-II.md",
+      "sha256_md": "6e6f80e10dea69bb4e5dd16382e15de3134daff6e1e8f8a564ca6c5445a86c83",
+      "cabeceras": 2,
+      "cierres_sentencia": 2,
+      "extraidas": 2,
+      "rechazos": []
+    },
+    {
+      "archivo": "10a-epoca/Libro-079_2020-10_octubre_Tomo-I.md",
+      "sha256_md": "33f4d90f14a3dd0b372de7cd807cb7bf5673731c1ee3dd486d86e96095a48623",
+      "cabeceras": 25,
+      "cierres_sentencia": 25,
+      "extraidas": 25,
+      "rechazos": []
+    },
+    {
+      "archivo": "10a-epoca/Libro-079_2020-10_octubre_Tomo-II.md",
+      "sha256_md": "c6f98fd5991f58f4843d2f8f4657adaf383e42a9ba8180f1cbca3b76707e8bbb",
+      "cabeceras": 15,
+      "cierres_sentencia": 15,
+      "extraidas": 15,
+      "rechazos": []
+    },
+    {
+      "archivo": "10a-epoca/Libro-079_2020-10_octubre_Tomo-III.md",
+      "sha256_md": "c6ccf8c87e3daceb2be6b8c97da7099c3957b030ee1706cae3f82fcbdcac21ce",
+      "cabeceras": 1,
+      "cierres_sentencia": 1,
+      "extraidas": 1,
+      "rechazos": []
+    },
+    {
+      "archivo": "10a-epoca/Libro-080_2020-11_noviembre_Tomo-I.md",
+      "sha256_md": "23b06a9f2e4cc1c21b9d78ac9647524b05416d105b237738fb22b10b51b9d97e",
+      "cabeceras": 16,
+      "cierres_sentencia": 16,
+      "extraidas": 16,
+      "rechazos": []
+    },
+    {
+      "archivo": "10a-epoca/Libro-080_2020-11_noviembre_Tomo-II.md",
+      "sha256_md": "22074e92989158104c816b77c64050ffa78780d4beb30e98cbef683299299d65",
+      "cabeceras": 15,
+      "cierres_sentencia": 15,
+      "extraidas": 15,
+      "rechazos": []
+    },
+    {
+      "archivo": "10a-epoca/Libro-080_2020-11_noviembre_Tomo-III.md",
+      "sha256_md": "59bd616c3a5aa7b47195080a346ad9f36077102d09d45587dba1361ac1b1dd2f",
+      "cabeceras": 4,
+      "cierres_sentencia": 4,
+      "extraidas": 4,
+      "rechazos": []
+    },
+    {
+      "archivo": "10a-epoca/Libro-081_2020-12_diciembre_Tomo-I.md",
+      "sha256_md": "a24e06601833e6c8d91d6a9c1c81914d3881caa05e6b433587d4fd9ea91fc974",
+      "cabeceras": 17,
+      "cierres_sentencia": 17,
+      "extraidas": 17,
+      "rechazos": []
+    },
+    {
+      "archivo": "10a-epoca/Libro-081_2020-12_diciembre_Tomo-II.md",
+      "sha256_md": "af2bf9d3dbc977513ca7c0722d7b3b9a41a3efc877c7ad25a44d417b3037da33",
+      "cabeceras": 13,
+      "cierres_sentencia": 12,
+      "extraidas": 12,
+      "rechazos": [
+        {
+          "linea": 3885,
+          "asunto": "AMPARO DIRECTO EN REVISIÓN 181/2011",
+          "motivo": "sin_cuerpo_reconocible"
+        }
+      ]
+    },
+    {
+      "archivo": "10a-epoca/Libro-082_2021-01_enero_Tomo-I.md",
+      "sha256_md": "3392333856df17cad4f9edda41ca0e14f84342e6b8c7d1e55e52bd573986a4d2",
+      "cabeceras": 15,
+      "cierres_sentencia": 12,
+      "extraidas": 15,
+      "rechazos": []
+    },
+    {
+      "archivo": "10a-epoca/Libro-082_2021-01_enero_Tomo-II_parte-1.md",
+      "sha256_md": "4c70b7247b2c649739d4ca761a832231c735c340b8055709a5f6facef14e3c86",
+      "cabeceras": 9,
+      "cierres_sentencia": 10,
+      "extraidas": 9,
+      "rechazos": []
+    },
+    {
+      "archivo": "10a-epoca/Libro-082_2021-01_enero_Tomo-II_parte-2.md",
+      "sha256_md": "7f41b9b2fda89c7b139ac04f4651c6dca995c95cfc45cbe77d4e897608f31b06",
+      "cabeceras": 0,
+      "cierres_sentencia": 0,
+      "extraidas": 0,
+      "rechazos": []
+    },
+    {
+      "archivo": "10a-epoca/Libro-082_2021-01_enero_Tomo-II_parte-3.md",
+      "sha256_md": "56db17a93984e1ac64b61e9c04241190e44d492016e2efa068a540d4e7382bd0",
+      "cabeceras": 0,
+      "cierres_sentencia": 0,
+      "extraidas": 0,
+      "rechazos": []
+    },
+    {
+      "archivo": "10a-epoca/Libro-083_2021-02_febrero_Tomo-I.md",
+      "sha256_md": "790829988e1785ac9af291b910d2a5740538e9102253a4bb26ce9fb73a44bcc7",
+      "cabeceras": 20,
+      "cierres_sentencia": 15,
+      "extraidas": 20,
+      "rechazos": []
+    },
+    {
+      "archivo": "10a-epoca/Libro-083_2021-02_febrero_Tomo-III.md",
+      "sha256_md": "39a53b50f75f1c33d80f5487b43b81a843a43c394159185ff1aa2acf700d57c7",
+      "cabeceras": 15,
+      "cierres_sentencia": 15,
+      "extraidas": 14,
+      "rechazos": [
+        {
+          "linea": 2841,
+          "asunto": "CONTRADICCIÓN DE TESIS 6/2019",
+          "motivo": "limite_sin_cierre_verificable"
+        }
+      ]
+    },
+    {
+      "archivo": "10a-epoca/Libro-084_2021-03_marzo_Tomo-I.md",
+      "sha256_md": "1f2c1a6e4d14faa83cbdc68d2feb666d745ebb72545bef4628e24025afc61d58",
+      "cabeceras": 10,
+      "cierres_sentencia": 9,
+      "extraidas": 9,
+      "rechazos": [
+        {
+          "linea": 34522,
+          "asunto": "RECURSO DE RECLAMACIÓN 150/2019-CA",
+          "motivo": "sin_cuerpo_reconocible"
+        }
+      ]
+    },
+    {
+      "archivo": "10a-epoca/Libro-084_2021-03_marzo_Tomo-II.md",
+      "sha256_md": "67b7d92393b5ddeccf3011470268c58128a4ad1bcd6e34aed16fb80bbef4432c",
+      "cabeceras": 18,
+      "cierres_sentencia": 15,
+      "extraidas": 18,
+      "rechazos": []
+    },
+    {
+      "archivo": "10a-epoca/Libro-084_2021-03_marzo_Tomo-III.md",
+      "sha256_md": "397c7bfc1a80d56f13f43722b9bb4f277d0763333dd94b88b49e9f90ffbee2f1",
+      "cabeceras": 21,
+      "cierres_sentencia": 21,
+      "extraidas": 21,
+      "rechazos": []
+    },
+    {
+      "archivo": "10a-epoca/Libro-084_2021-03_marzo_Tomo-IV.md",
+      "sha256_md": "a16d2a79cb2505ebdd1af598db6b4971bfcd127ff020985b3f428a0b7d54f85d",
+      "cabeceras": 4,
+      "cierres_sentencia": 4,
+      "extraidas": 4,
+      "rechazos": []
+    },
+    {
+      "archivo": "10a-epoca/Libro-085_2021-04_abril_Tomo-I.md",
+      "sha256_md": "17841ccb9ebfd39d7bdaf2be9cf80021330d7d3437f136730fc158b7377cd609",
+      "cabeceras": 20,
+      "cierres_sentencia": 20,
+      "extraidas": 20,
+      "rechazos": []
+    },
+    {
+      "archivo": "10a-epoca/Libro-085_2021-04_abril_Tomo-II.md",
+      "sha256_md": "59f103c85df80e2f6adb9ab936da44ab141fdcdcebec0bf2d63f9d176de64dc6",
+      "cabeceras": 16,
+      "cierres_sentencia": 16,
+      "extraidas": 16,
+      "rechazos": []
+    },
+    {
+      "archivo": "10a-epoca/Libro-085_2021-04_abril_Tomo-III.md",
+      "sha256_md": "a0aa0e13213e4fbbc76877338fe56f03192600433c0265fc35cbfce874e99478",
+      "cabeceras": 5,
+      "cierres_sentencia": 6,
+      "extraidas": 5,
+      "rechazos": []
+    },
+    {
+      "archivo": "11a-epoca/Libro-001_2021-05_mayo_Tomo-I.md",
+      "sha256_md": "465119a966922a54fd579142d077e01bb16e231608e9e59e6a7fc7ec995f980a",
+      "cabeceras": 18,
+      "cierres_sentencia": 18,
+      "extraidas": 18,
+      "rechazos": []
+    },
+    {
+      "archivo": "11a-epoca/Libro-001_2021-05_mayo_Tomo-II.md",
+      "sha256_md": "6fe35388bc5a11cc5fbf3ad451503eb44245241a1fba3aab3ec6dabda8065d12",
+      "cabeceras": 23,
+      "cierres_sentencia": 23,
+      "extraidas": 23,
+      "rechazos": []
+    },
+    {
+      "archivo": "11a-epoca/Libro-001_2021-05_mayo_Tomo-III.md",
+      "sha256_md": "17fe96b1959f9a91600be86978a67f453cada6fc1bae6446275303fefd15deef",
+      "cabeceras": 10,
+      "cierres_sentencia": 11,
+      "extraidas": 10,
+      "rechazos": []
+    },
+    {
+      "archivo": "11a-epoca/Libro-002_2021-06_junio_Tomo-I.md",
+      "sha256_md": "dd9de13df6824ead62aff858301551ffc4ab690c40d3bd058216129306cbf16f",
+      "cabeceras": 25,
+      "cierres_sentencia": 15,
+      "extraidas": 25,
+      "rechazos": []
+    },
+    {
+      "archivo": "11a-epoca/Libro-002_2021-06_junio_Tomo-II.md",
+      "sha256_md": "cea19d0ff60a8c92ef867285a7976674f8e1f8fd72542a317512cba55e7c0e1d",
+      "cabeceras": 19,
+      "cierres_sentencia": 19,
+      "extraidas": 19,
+      "rechazos": []
+    },
+    {
+      "archivo": "11a-epoca/Libro-002_2021-06_junio_Tomo-III.md",
+      "sha256_md": "814e6c9d7bb7ccdcc2da123aeba505e7daa9b3b027b527f72e13833566703e39",
+      "cabeceras": 12,
+      "cierres_sentencia": 11,
+      "extraidas": 11,
+      "rechazos": [
+        {
+          "linea": 21064,
+          "asunto": "RECURSO DE RECLAMACIÓN 33/2020-CA",
+          "motivo": "sin_cuerpo_reconocible"
+        }
+      ]
+    },
+    {
+      "archivo": "11a-epoca/Libro-002_2021-06_junio_Tomo-IV.md",
+      "sha256_md": "9fb5fc2d6071b136420bcc2ef8500578898767dc57b4c53946b0fbd503f6c7d7",
+      "cabeceras": 19,
+      "cierres_sentencia": 19,
+      "extraidas": 19,
+      "rechazos": []
+    },
+    {
+      "archivo": "11a-epoca/Libro-002_2021-06_junio_Tomo-V.md",
+      "sha256_md": "891dc7c00e70b095e585476d75b8ae7ab0ed8c80b581cd33ca6188635ce2c440",
+      "cabeceras": 14,
+      "cierres_sentencia": 14,
+      "extraidas": 14,
+      "rechazos": []
+    },
+    {
+      "archivo": "11a-epoca/Libro-003_2021-07_julio_Tomo-I.md",
+      "sha256_md": "d0891755f2d06968b2cc2f17ad7d8c548fd08d4ad38d7a1cb9b9e10fb5b09b5e",
+      "cabeceras": 21,
+      "cierres_sentencia": 13,
+      "extraidas": 21,
+      "rechazos": []
+    },
+    {
+      "archivo": "11a-epoca/Libro-003_2021-07_julio_Tomo-II.md",
+      "sha256_md": "1f2485977286c999d1a050c5d64a4a3b1d07eed4798989fcbd6d85e7b4fd9a21",
+      "cabeceras": 21,
+      "cierres_sentencia": 21,
+      "extraidas": 21,
+      "rechazos": []
+    },
+    {
+      "archivo": "11a-epoca/Libro-003_2021-07_julio_Tomo-III.md",
+      "sha256_md": "45a4ff1c8d034488bc53e8fa0f5adfd3a00df700f5b2ef4fd78f69f3d3e71ae5",
+      "cabeceras": 6,
+      "cierres_sentencia": 6,
+      "extraidas": 6,
+      "rechazos": []
+    },
+    {
+      "archivo": "11a-epoca/Libro-004_2021-08_agosto_Tomo-I.md",
+      "sha256_md": "ed1751fe34677a644c416b7398f2d8620b905a072e018649e02a3ddb2288948b",
+      "cabeceras": 17,
+      "cierres_sentencia": 10,
+      "extraidas": 17,
+      "rechazos": []
+    },
+    {
+      "archivo": "11a-epoca/Libro-004_2021-08_agosto_Tomo-II.md",
+      "sha256_md": "9eb4aa3e6a04085fb5b1c5606109cc0ac9f1801cb989761fe7685eefe32d8d33",
+      "cabeceras": 10,
+      "cierres_sentencia": 10,
+      "extraidas": 10,
+      "rechazos": []
+    },
+    {
+      "archivo": "11a-epoca/Libro-004_2021-08_agosto_Tomo-III.md",
+      "sha256_md": "1bf941402d8f13c67a55caffe029492efa46eea5c6bf04ee21926529b0dc3b8a",
+      "cabeceras": 13,
+      "cierres_sentencia": 13,
+      "extraidas": 13,
+      "rechazos": []
+    },
+    {
+      "archivo": "11a-epoca/Libro-004_2021-08_agosto_Tomo-IV.md",
+      "sha256_md": "4b22c2a70e4e52a9bf3d7780fc84157bb7e61ed1bbd74d5c431a8d1fa9a0e8f8",
+      "cabeceras": 21,
+      "cierres_sentencia": 21,
+      "extraidas": 21,
+      "rechazos": []
+    },
+    {
+      "archivo": "11a-epoca/Libro-004_2021-08_agosto_Tomo-V.md",
+      "sha256_md": "eb1757ad17a12412f1d4f44b396b647c789786873c8d0b510b5735ea356cfe9f",
+      "cabeceras": 9,
+      "cierres_sentencia": 11,
+      "extraidas": 9,
+      "rechazos": []
+    },
+    {
+      "archivo": "11a-epoca/Libro-005_2021-09_septiembre_Tomo-I.md",
+      "sha256_md": "93f260771c0210eeda25aa320fc4c9a98ec0fa3715c6a8894be7cc4cb06a6750",
+      "cabeceras": 17,
+      "cierres_sentencia": 16,
+      "extraidas": 17,
+      "rechazos": []
+    },
+    {
+      "archivo": "11a-epoca/Libro-005_2021-09_septiembre_Tomo-II.md",
+      "sha256_md": "9381de0192809034061692cfead37277938be685ff66c8578bc39fe37616a660",
+      "cabeceras": 26,
+      "cierres_sentencia": 25,
+      "extraidas": 26,
+      "rechazos": []
+    },
+    {
+      "archivo": "11a-epoca/Libro-005_2021-09_septiembre_Tomo-III.md",
+      "sha256_md": "e5c9e4e92bb3fdcbdcd93c224f050001a68ad11e4039f901a1a6bcf1bf4eb421",
+      "cabeceras": 15,
+      "cierres_sentencia": 14,
+      "extraidas": 14,
+      "rechazos": [
+        {
+          "linea": 9684,
+          "asunto": "CONTRADICCIÓN DE TESIS 1/2019",
+          "motivo": "limite_sin_cierre_verificable"
+        }
+      ]
+    },
+    {
+      "archivo": "11a-epoca/Libro-005_2021-09_septiembre_Tomo-IV.md",
+      "sha256_md": "d0b50ee08437024f48d9c7189bdde548b1137d74cf42ad6561edbeb9c1ee3d4e",
+      "cabeceras": 4,
+      "cierres_sentencia": 4,
+      "extraidas": 4,
+      "rechazos": []
+    },
+    {
+      "archivo": "11a-epoca/Libro-006_2021-10_octubre_Tomo-I.md",
+      "sha256_md": "09516de73c9a23ac41b69a77ef810d53cc774374531e25e4e5f35a5715da5c48",
+      "cabeceras": 13,
+      "cierres_sentencia": 13,
+      "extraidas": 13,
+      "rechazos": []
+    },
+    {
+      "archivo": "11a-epoca/Libro-006_2021-10_octubre_Tomo-II.md",
+      "sha256_md": "edc67d98b968cd96a8f1683c79963ec091fe6ae8383bacb127f9c6371480faed",
+      "cabeceras": 28,
+      "cierres_sentencia": 26,
+      "extraidas": 28,
+      "rechazos": []
+    },
+    {
+      "archivo": "11a-epoca/Libro-006_2021-10_octubre_Tomo-III.md",
+      "sha256_md": "6b74e6bf63b3ce685c1dd17c439fce5f3363704b7918699434faba8d5ac012e5",
+      "cabeceras": 18,
+      "cierres_sentencia": 18,
+      "extraidas": 18,
+      "rechazos": []
+    },
+    {
+      "archivo": "11a-epoca/Libro-006_2021-10_octubre_Tomo-IV.md",
+      "sha256_md": "e590f85ed5cdf4da2a4195986f6488cd6bb77cde2ce2d983666bad97a299f12f",
+      "cabeceras": 15,
+      "cierres_sentencia": 15,
+      "extraidas": 15,
+      "rechazos": []
+    },
+    {
+      "archivo": "11a-epoca/Libro-007_2021-11_noviembre_Tomo-I.md",
+      "sha256_md": "9ab38964ede4a285fac4c6a62e598a7f576510ed4cf3e4ca44008f46d23cf853",
+      "cabeceras": 12,
+      "cierres_sentencia": 12,
+      "extraidas": 12,
+      "rechazos": []
+    },
+    {
+      "archivo": "11a-epoca/Libro-007_2021-11_noviembre_Tomo-II.md",
+      "sha256_md": "308f6929b159a1ad8f113b24f6ade6b277d52923595bd8f63c1febd9f1aefe7b",
+      "cabeceras": 24,
+      "cierres_sentencia": 24,
+      "extraidas": 24,
+      "rechazos": []
+    },
+    {
+      "archivo": "11a-epoca/Libro-007_2021-11_noviembre_Tomo-III.md",
+      "sha256_md": "5c9d8d345a308d18b7613fe80f59e95150cb4c225f43488f8f1eff3765c9f565",
+      "cabeceras": 18,
+      "cierres_sentencia": 18,
+      "extraidas": 18,
+      "rechazos": []
+    },
+    {
+      "archivo": "11a-epoca/Libro-007_2021-11_noviembre_Tomo-IV.md",
+      "sha256_md": "71c237859da8ef41b45d307657116c9a0fa2c145de870a728da7e5091737e1ba",
+      "cabeceras": 8,
+      "cierres_sentencia": 9,
+      "extraidas": 8,
+      "rechazos": []
+    },
+    {
+      "archivo": "11a-epoca/Libro-008_2021-12_diciembre_Tomo-I.md",
+      "sha256_md": "85516b0823c94a665ab2ac9a7010912f79afe9c78bff1e1a2b3f04f7dcf9eacb",
+      "cabeceras": 13,
+      "cierres_sentencia": 11,
+      "extraidas": 13,
+      "rechazos": []
+    },
+    {
+      "archivo": "11a-epoca/Libro-008_2021-12_diciembre_Tomo-II.md",
+      "sha256_md": "82121657ba3a294af5c9237621d864f00ca61b9519661b1990c150f4f70bb6c8",
+      "cabeceras": 26,
+      "cierres_sentencia": 24,
+      "extraidas": 26,
+      "rechazos": []
+    },
+    {
+      "archivo": "11a-epoca/Libro-008_2021-12_diciembre_Tomo-III.md",
+      "sha256_md": "6f6e597eba794553d56f8a5b795c06f948d21a5a455a7f10cdc5362aebd22484",
+      "cabeceras": 2,
+      "cierres_sentencia": 2,
+      "extraidas": 2,
+      "rechazos": []
+    },
+    {
+      "archivo": "11a-epoca/Libro-009_2022-01_enero_Tomo-I.md",
+      "sha256_md": "a42e949c27b9cf6cbc143849eb22958434ca27cf96c6601b2ee546abad4a0dcd",
+      "cabeceras": 12,
+      "cierres_sentencia": 12,
+      "extraidas": 12,
+      "rechazos": []
+    },
+    {
+      "archivo": "11a-epoca/Libro-009_2022-01_enero_Tomo-II.md",
+      "sha256_md": "eacc6e8fa82cdf77e08ccb844ba02194fec5159f59207152e6815af4555ba120",
+      "cabeceras": 25,
+      "cierres_sentencia": 20,
+      "extraidas": 23,
+      "rechazos": [
+        {
+          "linea": 105,
+          "asunto": "CONFLICTO COMPETENCIAL 62/2021",
+          "motivo": "limite_sin_cierre_verificable"
+        },
+        {
+          "linea": 31508,
+          "asunto": "CONTROVERSIA CONSTITUCIONAL 100/2020",
+          "motivo": "limite_sin_cierre_verificable"
+        }
+      ]
+    },
+    {
+      "archivo": "11a-epoca/Libro-009_2022-01_enero_Tomo-III.md",
+      "sha256_md": "da10a58e08705f531d0de27d2416432d509d5096b6c44b31997ad276a581baf5",
+      "cabeceras": 16,
+      "cierres_sentencia": 16,
+      "extraidas": 16,
+      "rechazos": []
+    },
+    {
+      "archivo": "11a-epoca/Libro-009_2022-01_enero_Tomo-IV.md",
+      "sha256_md": "e67549e8eb79d21c76dd6de818fe6ae0d8cb57cd2d9f2bd769238d0660f48a7c",
+      "cabeceras": 13,
+      "cierres_sentencia": 15,
+      "extraidas": 13,
+      "rechazos": []
+    },
+    {
+      "archivo": "11a-epoca/Libro-010_2022-02_febrero_Tomo-I.md",
+      "sha256_md": "c6c5560ce300a93dc0379e798afb9a56b84e88632d1a002cdd412876ebf5c523",
+      "cabeceras": 14,
+      "cierres_sentencia": 13,
+      "extraidas": 14,
+      "rechazos": []
+    },
+    {
+      "archivo": "11a-epoca/Libro-010_2022-02_febrero_Tomo-II.md",
+      "sha256_md": "ac56fb6389df96194916086aa2c6a59a7b6b81afb92a9d63ed719d486ae1f3fe",
+      "cabeceras": 20,
+      "cierres_sentencia": 19,
+      "extraidas": 20,
+      "rechazos": []
+    },
+    {
+      "archivo": "11a-epoca/Libro-010_2022-02_febrero_Tomo-III.md",
+      "sha256_md": "f4acb409a0efe4006a4d8ab93981503f742b907ccf964601ce272d9e3183e496",
+      "cabeceras": 11,
+      "cierres_sentencia": 11,
+      "extraidas": 10,
+      "rechazos": [
+        {
+          "linea": 10787,
+          "asunto": "QUEJA 51/2022",
+          "motivo": "sin_cuerpo_reconocible"
+        }
+      ]
+    },
+    {
+      "archivo": "11a-epoca/Libro-011_2022-03_marzo_Tomo-I.md",
+      "sha256_md": "788e85afb2af4bad90d00e6a8c81f6e1238cc094577d201136c4a563732b24c1",
+      "cabeceras": 16,
+      "cierres_sentencia": 12,
+      "extraidas": 15,
+      "rechazos": [
+        {
+          "linea": 8734,
+          "asunto": "CONTRADICCIÓN DE TESIS 114/2019",
+          "motivo": "limite_sin_cierre_verificable"
+        }
+      ]
+    },
+    {
+      "archivo": "11a-epoca/Libro-011_2022-03_marzo_Tomo-II.md",
+      "sha256_md": "00f30ca3cae0c6651608bdbcbacff5ac62dd79e79cff75a6ed40f4822bc705b8",
+      "cabeceras": 10,
+      "cierres_sentencia": 10,
+      "extraidas": 10,
+      "rechazos": []
+    },
+    {
+      "archivo": "11a-epoca/Libro-011_2022-03_marzo_Tomo-III.md",
+      "sha256_md": "2da8fedf19387ceacd7efbfd8bd6ed22786571cd5d4e1962dbce9ccfc5f15ae2",
+      "cabeceras": 12,
+      "cierres_sentencia": 13,
+      "extraidas": 12,
+      "rechazos": []
+    },
+    {
+      "archivo": "11a-epoca/Libro-011_2022-03_marzo_Tomo-IV.md",
+      "sha256_md": "46f6c51a1582c1d9e7f78abef64ab287f8bda82cb2cc37d8ec8a15b3c383bff0",
+      "cabeceras": 15,
+      "cierres_sentencia": 15,
+      "extraidas": 15,
+      "rechazos": []
+    },
+    {
+      "archivo": "11a-epoca/Libro-011_2022-03_marzo_Tomo-V.md",
+      "sha256_md": "14133c7ec77adc54d95484445467f6027cbcf43465780b27a0f678acb689b8b3",
+      "cabeceras": 0,
+      "cierres_sentencia": 0,
+      "extraidas": 0,
+      "rechazos": []
+    },
+    {
+      "archivo": "11a-epoca/Libro-012_2022-04_abril_Tomo-I.md",
+      "sha256_md": "d71eb8ccddfbd82ea44c2ab86b5e79d7a0265e5b05ecdbba2dec73fb6024e201",
+      "cabeceras": 9,
+      "cierres_sentencia": 9,
+      "extraidas": 9,
+      "rechazos": []
+    },
+    {
+      "archivo": "11a-epoca/Libro-012_2022-04_abril_Tomo-II.md",
+      "sha256_md": "1860eda4364d7d37efa481368afff88ccb56d1eef4df881df50c57a87fdfa90f",
+      "cabeceras": 24,
+      "cierres_sentencia": 24,
+      "extraidas": 24,
+      "rechazos": []
+    },
+    {
+      "archivo": "11a-epoca/Libro-012_2022-04_abril_Tomo-III.md",
+      "sha256_md": "85c620fee189ff19d1ccd869bf6cbebf6a9aba619b054c2b32a048646e2401a2",
+      "cabeceras": 16,
+      "cierres_sentencia": 15,
+      "extraidas": 16,
+      "rechazos": []
+    },
+    {
+      "archivo": "11a-epoca/Libro-012_2022-04_abril_Tomo-IV.md",
+      "sha256_md": "1f122e3100ae5ec8fd35afb3c5926f40891d06f6e13f288bb2dee40766952e2b",
+      "cabeceras": 3,
+      "cierres_sentencia": 3,
+      "extraidas": 3,
+      "rechazos": []
+    },
+    {
+      "archivo": "11a-epoca/Libro-013_2022-05_mayo_Tomo-I.md",
+      "sha256_md": "6997432be1891c3dbb89cbd8b6fe060b0a2d1caf856d9d8c1a2d7100264292e0",
+      "cabeceras": 17,
+      "cierres_sentencia": 16,
+      "extraidas": 17,
+      "rechazos": []
+    },
+    {
+      "archivo": "11a-epoca/Libro-013_2022-05_mayo_Tomo-II.md",
+      "sha256_md": "37c0deff3c3f80b7a99aa35a269f25ccfc2885d9b8e2c1a3fc06dceefa20d43c",
+      "cabeceras": 3,
+      "cierres_sentencia": 3,
+      "extraidas": 3,
+      "rechazos": []
+    },
+    {
+      "archivo": "11a-epoca/Libro-013_2022-05_mayo_Tomo-III.md",
+      "sha256_md": "4759eb3de95f5fd818594974659d54268fb890705144668eb529834537ef92af",
+      "cabeceras": 22,
+      "cierres_sentencia": 24,
+      "extraidas": 22,
+      "rechazos": []
+    },
+    {
+      "archivo": "11a-epoca/Libro-013_2022-05_mayo_Tomo-IV.md",
+      "sha256_md": "99cdada0294dc6ef985bb095f337cc4924bf52b070fafcbd063780ec0c966807",
+      "cabeceras": 25,
+      "cierres_sentencia": 24,
+      "extraidas": 24,
+      "rechazos": [
+        {
+          "linea": 24807,
+          "asunto": "CONTRADICCIÓN DE CRITERIOS 14/2021",
+          "motivo": "limite_sin_cierre_verificable"
+        }
+      ]
+    },
+    {
+      "archivo": "11a-epoca/Libro-013_2022-05_mayo_Tomo-V.md",
+      "sha256_md": "d0abb7f4749d48499c187c4605ce5d032ad1494a03b8289c17ba2f86188d9bce",
+      "cabeceras": 4,
+      "cierres_sentencia": 4,
+      "extraidas": 4,
+      "rechazos": []
+    },
+    {
+      "archivo": "11a-epoca/Libro-014_2022-06_junio_Tomo-I.md",
+      "sha256_md": "57b1116c9ab70b1d16d538d696e9b3758938e40af4bd6dfdc30e67ae83d7353c",
+      "cabeceras": 13,
+      "cierres_sentencia": 10,
+      "extraidas": 13,
+      "rechazos": []
+    },
+    {
+      "archivo": "11a-epoca/Libro-014_2022-06_junio_Tomo-II.md",
+      "sha256_md": "87de2f725bddda61cfe279ae75e11fcb5d08e8cb5766a52593c16a110b8653f5",
+      "cabeceras": 8,
+      "cierres_sentencia": 8,
+      "extraidas": 8,
+      "rechazos": []
+    },
+    {
+      "archivo": "11a-epoca/Libro-014_2022-06_junio_Tomo-III.md",
+      "sha256_md": "32650d7129cfd78802f2c153b915e4acdb1b402f1e86ce1826d95b4faa59ce9d",
+      "cabeceras": 7,
+      "cierres_sentencia": 7,
+      "extraidas": 7,
+      "rechazos": []
+    },
+    {
+      "archivo": "11a-epoca/Libro-014_2022-06_junio_Tomo-IV.md",
+      "sha256_md": "a4ace1385cbfcfefef6109706128e6135fb4e396628f6600915294a57343a401",
+      "cabeceras": 9,
+      "cierres_sentencia": 9,
+      "extraidas": 9,
+      "rechazos": []
+    },
+    {
+      "archivo": "11a-epoca/Libro-014_2022-06_junio_Tomo-V.md",
+      "sha256_md": "51b19514ee61e69fbc4117bf90067a1ec33e6317a16abe565c4888e49e61c897",
+      "cabeceras": 17,
+      "cierres_sentencia": 17,
+      "extraidas": 17,
+      "rechazos": []
+    },
+    {
+      "archivo": "11a-epoca/Libro-014_2022-06_junio_Tomo-VI.md",
+      "sha256_md": "2e8132d08dfa76041c184a1fd0d21242fc101f754853670b6a3f52d164f99cbb",
+      "cabeceras": 20,
+      "cierres_sentencia": 17,
+      "extraidas": 17,
+      "rechazos": [
+        {
+          "linea": 12121,
+          "asunto": "CONTRADICCIÓN DE TESIS 6/2021",
+          "motivo": "limite_sin_cierre_verificable"
+        },
+        {
+          "linea": 12484,
+          "asunto": "CONTRADICCIÓN DE TESIS 188/2007-SS",
+          "motivo": "sin_cuerpo_reconocible"
+        },
+        {
+          "linea": 23445,
+          "asunto": "CONTRADICCIÓN DE CRITERIOS 1/2022",
+          "motivo": "limite_sin_cierre_verificable"
+        }
+      ]
+    },
+    {
+      "archivo": "11a-epoca/Libro-014_2022-06_junio_Tomo-VII.md",
+      "sha256_md": "4bb977e07a3bf893b71368b23fb55fdc7ca16f22fe5d82edcbf7cdfd85d99f5b",
+      "cabeceras": 10,
+      "cierres_sentencia": 12,
+      "extraidas": 10,
+      "rechazos": []
+    },
+    {
+      "archivo": "11a-epoca/Libro-014_2022-06_junio_Tomo-VIII.md",
+      "sha256_md": "cafd7ac27e8ad7477a39ff57ac357a142682b03ab983a69eacfcd2a7d8f6f832",
+      "cabeceras": 0,
+      "cierres_sentencia": 0,
+      "extraidas": 0,
+      "rechazos": []
+    },
+    {
+      "archivo": "11a-epoca/Libro-015_2022-07_julio_Tomo-I.md",
+      "sha256_md": "17862569ed4ecd72c7470f87018b66029090d3d61ced46536914d5a082c5c936",
+      "cabeceras": 12,
+      "cierres_sentencia": 11,
+      "extraidas": 12,
+      "rechazos": []
+    },
+    {
+      "archivo": "11a-epoca/Libro-015_2022-07_julio_Tomo-II.md",
+      "sha256_md": "da05e0b9d2594c6e8061b396017151c1111e02856323c508e52ab1acdc6ea9b6",
+      "cabeceras": 13,
+      "cierres_sentencia": 13,
+      "extraidas": 13,
+      "rechazos": []
+    },
+    {
+      "archivo": "11a-epoca/Libro-015_2022-07_julio_Tomo-III.md",
+      "sha256_md": "e3b535f763eb848bcae096a42214cb3f2f341bba62c1626902d53ec4f313aa14",
+      "cabeceras": 16,
+      "cierres_sentencia": 16,
+      "extraidas": 16,
+      "rechazos": []
+    },
+    {
+      "archivo": "11a-epoca/Libro-015_2022-07_julio_Tomo-IV.md",
+      "sha256_md": "f3fe1e8561e1613a63eda4f4b640c494f5569064532d15b454c07b1225148e9e",
+      "cabeceras": 9,
+      "cierres_sentencia": 9,
+      "extraidas": 9,
+      "rechazos": []
+    },
+    {
+      "archivo": "11a-epoca/Libro-015_2022-07_julio_Tomo-V.md",
+      "sha256_md": "1af9dbbc1d2c5e644ea059c8dea239d17bfdaf3d2395cfc48e1eec5646ed5438",
+      "cabeceras": 13,
+      "cierres_sentencia": 13,
+      "extraidas": 12,
+      "rechazos": [
+        {
+          "linea": 12653,
+          "asunto": "QUEJA 85/2021",
+          "motivo": "sin_cuerpo_reconocible"
+        }
+      ]
+    },
+    {
+      "archivo": "11a-epoca/Libro-016_2022-08_agosto_Tomo-I.md",
+      "sha256_md": "aa8fec00b5fbc8d80278835ff6b75b6648f32aadfa59b11e29353b1115b5edd1",
+      "cabeceras": 14,
+      "cierres_sentencia": 12,
+      "extraidas": 14,
+      "rechazos": []
+    },
+    {
+      "archivo": "11a-epoca/Libro-016_2022-08_agosto_Tomo-II.md",
+      "sha256_md": "d7d7f3f90b3abccf80d1066b0fc07274f8cb6ce74f3e01d4aefc5b318cd3db4f",
+      "cabeceras": 18,
+      "cierres_sentencia": 18,
+      "extraidas": 18,
+      "rechazos": []
+    },
+    {
+      "archivo": "11a-epoca/Libro-016_2022-08_agosto_Tomo-III.md",
+      "sha256_md": "61bc77406ff3c66c8604fcccd6160ccdd0b058f1be16df78cb4e3cbc0c669861",
+      "cabeceras": 18,
+      "cierres_sentencia": 21,
+      "extraidas": 18,
+      "rechazos": []
+    },
+    {
+      "archivo": "11a-epoca/Libro-016_2022-08_agosto_Tomo-IV.md",
+      "sha256_md": "de9b6b102512f927cf3998f9742b7c442b56793b13acadec7306a82bd9ecbf35",
+      "cabeceras": 25,
+      "cierres_sentencia": 27,
+      "extraidas": 25,
+      "rechazos": []
+    },
+    {
+      "archivo": "11a-epoca/Libro-016_2022-08_agosto_Tomo-V.md",
+      "sha256_md": "fe1b64b30d4ba23a952aafb141d1b91aa565bd280ae42c25c4a8bada23db4d5c",
+      "cabeceras": 4,
+      "cierres_sentencia": 4,
+      "extraidas": 4,
+      "rechazos": []
+    },
+    {
+      "archivo": "11a-epoca/Libro-017_2022-09_septiembre_Tomo-I.md",
+      "sha256_md": "bffb4bbfecefc8face18a02ea9f74346fef2b048e5245398a366596f3f4b43de",
+      "cabeceras": 14,
+      "cierres_sentencia": 14,
+      "extraidas": 14,
+      "rechazos": []
+    },
+    {
+      "archivo": "11a-epoca/Libro-017_2022-09_septiembre_Tomo-II.md",
+      "sha256_md": "adedec8e7cb5136e54c6565fc15d5c0e19aab108bbb159691c8a09819fc029e2",
+      "cabeceras": 6,
+      "cierres_sentencia": 6,
+      "extraidas": 6,
+      "rechazos": []
+    },
+    {
+      "archivo": "11a-epoca/Libro-017_2022-09_septiembre_Tomo-III.md",
+      "sha256_md": "7ae039ac76dab1e2cb778fb52cc22baa29febdec69a63efe16e4107e9f6acd80",
+      "cabeceras": 14,
+      "cierres_sentencia": 14,
+      "extraidas": 14,
+      "rechazos": []
+    },
+    {
+      "archivo": "11a-epoca/Libro-017_2022-09_septiembre_Tomo-IV.md",
+      "sha256_md": "2815bf49ae98c8775b028601c141e7f7670b305277cd6cce1010e741cb3e8a65",
+      "cabeceras": 25,
+      "cierres_sentencia": 24,
+      "extraidas": 25,
+      "rechazos": []
+    },
+    {
+      "archivo": "11a-epoca/Libro-017_2022-09_septiembre_Tomo-V.md",
+      "sha256_md": "413b9b00cba3ee4035eaba66df6d626603cef734c39a2b8e3f109f2fb09e7938",
+      "cabeceras": 20,
+      "cierres_sentencia": 20,
+      "extraidas": 20,
+      "rechazos": []
+    },
+    {
+      "archivo": "11a-epoca/Libro-017_2022-09_septiembre_Tomo-VI.md",
+      "sha256_md": "25ac5ced9b5d6e8386ce1d8837be8ce62fbcf8babefdecf772307a7a70fb5cb2",
+      "cabeceras": 0,
+      "cierres_sentencia": 0,
+      "extraidas": 0,
+      "rechazos": []
+    },
+    {
+      "archivo": "11a-epoca/Libro-018_2022-10_octubre_Tomo-I.md",
+      "sha256_md": "d2bd77d5112dcd5a1ed1bd2d9f5eaa44741ceaebb966edae92c2d1344ffd989e",
+      "cabeceras": 10,
+      "cierres_sentencia": 9,
+      "extraidas": 10,
+      "rechazos": []
+    },
+    {
+      "archivo": "11a-epoca/Libro-018_2022-10_octubre_Tomo-II.md",
+      "sha256_md": "d5c23811861f16ab2051677b799cd931246aeb996d87365bd26e78208d357345",
+      "cabeceras": 11,
+      "cierres_sentencia": 11,
+      "extraidas": 11,
+      "rechazos": []
+    },
+    {
+      "archivo": "11a-epoca/Libro-018_2022-10_octubre_Tomo-III.md",
+      "sha256_md": "980d8ad1c2f74d44746a778fbaf0fb1fe3a7da69a35fa564791cf37853d54812",
+      "cabeceras": 22,
+      "cierres_sentencia": 22,
+      "extraidas": 22,
+      "rechazos": []
+    },
+    {
+      "archivo": "11a-epoca/Libro-018_2022-10_octubre_Tomo-IV.md",
+      "sha256_md": "cec697dddba2364e72f62aac2c8674e8869960c0db3d31051c9115c438ddb86a",
+      "cabeceras": 10,
+      "cierres_sentencia": 12,
+      "extraidas": 10,
+      "rechazos": []
+    },
+    {
+      "archivo": "11a-epoca/Libro-018_2022-10_octubre_Tomo-V.md",
+      "sha256_md": "fb817cade43a5d6a41d48d9b45f40e1f61d5f5ba0606b00c7c1457b21e567d36",
+      "cabeceras": 0,
+      "cierres_sentencia": 0,
+      "extraidas": 0,
+      "rechazos": []
+    },
+    {
+      "archivo": "11a-epoca/Libro-019_2022-11_noviembre_Tomo-I.md",
+      "sha256_md": "a02fd0c99f1f7a77c1fa228c9ae0491286c0d7b5aafa235d0f3cb7f061800238",
+      "cabeceras": 11,
+      "cierres_sentencia": 10,
+      "extraidas": 11,
+      "rechazos": []
+    },
+    {
+      "archivo": "11a-epoca/Libro-019_2022-11_noviembre_Tomo-II.md",
+      "sha256_md": "cfc449fdc8763cb1b4de73d84b431bbea541765ad971f73d62da205d563e7f47",
+      "cabeceras": 27,
+      "cierres_sentencia": 28,
+      "extraidas": 27,
+      "rechazos": []
+    },
+    {
+      "archivo": "11a-epoca/Libro-019_2022-11_noviembre_Tomo-III.md",
+      "sha256_md": "1b82000205432f92c28a4f497c421203e6ee5920e3cabfdd3338d0a348b8a3b2",
+      "cabeceras": 14,
+      "cierres_sentencia": 14,
+      "extraidas": 12,
+      "rechazos": [
+        {
+          "linea": 24318,
+          "asunto": "CONTRADICCIÓN DE CRITERIOS 4/2022",
+          "motivo": "limite_sin_cierre_verificable"
+        },
+        {
+          "linea": 30361,
+          "asunto": "CONTRADICCIÓN DE CRITERIOS 2/2022",
+          "motivo": "limite_sin_cierre_verificable"
+        }
+      ]
+    },
+    {
+      "archivo": "11a-epoca/Libro-019_2022-11_noviembre_Tomo-IV.md",
+      "sha256_md": "f0554c0897ce9fda2de7b2ee2d321d4705358f88308de9cdf000b242723fc87d",
+      "cabeceras": 15,
+      "cierres_sentencia": 16,
+      "extraidas": 15,
+      "rechazos": []
+    },
+    {
+      "archivo": "11a-epoca/Libro-019_2022-11_noviembre_Tomo-V.md",
+      "sha256_md": "d8c76b9551b1e331d1205102f2151793869f9f975b3c7b1130ba80817bb3855b",
+      "cabeceras": 0,
+      "cierres_sentencia": 0,
+      "extraidas": 0,
+      "rechazos": []
+    },
+    {
+      "archivo": "11a-epoca/Libro-020_2022-12_diciembre_Tomo-I.md",
+      "sha256_md": "0f557ea43cd9d90cc374e59f38a4c6f19222d494687bd99206b9026db1a0241d",
+      "cabeceras": 17,
+      "cierres_sentencia": 17,
+      "extraidas": 16,
+      "rechazos": [
+        {
+          "linea": 2216,
+          "asunto": "ACCIÓN DE INCONSTITUCIONALIDAD 153/2021",
+          "motivo": "limite_sin_cierre_verificable"
+        }
+      ]
+    },
+    {
+      "archivo": "11a-epoca/Libro-020_2022-12_diciembre_Tomo-II.md",
+      "sha256_md": "79bdcde7a99794eb49f357eb205d6d29aa4239ab3cda6027e2cf25c696fc2d9e",
+      "cabeceras": 20,
+      "cierres_sentencia": 20,
+      "extraidas": 20,
+      "rechazos": []
+    },
+    {
+      "archivo": "11a-epoca/Libro-020_2022-12_diciembre_Tomo-III.md",
+      "sha256_md": "6279f387bd5fabb1f847b25c1178ce7624144821cf63b57260476262ad94d2f9",
+      "cabeceras": 9,
+      "cierres_sentencia": 9,
+      "extraidas": 9,
+      "rechazos": []
+    },
+    {
+      "archivo": "11a-epoca/Libro-021_2023-01_enero_Tomo-I.md",
+      "sha256_md": "57dec55eb7641834c7d550314a40ae9e40676ddef16ce5d335889bcd90401287",
+      "cabeceras": 27,
+      "cierres_sentencia": 22,
+      "extraidas": 27,
+      "rechazos": []
+    },
+    {
+      "archivo": "11a-epoca/Libro-021_2023-01_enero_Tomo-II.md",
+      "sha256_md": "21691baf021e9a29f1e2a6c76ebdbfd3eafe67bdb00b905644549dfeaed0eb79",
+      "cabeceras": 15,
+      "cierres_sentencia": 10,
+      "extraidas": 15,
+      "rechazos": []
+    },
+    {
+      "archivo": "11a-epoca/Libro-021_2023-01_enero_Tomo-III.md",
+      "sha256_md": "ff000e6a51014d2153748ce71abf6fbb3590c9b51aeff1837bf090085e17103a",
+      "cabeceras": 15,
+      "cierres_sentencia": 15,
+      "extraidas": 14,
+      "rechazos": [
+        {
+          "linea": 38523,
+          "asunto": "CONTRADICCIÓN DE CRITERIOS 10/2022",
+          "motivo": "limite_sin_cierre_verificable"
+        }
+      ]
+    },
+    {
+      "archivo": "11a-epoca/Libro-021_2023-01_enero_Tomo-IV.md",
+      "sha256_md": "fe150b37f9f5863821b7112caaf7aa9d1908867860e74d1a5af125e3b49825b1",
+      "cabeceras": 16,
+      "cierres_sentencia": 16,
+      "extraidas": 16,
+      "rechazos": []
+    },
+    {
+      "archivo": "11a-epoca/Libro-021_2023-01_enero_Tomo-V.md",
+      "sha256_md": "3146cdb31be3deecea588107a5508fc640cf92576a834c3a5cbe55fb8e6385b9",
+      "cabeceras": 15,
+      "cierres_sentencia": 15,
+      "extraidas": 13,
+      "rechazos": [
+        {
+          "linea": 11135,
+          "asunto": "CONTRADICCIÓN DE CRITERIOS 9/2022",
+          "motivo": "limite_sin_cierre_verificable"
+        },
+        {
+          "linea": 33867,
+          "asunto": "CONTRADICCIÓN DE CRITERIOS 11/2022",
+          "motivo": "limite_sin_cierre_verificable"
+        }
+      ]
+    },
+    {
+      "archivo": "11a-epoca/Libro-021_2023-01_enero_Tomo-VI.md",
+      "sha256_md": "b63d13aead4e26b4df0151acfff1e7b60778db2e7db0b3a4c687a2911791e3f4",
+      "cabeceras": 15,
+      "cierres_sentencia": 15,
+      "extraidas": 15,
+      "rechazos": []
+    },
+    {
+      "archivo": "11a-epoca/Libro-021_2023-01_enero_Tomo-VII.md",
+      "sha256_md": "98fa21f8ce218945dbcaf9a01d47f83c21867b76162cb6fa3005ed416da65727",
+      "cabeceras": 0,
+      "cierres_sentencia": 0,
+      "extraidas": 0,
+      "rechazos": []
+    },
+    {
+      "archivo": "11a-epoca/Libro-021_2023-01_enero_Tomo-VIII.md",
+      "sha256_md": "510b295c00b4a15b10eaf803339638f96173d01de6a4b8d26c5268e550d25c0b",
+      "cabeceras": 0,
+      "cierres_sentencia": 0,
+      "extraidas": 0,
+      "rechazos": []
+    },
+    {
+      "archivo": "11a-epoca/Libro-022_2023-02_febrero_Tomo-I.md",
+      "sha256_md": "a32db4e2ca949a557b900d4ae1168c389981f271c3d39b4e26b775533c6f21b6",
+      "cabeceras": 17,
+      "cierres_sentencia": 17,
+      "extraidas": 17,
+      "rechazos": []
+    },
+    {
+      "archivo": "11a-epoca/Libro-022_2023-02_febrero_Tomo-II.md",
+      "sha256_md": "edd0261930a50d867d88f28e93bf58cffeeeddf743f5fc6370a0184a395dbf4b",
+      "cabeceras": 17,
+      "cierres_sentencia": 13,
+      "extraidas": 17,
+      "rechazos": []
+    },
+    {
+      "archivo": "11a-epoca/Libro-022_2023-02_febrero_Tomo-III.md",
+      "sha256_md": "2588b42ea984b6ddc806526d4c5f527d02f50a90d366edc7f676456ec709caba",
+      "cabeceras": 22,
+      "cierres_sentencia": 22,
+      "extraidas": 22,
+      "rechazos": []
+    },
+    {
+      "archivo": "11a-epoca/Libro-022_2023-02_febrero_Tomo-IV.md",
+      "sha256_md": "b52b6c3d74848b752afb73691ef451dfb5ddf13e09311727dde4f22ad7937c2d",
+      "cabeceras": 6,
+      "cierres_sentencia": 6,
+      "extraidas": 6,
+      "rechazos": []
+    },
+    {
+      "archivo": "11a-epoca/Libro-023_2023-03_marzo_Tomo-I.md",
+      "sha256_md": "7bc3ef747cf0419bb13c95f452bb1c2a59e62b8da68cbcc2381f02adf945c024",
+      "cabeceras": 9,
+      "cierres_sentencia": 8,
+      "extraidas": 9,
+      "rechazos": []
+    },
+    {
+      "archivo": "11a-epoca/Libro-023_2023-03_marzo_Tomo-II.md",
+      "sha256_md": "cc3fed3f5b241be30c6ca45d41f2668da5d1d3863181fc031bcf315537e8d33b",
+      "cabeceras": 15,
+      "cierres_sentencia": 15,
+      "extraidas": 15,
+      "rechazos": []
+    },
+    {
+      "archivo": "11a-epoca/Libro-023_2023-03_marzo_Tomo-III.md",
+      "sha256_md": "8c82ec6f8452666dbe2110b2fa8deba665e943fd2c4dfb94c63734630293ce8a",
+      "cabeceras": 15,
+      "cierres_sentencia": 15,
+      "extraidas": 15,
+      "rechazos": []
+    },
+    {
+      "archivo": "11a-epoca/Libro-023_2023-03_marzo_Tomo-IV.md",
+      "sha256_md": "162211cb3ef3e0add631709c41862b4df68161ff14b8107e99ff00d1ace53dfa",
+      "cabeceras": 20,
+      "cierres_sentencia": 25,
+      "extraidas": 20,
+      "rechazos": []
+    },
+    {
+      "archivo": "11a-epoca/Libro-023_2023-03_marzo_Tomo-V.md",
+      "sha256_md": "82cbeddc702fb908e75ea9d3945befc9e50cc749d1e4f48a2d19ff5798a469ad",
+      "cabeceras": 0,
+      "cierres_sentencia": 0,
+      "extraidas": 0,
+      "rechazos": []
+    },
+    {
+      "archivo": "11a-epoca/Libro-024_2023-04_abril_Tomo-I.md",
+      "sha256_md": "ef4302d0a4a7d93ea6407b4db6563f53724dcd98c81cc04ec257452eb1d59c32",
+      "cabeceras": 11,
+      "cierres_sentencia": 11,
+      "extraidas": 11,
+      "rechazos": []
+    },
+    {
+      "archivo": "11a-epoca/Libro-024_2023-04_abril_Tomo-II.md",
+      "sha256_md": "2c715f426c6927e8af6eb2d090c56970b64fafc2b7138d3d3dab8f8ef4bf27e8",
+      "cabeceras": 22,
+      "cierres_sentencia": 22,
+      "extraidas": 22,
+      "rechazos": []
+    },
+    {
+      "archivo": "11a-epoca/Libro-024_2023-04_abril_Tomo-III.md",
+      "sha256_md": "8af042780fe857b9999b447d62d50c4d9f17a3da1e88d7054c214e3251378fca",
+      "cabeceras": 16,
+      "cierres_sentencia": 16,
+      "extraidas": 16,
+      "rechazos": []
+    },
+    {
+      "archivo": "11a-epoca/Libro-025_2023-05_mayo_Tomo-I.md",
+      "sha256_md": "55c9ddc3c6f2b1a1fa216e4649e7747154c89542aef0bdeeb37c3c6f46d516bb",
+      "cabeceras": 10,
+      "cierres_sentencia": 10,
+      "extraidas": 10,
+      "rechazos": []
+    },
+    {
+      "archivo": "11a-epoca/Libro-025_2023-05_mayo_Tomo-II.md",
+      "sha256_md": "607c88d375b56509ecf23021181cb1a61db14c5888d08adfa475ff9d90827a9e",
+      "cabeceras": 25,
+      "cierres_sentencia": 26,
+      "extraidas": 25,
+      "rechazos": []
+    },
+    {
+      "archivo": "11a-epoca/Libro-025_2023-05_mayo_Tomo-III.md",
+      "sha256_md": "cddfe4b564a84460837a77e9650f1913e17251ae3fcc0d7ddcc65776b6a236e8",
+      "cabeceras": 23,
+      "cierres_sentencia": 23,
+      "extraidas": 23,
+      "rechazos": []
+    },
+    {
+      "archivo": "11a-epoca/Libro-025_2023-05_mayo_Tomo-IV.md",
+      "sha256_md": "d05bbddd30b29ca2e79d5c5316928c31d8ae14d60fba473a744d84f394be720a",
+      "cabeceras": 0,
+      "cierres_sentencia": 0,
+      "extraidas": 0,
+      "rechazos": []
+    },
+    {
+      "archivo": "11a-epoca/Libro-026_2023-06_junio_Tomo-I.md",
+      "sha256_md": "5ec6db946103dda418ea0923b15ce0c067ad2d755abc818a2b0e828d7286c64a",
+      "cabeceras": 8,
+      "cierres_sentencia": 7,
+      "extraidas": 8,
+      "rechazos": []
+    },
+    {
+      "archivo": "11a-epoca/Libro-026_2023-06_junio_Tomo-II.md",
+      "sha256_md": "699f638de32641ff0a872649f0fbeb778531a25b974a186b725431911ccd99cb",
+      "cabeceras": 14,
+      "cierres_sentencia": 14,
+      "extraidas": 14,
+      "rechazos": []
+    },
+    {
+      "archivo": "11a-epoca/Libro-026_2023-06_junio_Tomo-III.md",
+      "sha256_md": "02a7af3c1b0f7ccda82fef698719150d1203390e4a1119475671155a9cd6cee3",
+      "cabeceras": 7,
+      "cierres_sentencia": 7,
+      "extraidas": 7,
+      "rechazos": []
+    },
+    {
+      "archivo": "11a-epoca/Libro-026_2023-06_junio_Tomo-IV.md",
+      "sha256_md": "4ecee73f2d1799b6ec92920b6347a8d29601012e70bcb11758a56e10370738c5",
+      "cabeceras": 16,
+      "cierres_sentencia": 16,
+      "extraidas": 16,
+      "rechazos": []
+    },
+    {
+      "archivo": "11a-epoca/Libro-026_2023-06_junio_Tomo-V.md",
+      "sha256_md": "cfffaecd6a8c19c4bf73d25988cf2a4832f3702a2d631c7d375a8b891aca12db",
+      "cabeceras": 26,
+      "cierres_sentencia": 26,
+      "extraidas": 26,
+      "rechazos": []
+    },
+    {
+      "archivo": "11a-epoca/Libro-026_2023-06_junio_Tomo-VI.md",
+      "sha256_md": "a467ea03317b69d35c96d25d2c266c10b0d547856c494511db568252f5081513",
+      "cabeceras": 22,
+      "cierres_sentencia": 22,
+      "extraidas": 22,
+      "rechazos": []
+    },
+    {
+      "archivo": "11a-epoca/Libro-026_2023-06_junio_Tomo-VII.md",
+      "sha256_md": "ed00a6460b1715b6464215c121e0bd98410388c9316e680d1146740c04b1ba95",
+      "cabeceras": 15,
+      "cierres_sentencia": 17,
+      "extraidas": 15,
+      "rechazos": []
+    },
+    {
+      "archivo": "11a-epoca/Libro-026_2023-06_junio_Tomo-VIII.md",
+      "sha256_md": "5f2810a4834386c07f5e74c260094fa0f68d2784a9f5ccf8d42d0409d6f36245",
+      "cabeceras": 0,
+      "cierres_sentencia": 0,
+      "extraidas": 0,
+      "rechazos": []
+    },
+    {
+      "archivo": "11a-epoca/Libro-027_2023-07_julio_Tomo-I.md",
+      "sha256_md": "4c1e9e6d7c402e719e1a6d0844c59c2ae9e4a2b945a54160e6230389ebc4ff3c",
+      "cabeceras": 18,
+      "cierres_sentencia": 17,
+      "extraidas": 18,
+      "rechazos": []
+    },
+    {
+      "archivo": "11a-epoca/Libro-027_2023-07_julio_Tomo-II.md",
+      "sha256_md": "3f943bec5bb32b9dea71460f7e5e03f351efcf25058810323c2cda46a3d17060",
+      "cabeceras": 25,
+      "cierres_sentencia": 26,
+      "extraidas": 25,
+      "rechazos": []
+    },
+    {
+      "archivo": "11a-epoca/Libro-027_2023-07_julio_Tomo-III.md",
+      "sha256_md": "8000e242e55139e8bf9daa1b175646ec7335de82cd2c6b5593729cf750e09834",
+      "cabeceras": 5,
+      "cierres_sentencia": 5,
+      "extraidas": 5,
+      "rechazos": []
+    },
+    {
+      "archivo": "11a-epoca/Libro-028_2023-08_agosto_Tomo-I.md",
+      "sha256_md": "687211d57cf46b9d72e145d9b0a2e3a9e5a4934a9a3f52728fa280fd455a0373",
+      "cabeceras": 14,
+      "cierres_sentencia": 14,
+      "extraidas": 14,
+      "rechazos": []
+    },
+    {
+      "archivo": "11a-epoca/Libro-028_2023-08_agosto_Tomo-II.md",
+      "sha256_md": "f3842e9b04eacb5752921692d0553ee3c5a89535af8e652baa5f27d6c1fe9181",
+      "cabeceras": 25,
+      "cierres_sentencia": 23,
+      "extraidas": 25,
+      "rechazos": []
+    },
+    {
+      "archivo": "11a-epoca/Libro-028_2023-08_agosto_Tomo-III.md",
+      "sha256_md": "976af3529552456e7325068ea6708273e4f6f4d6943816494ab1c7df85125473",
+      "cabeceras": 17,
+      "cierres_sentencia": 17,
+      "extraidas": 17,
+      "rechazos": []
+    },
+    {
+      "archivo": "11a-epoca/Libro-028_2023-08_agosto_Tomo-IV.md",
+      "sha256_md": "3badaeb9e596bdbb146f9bd92c49a066f3599afcca8cf44f77e39ee6fbbe95a9",
+      "cabeceras": 21,
+      "cierres_sentencia": 22,
+      "extraidas": 21,
+      "rechazos": []
+    },
+    {
+      "archivo": "11a-epoca/Libro-028_2023-08_agosto_Tomo-V.md",
+      "sha256_md": "7bd5a0bdf9647dc097502da49f024d4cef427561328247111d31b838961cce6b",
+      "cabeceras": 3,
+      "cierres_sentencia": 3,
+      "extraidas": 3,
+      "rechazos": []
+    },
+    {
+      "archivo": "11a-epoca/Libro-029_2023-09_septiembre_Tomo-I.md",
+      "sha256_md": "8325d7b6c07dfa418f440589ed4a42887d8a3025f92f9d88e344bcca710191a0",
+      "cabeceras": 12,
+      "cierres_sentencia": 11,
+      "extraidas": 12,
+      "rechazos": []
+    },
+    {
+      "archivo": "11a-epoca/Libro-029_2023-09_septiembre_Tomo-III.md",
+      "sha256_md": "fcf01a4d1dbbba1941bd5b09503553263fd69367e52c18cf36ae71909258c561",
+      "cabeceras": 19,
+      "cierres_sentencia": 19,
+      "extraidas": 19,
+      "rechazos": []
+    },
+    {
+      "archivo": "11a-epoca/Libro-029_2023-09_septiembre_Tomo-IV.md",
+      "sha256_md": "7b0360b6eb3b58c630021ed060afb0cf6794353953569e3d340163a97814e647",
+      "cabeceras": 24,
+      "cierres_sentencia": 23,
+      "extraidas": 23,
+      "rechazos": [
+        {
+          "linea": 26351,
+          "asunto": "CONTRADICCIÓN DE CRITERIOS 42/2023",
+          "motivo": "limite_sin_cierre_verificable"
+        }
+      ]
+    },
+    {
+      "archivo": "11a-epoca/Libro-029_2023-09_septiembre_Tomo-V.md",
+      "sha256_md": "6961f82845d8a466e732b9f20ee635c9f0d2616dfa16c6d7db6ca56585617285",
+      "cabeceras": 18,
+      "cierres_sentencia": 19,
+      "extraidas": 18,
+      "rechazos": []
+    },
+    {
+      "archivo": "11a-epoca/Libro-029_2023-09_septiembre_Tomo-VI.md",
+      "sha256_md": "6eb133e8adf35bb3b0c2691e8be4fa72fb0bfaadd8e687e920c87152a1267a29",
+      "cabeceras": 0,
+      "cierres_sentencia": 0,
+      "extraidas": 0,
+      "rechazos": []
+    },
+    {
+      "archivo": "11a-epoca/Libro-030_2023-10_octubre_Tomo-I.md",
+      "sha256_md": "c5a4225046fb1d79946f45aa8e88f667ba1e7ba5930ed8116261ea005a0a4ef5",
+      "cabeceras": 13,
+      "cierres_sentencia": 13,
+      "extraidas": 13,
+      "rechazos": []
+    },
+    {
+      "archivo": "11a-epoca/Libro-030_2023-10_octubre_Tomo-II.md",
+      "sha256_md": "657f190e3e9270d16ac000a7f665d2f779b21c331a1208599c88e9b1a7349804",
+      "cabeceras": 18,
+      "cierres_sentencia": 18,
+      "extraidas": 18,
+      "rechazos": []
+    },
+    {
+      "archivo": "11a-epoca/Libro-030_2023-10_octubre_Tomo-III.md",
+      "sha256_md": "7c1648f3b32c5861203687e3a0677d59333fa5e96a2de0f2ff61bb66209a7494",
+      "cabeceras": 26,
+      "cierres_sentencia": 27,
+      "extraidas": 26,
+      "rechazos": []
+    },
+    {
+      "archivo": "11a-epoca/Libro-030_2023-10_octubre_Tomo-IV.md",
+      "sha256_md": "9d9aec23f0b64a8f5df31a1bf9201359984e9c0e6980a0c828df9685c0e580ed",
+      "cabeceras": 14,
+      "cierres_sentencia": 15,
+      "extraidas": 14,
+      "rechazos": []
+    },
+    {
+      "archivo": "11a-epoca/Libro-030_2023-10_octubre_Tomo-V.md",
+      "sha256_md": "b2cbb5b89de836b41e5ae73fae9d2f648771c13354efef489eec3728c7d10f1c",
+      "cabeceras": 16,
+      "cierres_sentencia": 17,
+      "extraidas": 15,
+      "rechazos": [
+        {
+          "linea": 17726,
+          "asunto": "AMPARO EN REVISIÓN 517/2022",
+          "motivo": "sin_cuerpo_reconocible"
+        }
+      ]
+    },
+    {
+      "archivo": "11a-epoca/Libro-030_2023-10_octubre_Tomo-VI.md",
+      "sha256_md": "d1208fc0094215c2b4a718d73f684d6ea9ac7879365ca395b07a9ce88927f72e",
+      "cabeceras": 0,
+      "cierres_sentencia": 0,
+      "extraidas": 0,
+      "rechazos": []
+    },
+    {
+      "archivo": "11a-epoca/Libro-031_2023-11_noviembre_Tomo-I.md",
+      "sha256_md": "0f97084bc4ceef7676d39db06b3e0d551b998f25e95466d7b454a924c76abdb4",
+      "cabeceras": 10,
+      "cierres_sentencia": 9,
+      "extraidas": 10,
+      "rechazos": []
+    },
+    {
+      "archivo": "11a-epoca/Libro-031_2023-11_noviembre_Tomo-II.md",
+      "sha256_md": "14b267072ec15ea0fa776e2d1f399530d1438240cc08642621de6e6bea36299b",
+      "cabeceras": 21,
+      "cierres_sentencia": 21,
+      "extraidas": 21,
+      "rechazos": []
+    },
+    {
+      "archivo": "11a-epoca/Libro-031_2023-11_noviembre_Tomo-III.md",
+      "sha256_md": "c1d8112ecc16c8caa90a51a39c9d3fb5dd32e4e634a533f4d449255ae4bf5b46",
+      "cabeceras": 19,
+      "cierres_sentencia": 19,
+      "extraidas": 19,
+      "rechazos": []
+    },
+    {
+      "archivo": "11a-epoca/Libro-031_2023-11_noviembre_Tomo-IV.md",
+      "sha256_md": "66e840ef15466a6b2ad62c74da905848607c614cbf05c2991a8f03fcd4a74993",
+      "cabeceras": 17,
+      "cierres_sentencia": 17,
+      "extraidas": 17,
+      "rechazos": []
+    },
+    {
+      "archivo": "11a-epoca/Libro-031_2023-11_noviembre_Tomo-V.md",
+      "sha256_md": "4bf1f9de8ab5b0429475a84a4d8cb8a4b322ad9223166b2442dbe168ed976c8d",
+      "cabeceras": 4,
+      "cierres_sentencia": 4,
+      "extraidas": 4,
+      "rechazos": []
+    },
+    {
+      "archivo": "11a-epoca/Libro-032_2023-12_diciembre_Tomo-I.md",
+      "sha256_md": "bbf205d2e64435fb40fdbcf6333c763375445c1f70403b1d696d35fe3bf485fc",
+      "cabeceras": 9,
+      "cierres_sentencia": 8,
+      "extraidas": 9,
+      "rechazos": []
+    },
+    {
+      "archivo": "11a-epoca/Libro-032_2023-12_diciembre_Tomo-II.md",
+      "sha256_md": "0ce95df1bc3936725773d19b2182e974e09dfeed6d26c96dd0320ea08c71e499",
+      "cabeceras": 13,
+      "cierres_sentencia": 16,
+      "extraidas": 13,
+      "rechazos": []
+    },
+    {
+      "archivo": "11a-epoca/Libro-032_2023-12_diciembre_Tomo-III.md",
+      "sha256_md": "6d2c16e3f343c6d49678280ca5449bbcee990a96e9e1bd595aa1b9b7592206a1",
+      "cabeceras": 22,
+      "cierres_sentencia": 22,
+      "extraidas": 22,
+      "rechazos": []
+    },
+    {
+      "archivo": "11a-epoca/Libro-032_2023-12_diciembre_Tomo-IV.md",
+      "sha256_md": "a2b13dcdf5f2e95df88c3a5ad1b26105fda7307d25a0edfc3c2461714864cdda",
+      "cabeceras": 17,
+      "cierres_sentencia": 17,
+      "extraidas": 17,
+      "rechazos": []
+    },
+    {
+      "archivo": "11a-epoca/Libro-032_2023-12_diciembre_Tomo-V.md",
+      "sha256_md": "0c300143c41198fea7944b4be955d52e9f1958642a10aacfc3af6baf073c8287",
+      "cabeceras": 0,
+      "cierres_sentencia": 0,
+      "extraidas": 0,
+      "rechazos": []
+    },
+    {
+      "archivo": "11a-epoca/Libro-033_2024-01_enero_Tomo-I.md",
+      "sha256_md": "cb4d5e3fec1a9cc63132999abc18b3068fb92616e8f215ecc65d23415da330bf",
+      "cabeceras": 14,
+      "cierres_sentencia": 9,
+      "extraidas": 14,
+      "rechazos": []
+    },
+    {
+      "archivo": "11a-epoca/Libro-033_2024-01_enero_Tomo-II.md",
+      "sha256_md": "6d56ae64896ee5364724580974484cf7b017a037295d946133d481aacdce69e0",
+      "cabeceras": 15,
+      "cierres_sentencia": 12,
+      "extraidas": 15,
+      "rechazos": []
+    },
+    {
+      "archivo": "11a-epoca/Libro-033_2024-01_enero_Tomo-III.md",
+      "sha256_md": "899f54d6a3b5459068fc50c2064e540a2a1fe6bceb5c641b1ba499260a6b1f2b",
+      "cabeceras": 13,
+      "cierres_sentencia": 13,
+      "extraidas": 13,
+      "rechazos": []
+    },
+    {
+      "archivo": "11a-epoca/Libro-033_2024-01_enero_Tomo-IV.md",
+      "sha256_md": "4e7d1b662668af46feafc61491449544622449fdb636f5e419003cdfc44818e1",
+      "cabeceras": 18,
+      "cierres_sentencia": 18,
+      "extraidas": 18,
+      "rechazos": []
+    },
+    {
+      "archivo": "11a-epoca/Libro-033_2024-01_enero_Tomo-V.md",
+      "sha256_md": "a35b56f694d39d07d72fadbc7737d19666e015d110b26bebbd6dbaa5acee626e",
+      "cabeceras": 18,
+      "cierres_sentencia": 18,
+      "extraidas": 18,
+      "rechazos": []
+    },
+    {
+      "archivo": "11a-epoca/Libro-033_2024-01_enero_Tomo-VI.md",
+      "sha256_md": "87c07730edfb95f42348db5332b1ee1133fb3ed0dc0ca52bd2cecfd53dadd5df",
+      "cabeceras": 13,
+      "cierres_sentencia": 14,
+      "extraidas": 13,
+      "rechazos": []
+    },
+    {
+      "archivo": "11a-epoca/Libro-033_2024-01_enero_Tomo-VII.md",
+      "sha256_md": "0e35830c089365476393762084a1831b0c8d44d94367f100958e9041ea46c79c",
+      "cabeceras": 0,
+      "cierres_sentencia": 0,
+      "extraidas": 0,
+      "rechazos": []
+    },
+    {
+      "archivo": "11a-epoca/Libro-034_2024-02_febrero_Tomo-I.md",
+      "sha256_md": "87ea271cf499fe2a39bcad8743f327adc22ae0362e24b12d152a13dac6355b3a",
+      "cabeceras": 13,
+      "cierres_sentencia": 13,
+      "extraidas": 13,
+      "rechazos": []
+    },
+    {
+      "archivo": "11a-epoca/Libro-034_2024-02_febrero_Tomo-II.md",
+      "sha256_md": "784ea3aa47295ba70f2454191e13a51db223042dda70c771b0dff71d60d18efa",
+      "cabeceras": 18,
+      "cierres_sentencia": 18,
+      "extraidas": 18,
+      "rechazos": []
+    },
+    {
+      "archivo": "11a-epoca/Libro-034_2024-02_febrero_Tomo-III.md",
+      "sha256_md": "deeef0c0911706b971540ec8e7b7344b985ebf89dfeff944ce0bdaaf0a3b800f",
+      "cabeceras": 17,
+      "cierres_sentencia": 17,
+      "extraidas": 17,
+      "rechazos": []
+    },
+    {
+      "archivo": "11a-epoca/Libro-034_2024-02_febrero_Tomo-IV.md",
+      "sha256_md": "457853322edc2d059aff8ead63c7061f31bba445de6fc3468e9c5d7697ee0e0c",
+      "cabeceras": 13,
+      "cierres_sentencia": 13,
+      "extraidas": 13,
+      "rechazos": []
+    },
+    {
+      "archivo": "11a-epoca/Libro-034_2024-02_febrero_Tomo-V.md",
+      "sha256_md": "c2bae2121d86a8798ef1e530110611a273c4dbdf8123afbcd52f439bdd7d0308",
+      "cabeceras": 13,
+      "cierres_sentencia": 13,
+      "extraidas": 12,
+      "rechazos": [
+        {
+          "linea": 16758,
+          "asunto": "QUEJA 16/2024",
+          "motivo": "limite_sin_cierre_verificable"
+        }
+      ]
+    },
+    {
+      "archivo": "11a-epoca/Libro-035_2024-03_marzo_Tomo-I.md",
+      "sha256_md": "f347d1837727368237e9689f33f649566e42126b3c81fc4f677887b78673fd5b",
+      "cabeceras": 11,
+      "cierres_sentencia": 11,
+      "extraidas": 11,
+      "rechazos": []
+    },
+    {
+      "archivo": "11a-epoca/Libro-035_2024-03_marzo_Tomo-II.md",
+      "sha256_md": "9a2b1f9059d1df56ecbc2e9c5281d7ebb660e7c5c29f92c1ad7acd70a009048f",
+      "cabeceras": 7,
+      "cierres_sentencia": 7,
+      "extraidas": 7,
+      "rechazos": []
+    },
+    {
+      "archivo": "11a-epoca/Libro-035_2024-03_marzo_Tomo-III.md",
+      "sha256_md": "2d3426d2b5a849c6cbf45ebb83e07850bc5421572bfe19978514651a773a4d8e",
+      "cabeceras": 29,
+      "cierres_sentencia": 28,
+      "extraidas": 29,
+      "rechazos": []
+    },
+    {
+      "archivo": "11a-epoca/Libro-035_2024-03_marzo_Tomo-IV.md",
+      "sha256_md": "f592b14789c4aab4235e812b9cf01d8f3822db0a77b4df9e007f5d11e33c51f9",
+      "cabeceras": 26,
+      "cierres_sentencia": 26,
+      "extraidas": 26,
+      "rechazos": []
+    },
+    {
+      "archivo": "11a-epoca/Libro-035_2024-03_marzo_Tomo-V.md",
+      "sha256_md": "e59407527c37b1f4d8ee3d70e0a3e49824edf5abd9aeec289cdc5d87f597369b",
+      "cabeceras": 19,
+      "cierres_sentencia": 19,
+      "extraidas": 19,
+      "rechazos": []
+    },
+    {
+      "archivo": "11a-epoca/Libro-035_2024-03_marzo_Tomo-VI.md",
+      "sha256_md": "a2473870fdc46ae64cf8cd5aa7f0930890fc2b15ba4389541d53e1b5372def2a",
+      "cabeceras": 5,
+      "cierres_sentencia": 5,
+      "extraidas": 5,
+      "rechazos": []
+    },
+    {
+      "archivo": "11a-epoca/Libro-035_2024-03_marzo_Tomo-VII.md",
+      "sha256_md": "05378dae86c625e7ce0a9e1e28d41f46c94b30db2b287e8e65bc8c49a309e1cc",
+      "cabeceras": 9,
+      "cierres_sentencia": 12,
+      "extraidas": 9,
+      "rechazos": []
+    },
+    {
+      "archivo": "11a-epoca/Libro-036_2024-04_abril_Tomo-I.md",
+      "sha256_md": "69dcb2e2435e9517041222636367302ce4133afb0596b25c20a1d516d38afb38",
+      "cabeceras": 18,
+      "cierres_sentencia": 18,
+      "extraidas": 18,
+      "rechazos": []
+    },
+    {
+      "archivo": "11a-epoca/Libro-036_2024-04_abril_Tomo-II.md",
+      "sha256_md": "c92fcd5e1bc190a1051b856c6351458e01c45aff16f46c3914720f0268876875",
+      "cabeceras": 28,
+      "cierres_sentencia": 28,
+      "extraidas": 28,
+      "rechazos": []
+    },
+    {
+      "archivo": "11a-epoca/Libro-036_2024-04_abril_Tomo-III.md",
+      "sha256_md": "29e0de8801e90ea4b83bee5cacf6b9dbda5afa509cac2fe70ef9ca5677d35b18",
+      "cabeceras": 19,
+      "cierres_sentencia": 19,
+      "extraidas": 19,
+      "rechazos": []
+    },
+    {
+      "archivo": "11a-epoca/Libro-036_2024-04_abril_Tomo-V.md",
+      "sha256_md": "c3a009f9a966f19d721be59e36d9f120f593a186dc783a344d60351cf57cc5dd",
+      "cabeceras": 8,
+      "cierres_sentencia": 10,
+      "extraidas": 8,
+      "rechazos": []
+    },
+    {
+      "archivo": "11a-epoca/Libro-037_2024-05_mayo_Tomo-I.md",
+      "sha256_md": "c57863804bdf9b604e800920684f8fa9dc962375ab3c7f956f83ae721f2fe549",
+      "cabeceras": 13,
+      "cierres_sentencia": 13,
+      "extraidas": 13,
+      "rechazos": []
+    },
+    {
+      "archivo": "11a-epoca/Libro-037_2024-05_mayo_Tomo-II.md",
+      "sha256_md": "1026d49161c40539a516444ba7cfa35e5a9aa91398bf813dc7b84b4e1f317c97",
+      "cabeceras": 22,
+      "cierres_sentencia": 23,
+      "extraidas": 22,
+      "rechazos": []
+    },
+    {
+      "archivo": "11a-epoca/Libro-037_2024-05_mayo_Tomo-III.md",
+      "sha256_md": "e61113ce5c8cd20ef5230e0a2a42be7e01f1afe4ed7e3ad4717f0cb5df635484",
+      "cabeceras": 26,
+      "cierres_sentencia": 26,
+      "extraidas": 26,
+      "rechazos": []
+    },
+    {
+      "archivo": "11a-epoca/Libro-037_2024-05_mayo_Tomo-IV.md",
+      "sha256_md": "03e8d01d0ec93b20b226e8509bf33d5ae9c5d030cb6240ecf81e5bb45259a60c",
+      "cabeceras": 13,
+      "cierres_sentencia": 13,
+      "extraidas": 13,
+      "rechazos": []
+    },
+    {
+      "archivo": "11a-epoca/Libro-037_2024-05_mayo_Tomo-V.md",
+      "sha256_md": "d06bab6b71de6fa68ad731ab31817afabde9e441ebfd47c9613b84a663910a50",
+      "cabeceras": 16,
+      "cierres_sentencia": 16,
+      "extraidas": 16,
+      "rechazos": []
+    },
+    {
+      "archivo": "11a-epoca/Libro-037_2024-05_mayo_Tomo-VI.md",
+      "sha256_md": "6a5566cf122682a1b253931774884ba3196f8edd3b11adcd7ce7de5af98ae4cb",
+      "cabeceras": 0,
+      "cierres_sentencia": 0,
+      "extraidas": 0,
+      "rechazos": []
+    },
+    {
+      "archivo": "11a-epoca/Libro-038_2024-06_junio_Tomo-I.md",
+      "sha256_md": "696028c9005f02d9bb85872cde06c569bd426637af05809455b5018b469886c8",
+      "cabeceras": 14,
+      "cierres_sentencia": 13,
+      "extraidas": 14,
+      "rechazos": []
+    },
+    {
+      "archivo": "11a-epoca/Libro-038_2024-06_junio_Tomo-II.md",
+      "sha256_md": "6e829ff1776e0ab36a127eebb60faff3ce1a356e4a3fd141a9322ab0044338c0",
+      "cabeceras": 25,
+      "cierres_sentencia": 26,
+      "extraidas": 25,
+      "rechazos": []
+    },
+    {
+      "archivo": "11a-epoca/Libro-038_2024-06_junio_Tomo-III.md",
+      "sha256_md": "f39e0dce38ec30bf1321bcd6f534838e8cfd0056914d79c5eb8449feb5976ee6",
+      "cabeceras": 21,
+      "cierres_sentencia": 22,
+      "extraidas": 21,
+      "rechazos": []
+    },
+    {
+      "archivo": "11a-epoca/Libro-038_2024-06_junio_Tomo-IV.md",
+      "sha256_md": "cdd97e4f2ae77e8792b952db1c16626cb35b37b7df7f7e3d7da8269809a655d3",
+      "cabeceras": 12,
+      "cierres_sentencia": 12,
+      "extraidas": 12,
+      "rechazos": []
+    },
+    {
+      "archivo": "11a-epoca/Libro-039_2024-07_julio.md",
+      "sha256_md": "16a2ffc5f588f0d48557d2e5de1fc3cc3538a8b61d32042369aeb567e7450a9b",
+      "cabeceras": 36,
+      "cierres_sentencia": 36,
+      "extraidas": 36,
+      "rechazos": []
+    },
+    {
+      "archivo": "11a-epoca/Libro-040_2024-08_agosto.md",
+      "sha256_md": "69d7ba685cab81cafb94de9e82f1a2d560f2b9d273b8f1608022bb617d847e24",
+      "cabeceras": 82,
+      "cierres_sentencia": 84,
+      "extraidas": 81,
+      "rechazos": [
+        {
+          "linea": 88005,
+          "asunto": "CONFLICTO COMPETENCIAL 1/2024",
+          "motivo": "limite_sin_cierre_verificable"
+        }
+      ]
+    },
+    {
+      "archivo": "11a-epoca/Libro-041_2024-09_septiembre.md",
+      "sha256_md": "414193722a07f2f7b5961621a8da7198f4daa2b469954760f5f91f0ad2d95b6d",
+      "cabeceras": 58,
+      "cierres_sentencia": 60,
+      "extraidas": 58,
+      "rechazos": []
+    },
+    {
+      "archivo": "11a-epoca/Libro-042_2024-10_octubre.md",
+      "sha256_md": "957d8e35c590d8a4c360efb181c8f4d8f8981e3e3dc1165f0e6be2e89af92fd1",
+      "cabeceras": 43,
+      "cierres_sentencia": 43,
+      "extraidas": 43,
+      "rechazos": []
+    },
+    {
+      "archivo": "11a-epoca/Libro-043_2024-11_noviembre.md",
+      "sha256_md": "6044cc58b3741456cac8eef20f62e4ddf9576e222bca6dcfa17cfa1991a06522",
+      "cabeceras": 101,
+      "cierres_sentencia": 99,
+      "extraidas": 100,
+      "rechazos": [
+        {
+          "linea": 221232,
+          "asunto": "AMPARO DIRECTO 878/2023",
+          "motivo": "limite_sin_cierre_verificable"
+        }
+      ]
+    },
+    {
+      "archivo": "11a-epoca/Libro-044_2024-12_diciembre.md",
+      "sha256_md": "3e2bc67ed34e373d359a7dd6fb3fd2232f1cd9e3fac5cd0b16c65e16ba8d2463",
+      "cabeceras": 37,
+      "cierres_sentencia": 38,
+      "extraidas": 37,
+      "rechazos": []
+    },
+    {
+      "archivo": "11a-epoca/Libro-045_2025-01_enero.md",
+      "sha256_md": "33be51663043ec71fa1ca93d5084e4fb7e027957d6e19460cf60abaa3b4b62c1",
+      "cabeceras": 43,
+      "cierres_sentencia": 40,
+      "extraidas": 43,
+      "rechazos": []
+    },
+    {
+      "archivo": "11a-epoca/Libro-046_2025-02_febrero.md",
+      "sha256_md": "0466b79b4ca0d07f9c5c5b1e48a450f73533de756453da1a59dd633b37a34e04",
+      "cabeceras": 71,
+      "cierres_sentencia": 71,
+      "extraidas": 71,
+      "rechazos": []
+    },
+    {
+      "archivo": "11a-epoca/Libro-047_2025-03_marzo.md",
+      "sha256_md": "ba76e69acdf35327074213168918bcbba1bee549a3a243c5cedc72e708886d1e",
+      "cabeceras": 70,
+      "cierres_sentencia": 71,
+      "extraidas": 69,
+      "rechazos": [
+        {
+          "linea": 14935,
+          "asunto": "CONTRADICCIÓN DE CRITERIOS 128/2024",
+          "motivo": "limite_sin_cierre_verificable"
+        }
+      ]
+    },
+    {
+      "archivo": "11a-epoca/Libro-048_2025-04_abril.md",
+      "sha256_md": "7d9d954246aa7c1c7ec36a3167bb34dd173b8c8cde880916af942eae636338f8",
+      "cabeceras": 58,
+      "cierres_sentencia": 58,
+      "extraidas": 58,
+      "rechazos": []
+    },
+    {
+      "archivo": "11a-epoca/Libro-049_2025-05_mayo.md",
+      "sha256_md": "6a237ab6c54ca1520e3f770ba8b5da8786c0e21a7c7c15a4af3888fa7e78cdc5",
+      "cabeceras": 67,
+      "cierres_sentencia": 68,
+      "extraidas": 67,
+      "rechazos": []
+    },
+    {
+      "archivo": "11a-epoca/Libro-050_2025-06_junio.md",
+      "sha256_md": "ebfe7af486f25734354ded123f147a9789676098a44a25f47fc58cbfffb9d9d5",
+      "cabeceras": 135,
+      "cierres_sentencia": 135,
+      "extraidas": 133,
+      "rechazos": [
+        {
+          "linea": 167591,
+          "asunto": "QUEJA 258/2024",
+          "motivo": "limite_sin_cierre_verificable"
+        },
+        {
+          "linea": 236003,
+          "asunto": "CONTRADICCIÓN DE CRITERIOS 18/2025",
+          "motivo": "limite_sin_cierre_verificable"
+        }
+      ]
+    },
+    {
+      "archivo": "11a-epoca/Libro-051_2025-07_julio.md",
+      "sha256_md": "4ccf6de74214e9a2b677d20242e28284aae779bdc1e8a467ebd82228292cbb1f",
+      "cabeceras": 47,
+      "cierres_sentencia": 49,
+      "extraidas": 47,
+      "rechazos": []
+    },
+    {
+      "archivo": "11a-epoca/Libro-052_2025-08_agosto.md",
+      "sha256_md": "0fa24e5fb3c94882b7b85e3258791c3164dc9b99e8e78224efd0ed2a04eec3d1",
+      "cabeceras": 145,
+      "cierres_sentencia": 148,
+      "extraidas": 144,
+      "rechazos": [
+        {
+          "linea": 325272,
+          "asunto": "AMPARO DIRECTO 15/2020",
+          "motivo": "limite_sin_cierre_verificable"
+        }
+      ]
+    },
+    {
+      "archivo": "11a-epoca/Libro-053_2025-09_septiembre.md",
+      "sha256_md": "df1cf504cfb4cee99bb526b18b2054037622f6e0b40815cd5dcfdb9141f20d6c",
+      "cabeceras": 87,
+      "cierres_sentencia": 87,
+      "extraidas": 86,
+      "rechazos": [
+        {
+          "linea": 167768,
+          "asunto": "AMPARO DIRECTO 628/2023",
+          "motivo": "limite_sin_cierre_verificable"
+        }
+      ]
+    },
+    {
+      "archivo": "12a-epoca/Libro-001_2025-09_septiembre.md",
+      "sha256_md": "8da540c24cddc74ef5edea8bc25055656092363bc2e7a2990ad190aebd54a070",
+      "cabeceras": 15,
+      "cierres_sentencia": 8,
+      "extraidas": 15,
+      "rechazos": []
+    },
+    {
+      "archivo": "12a-epoca/Libro-002_2025-10_octubre.md",
+      "sha256_md": "75aee5135560085f8a22045f2a17d7bf9138e32fd81ff3a3d250aceb9061c929",
+      "cabeceras": 50,
+      "cierres_sentencia": 51,
+      "extraidas": 50,
+      "rechazos": []
+    },
+    {
+      "archivo": "12a-epoca/Libro-003_2025-11_noviembre.md",
+      "sha256_md": "7eec33944d39b160c05f4c4b909d83053f45cf16603dd10379baa4404366c21b",
+      "cabeceras": 42,
+      "cierres_sentencia": 44,
+      "extraidas": 42,
+      "rechazos": []
+    },
+    {
+      "archivo": "12a-epoca/Libro-004_2025-12_diciembre.md",
+      "sha256_md": "0cfe1d0a47715c4f9f89bffb2615f991ea6049b50e26fd7b1259a9f0fa1ea28f",
+      "cabeceras": 20,
+      "cierres_sentencia": 20,
+      "extraidas": 20,
+      "rechazos": []
+    },
+    {
+      "archivo": "12a-epoca/Libro-005_2026-01_enero.md",
+      "sha256_md": "559cec0da2aeb206acaac4f780ef8e4593150b676e4631dd8350b670d5a75fe1",
+      "cabeceras": 48,
+      "cierres_sentencia": 47,
+      "extraidas": 48,
+      "rechazos": []
+    },
+    {
+      "archivo": "12a-epoca/Libro-006_2026-02_febrero.md",
+      "sha256_md": "49492773fa0598e9fc2f5c95aac851d58a77c02eb9a4781775d35f973cf7a13f",
+      "cabeceras": 41,
+      "cierres_sentencia": 39,
+      "extraidas": 41,
+      "rechazos": []
+    },
+    {
+      "archivo": "12a-epoca/Libro-007_2026-03_marzo.md",
+      "sha256_md": "8a7063916e2d0d9672b89aa94fcfedca43bb33bcf89d8f25dd719c3ce57ef4d1",
+      "cabeceras": 61,
+      "cierres_sentencia": 62,
+      "extraidas": 61,
+      "rechazos": []
+    },
+    {
+      "archivo": "12a-epoca/Libro-008_2026-04_abril.md",
+      "sha256_md": "b3e30a3ac8a78627d52da670be0611d065e9359642fcf260e02c04a5c9d5998d",
+      "cabeceras": 45,
+      "cierres_sentencia": 45,
+      "extraidas": 44,
+      "rechazos": [
+        {
+          "linea": 51295,
+          "asunto": "CONTRADICCIÓN DE CRITERIOS 35/2025",
+          "motivo": "limite_sin_cierre_verificable"
+        }
+      ]
+    },
+    {
+      "archivo": "12a-epoca/Libro-009_2026-05_mayo.md",
+      "sha256_md": "033ead29b1283fd5c4bea0678a09f67098522d6242c3e8414c1b763fad5f23da",
+      "cabeceras": 49,
+      "cierres_sentencia": 48,
+      "extraidas": 48,
+      "rechazos": [
+        {
+          "linea": 9814,
+          "asunto": "CONTRADICCIÓN DE CRITERIOS 163/2025",
+          "motivo": "limite_sin_cierre_verificable"
+        }
+      ]
+    },
+    {
+      "archivo": "12a-epoca/Libro-010_2026-06_junio.md",
+      "sha256_md": "8998cd326adb58318e54e154bf614c2a21553966e6e1bf7f5a825c68cf8cbba0",
+      "cabeceras": 81,
+      "cierres_sentencia": 71,
+      "extraidas": 80,
+      "rechazos": [
+        {
+          "linea": 146381,
+          "asunto": "RECURSO DE RECLAMACIÓN 121/2025-CA",
+          "motivo": "sin_cuerpo_reconocible"
+        }
+      ]
+    },
+    {
+      "archivo": "12a-epoca/Libro-011_2026-07_julio.md",
+      "sha256_md": "41ceb968ea946c42987ac7b22a679015a67113fb7563192f0677bb2b18f2636b",
+      "cabeceras": 39,
+      "cierres_sentencia": 35,
+      "extraidas": 37,
+      "rechazos": [
+        {
+          "linea": 14941,
+          "asunto": "RECURSO DE RECLAMACIÓN 108/2025-CA",
+          "motivo": "sin_cuerpo_reconocible"
+        },
+        {
+          "linea": 28065,
+          "asunto": "AMPARO DIRECTO 79/2023",
+          "motivo": "limite_sin_cierre_verificable"
+        }
+      ]
+    },
+    {
+      "archivo": "12a-epoca/Libro-012_2026-08_agosto.md",
+      "sha256_md": "1ee7ec8ac82bd3307506303820899fa52c3f1f71e877a32bd7daa0343a190756",
+      "cabeceras": 44,
+      "cierres_sentencia": 44,
+      "extraidas": 43,
+      "rechazos": [
+        {
+          "linea": 1148,
+          "asunto": "AMPARO DIRECTO EN REVISIÓN 4852/2025",
+          "motivo": "limite_sin_cierre_verificable"
+        }
+      ]
+    },
+    {
+      "archivo": "9a-epoca/Libro-033_2011-03_marzo.md",
+      "sha256_md": "36430ca22182904022826111b4948903dded1231f5a78dfdadba512d0dd96127",
+      "cabeceras": 21,
+      "cierres_sentencia": 0,
+      "extraidas": 20,
+      "rechazos": [
+        {
+          "linea": 62414,
+          "asunto": "CONTROVERSIA CONSTITUCIONAL 84/2007",
+          "motivo": "limite_sin_cierre_verificable"
+        }
+      ]
+    },
+    {
+      "archivo": "9a-epoca/Libro-033_2011-04_abril.md",
+      "sha256_md": "88eb96ca6360adc4bdbcbd8b348c3aea31d65127554d8bdb0107d0f3cf2a2b94",
+      "cabeceras": 8,
+      "cierres_sentencia": 0,
+      "extraidas": 8,
+      "rechazos": []
+    },
+    {
+      "archivo": "9a-epoca/Libro-033_2011-05_mayo.md",
+      "sha256_md": "2c615ff44aa34765452b61dffaa42c05894c84649ca27e52e0316411e199a843",
+      "cabeceras": 4,
+      "cierres_sentencia": 0,
+      "extraidas": 4,
+      "rechazos": []
+    },
+    {
+      "archivo": "9a-epoca/Libro-033_2011-06_junio.md",
+      "sha256_md": "f369a0d18e1ce6ffc5b6a161755c9371ecf53b8d00049243d006e4c217f377cf",
+      "cabeceras": 11,
+      "cierres_sentencia": 0,
+      "extraidas": 8,
+      "rechazos": [
+        {
+          "linea": 24509,
+          "asunto": "SOLICITUD DE EJERCICIO DE LA FACULTAD DE ATRACCIÓN 11/2008-SS",
+          "motivo": "limite_sin_cierre_verificable"
+        },
+        {
+          "linea": 51789,
+          "asunto": "AMPARO EN REVISIÓN 419/2010",
+          "motivo": "limite_sin_cierre_verificable"
+        },
+        {
+          "linea": 53338,
+          "asunto": "AMPARO EN REVISIÓN 130/2011",
+          "motivo": "limite_sin_cierre_verificable"
+        }
+      ]
+    },
+    {
+      "archivo": "9a-epoca/Libro-034_2011-07_julio.md",
+      "sha256_md": "94b7c4d0c1bb499871cd2e0114aa19ff3b40ab9a5781cefa606b6ad57a21885d",
+      "cabeceras": 9,
+      "cierres_sentencia": 0,
+      "extraidas": 9,
+      "rechazos": []
+    },
+    {
+      "archivo": "9a-epoca/Libro-034_2011-08_agosto.md",
+      "sha256_md": "f58b162fcaae118dc8782c9a18c0b983e41f0ba29eafc5c018351d6b0b7ef12b",
+      "cabeceras": 2,
+      "cierres_sentencia": 0,
+      "extraidas": 2,
+      "rechazos": []
+    },
+    {
+      "archivo": "9a-epoca/Libro-034_2011-09_septiembre.md",
+      "sha256_md": "28de8cf5fc64c19d8b7193355a65e5e1062e3ce927cac5c8f8b7c3ac6a81e6e1",
+      "cabeceras": 3,
+      "cierres_sentencia": 0,
+      "extraidas": 3,
+      "rechazos": []
+    }
+  ],
+  "por_alcance_texto": {
+    "resolucion_con_cierre": 8846,
+    "extracto_publicado": 1347
+  },
+  "gaceta_desde": "2011-03",
+  "gaceta_hasta": "2026-10",
+  "alcance": "Resoluciones publicadas extraídas de las Gacetas disponibles; no es la totalidad de las sentencias SCJN. No contiene IUS inferidos.",
+  "rechazos_por_motivo": {
+    "limite_sin_cierre_verificable": 310,
+    "sin_cuerpo_reconocible": 111
+  }
+}

@@ -34,10 +34,11 @@ import repositorio_scjn
 import sjf_local
 import sjf_semanal
 import tepjf
+import ejecutorias_local
 
 # Única fuente del número de versión. server_http.py la importa de aquí para que
 # /salud y estado_conector no puedan volver a discrepar.
-VERSION = "2.16.0"
+VERSION = "2.17.0"
 POLITICA_TEXTOS_COMPLETOS = "acervo_propio_primero"
 
 BASE = "https://sjf2.scjn.gob.mx/services/sjftesismicroservice/api/public"
@@ -1467,8 +1468,10 @@ async def buscar_ejecutorias(
     pagina: int = 1,
     por_pagina: int = 20,
     orden: str = "jerarquia",
+    fuente: str = "local",
 ) -> str:
-    """Busca ejecutorias y precedentes de la SCJN: las sentencias completas, no las tesis.
+    """Busca resoluciones publicadas del SJF en el acervo permanente de Kriterius,
+    sin red. Incluye sentencias y extractos, distinguidos en cada resultado.
 
     ÚSALA cuando el usuario pregunte por controversias constitucionales, acciones de
     inconstitucionalidad, declaratorias generales de inconstitucionalidad,
@@ -1486,13 +1489,19 @@ async def buscar_ejecutorias(
         orden: "jerarquia" (default) ordena por obligatoriedad: órgano
             (Pleno > Salas > Plenos Regionales > Plenos de Circuito > TCC) y época
             más reciente. "fecha" respeta el orden nativo del SJF.
+        fuente: "local" (default) consulta únicamente las Gacetas conservadas.
+            "oficial" solicita expresamente los servicios externos de la SCJN.
 
     Returns:
-        Lista de ejecutorias con tipo y número de asunto, órgano, promovente, época,
-        registro digital y link directo (https://sjf2.scjn.gob.mx/detalle/ejecutoria/{registro}).
-        Al citar una ejecutoria incluye SIEMPRE su link. Usa ver_ejecutoria(registro)
-        para leer la sentencia.
+        Asunto, órgano cuando consta, alcance del texto, páginas y PDF oficial.
+        En local devuelve un identificador gaceta-ejec-...: pásalo a ver_ejecutoria.
+        No confundirlo con un registro digital IUS ni asumir cobertura exhaustiva.
     """
+    if fuente not in ('local','oficial'):
+        return 'fuente debe ser local u oficial.'
+    if fuente=='local':
+        rows,total=ejecutorias_local.buscar(consulta,epocas,pagina,por_pagina,orden)
+        return ejecutorias_local.formatear_busqueda(rows,total,consulta,max(1,pagina))
     body = _search_body(consulta, epocas, False)
     page, size = max(pagina, 1) - 1, min(max(por_pagina, 1), 50)
     aviso_repo = ""
@@ -1546,28 +1555,50 @@ async def buscar_ejecutorias(
 
 @mcp.tool()
 async def ver_ejecutoria(
-    registro_digital: int,
+    registro_digital: int | str,
     buscar_en_texto: str | None = None,
     parte: int = 1,
+    fuente: str = "local",
 ) -> str:
-    """Lee una ejecutoria del SJF por su número de registro digital.
+    """Lee una resolución publicada desde el acervo permanente, sin red por defecto.
 
     Una sentencia puede pasar de 180 mil caracteres, así que nunca se devuelve entera:
     siempre llegan los datos de identificación y los criterios que la sentencia dejó, y
     del cuerpo llega o la parte que pidas o los fragmentos donde aparece un término.
 
     Args:
-        registro_digital: Número de registro digital (IUS) de la ejecutoria, p. ej. 201074.
+        registro_digital: Identificador local gaceta-ejec-... devuelto por buscar_ejecutorias,
+            o asunto y expediente (p. ej. 'ADR 6897/2025'). Un IUS numérico se resuelve
+            localmente solo si está documentado, nunca se infiere. Si hay varias
+            versiones/órganos devuelve opciones para elegir el identificador exacto.
         buscar_en_texto: Si lo indicas, en vez de una parte del texto devuelve los
             fragmentos donde aparece esa expresión, con su contexto. Ignora acentos.
             Es la forma más rápida de encontrar lo que dijo la sentencia sobre un punto.
         parte: Parte del texto a devolver cuando no se busca un término (desde 1).
             La respuesta indica cuántas partes tiene la sentencia.
+        fuente: "local" (default) no contacta la SCJN. "oficial" usa un IUS numérico
+            para consultar expresamente los servicios externos.
 
     Returns:
         Identificación del asunto, criterios que dejó, tesis derivadas y el fragmento
         de texto solicitado, con el link oficial.
     """
+    if fuente not in ('local','oficial'):
+        return 'fuente debe ser local u oficial.'
+    if fuente=='local':
+        rows=ejecutorias_local.obtener(registro_digital)
+        if len(rows)==1:
+            return ejecutorias_local.formatear_detalle(rows[0],parte,buscar_en_texto)
+        if len(rows)>1:
+            return ('Hay varias publicaciones u órganos para ese expediente. Elige su identificador local.\n\n'
+                    + '\n\n'.join(ejecutorias_local.referencia(d) for d in rows[:20]))
+        return (ejecutorias_local.cobertura()+
+                '\nNo consta ese identificador o expediente en el acervo local. '
+                'Usa buscar_ejecutorias para localizarlo por tema o expediente. '
+                'No se hicieron consultas externas ni se infirió un IUS. '
+                'La consulta oficial, si se solicita, requiere un IUS y fuente="oficial".')
+    if not str(registro_digital).isdigit():
+        return 'La consulta oficial requiere un registro digital IUS numérico.'
     # Mismo enredo que en las tesis, y peor: el valor equivocado de isSemanal devuelve
     # 404 en unos registros y 500 en otros, así que se prueban los dos sin confiar en
     # el código de error.
@@ -1645,24 +1676,24 @@ async def ver_ejecutoria(
             for n, e in enumerate(extractos, 1):
                 partes_out += ["", f"[{n}] …{e}…"]
             partes_out.append("")
-            partes_out.append("Para leer la sentencia corrida usa ver_ejecutoria(registro, parte=N).")
+            partes_out.append("Para leer la sentencia corrida usa ver_ejecutoria(registro, fuente='oficial', parte=N).")
         else:
             trozos = _ejec_partir(texto)
             partes_out += ["", f"La expresión '{buscar_en_texto}' no aparece en el cuerpo de la "
                            f"sentencia ({len(texto):,} caracteres). Puede estar en los criterios "
                            f"de arriba, o con otra redacción. El texto tiene {len(trozos)} partes: "
-                           f"ver_ejecutoria({registro_digital}, parte=1)."]
+                           f"ver_ejecutoria({registro_digital}, fuente='oficial', parte=1)."]
     else:
         trozos = _ejec_partir(texto)
         n = min(max(parte, 1), len(trozos))
         partes_out += ["", f"TEXTO — parte {n} de {len(trozos)} ({len(texto):,} caracteres en total):",
                        trozos[n - 1]]
         if len(trozos) > 1:
-            siguiente = (f" Siguiente: ver_ejecutoria({registro_digital}, parte={n + 1})."
+            siguiente = (f" Siguiente: ver_ejecutoria({registro_digital}, fuente='oficial', parte={n + 1})."
                          if n < len(trozos) else " Es la última parte.")
             partes_out.append("")
             partes_out.append(f"[Parte {n} de {len(trozos)}.{siguiente} Para ir directo a un punto: "
-                              f"ver_ejecutoria({registro_digital}, buscar_en_texto='...')]")
+                              f"ver_ejecutoria({registro_digital}, fuente='oficial', buscar_en_texto='...')]")
 
     partes_out += ["", f"Fuente: {HOST}/detalle/ejecutoria/{d.get('ius') or registro_digital}"]
     if d.get("huellaDigital"):
@@ -3777,6 +3808,7 @@ async def estado_conector() -> str:
         f"puerta del Semanario y fuente de las sentencias del SIJ",
         _linea_estado_sjf_local(),
         _linea_estado_tepjf(),
+        ejecutorias_local.cobertura(),
         "",
         f"Caché: {_CACHE.resumen()}",
         f"Peticiones a fuentes en el último minuto: {recientes} de {LIMITE_PETICIONES_MINUTO}",

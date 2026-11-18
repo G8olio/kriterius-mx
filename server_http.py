@@ -28,6 +28,7 @@ from starlette.responses import FileResponse, HTMLResponse, JSONResponse, Respon
 # La versión vive en kriterius_mx.py y solo ahí. Cuando estaba duplicada aquí,
 # /salud siguió anunciando la 2.6.0 con la 2.7.0 ya desplegada.
 from kriterius_mx import mcp, VERSION, POLITICA_TEXTOS_COMPLETOS
+import ejecutorias_local
 import sjf_local
 import sjf_semanal
 import tepjf
@@ -64,6 +65,11 @@ def _cargar_acervo_sjf():
 _hilo_sjf = _threading.Thread(target=_cargar_acervo_sjf, name="sjf-local",
                               daemon=True)
 _hilo_sjf.start()
+
+def _cargar_ejecutorias():
+    print(f'Ejecutorias permanentes: {ejecutorias_local.cargar()} documentos listos',flush=True)
+
+_threading.Thread(target=_cargar_ejecutorias,name='ejecutorias-local',daemon=True).start()
 
 _SHAS: dict[str, str] = {}
 
@@ -146,6 +152,22 @@ async def manifiesto_tepjf(request):
                          "sha256": _sha256_archivo(tepjf.RUTA_DATOS),
                          "conservacion": "permanente"},
                         headers={"Cache-Control": "no-store"})
+
+
+@mcp.custom_route('/datos/ejecutorias.json',methods=['GET'])
+async def manifiesto_ejecutorias(request):
+    return JSONResponse(ejecutorias_local.meta(),headers={'Cache-Control':'no-store'})
+
+
+@mcp.custom_route('/datos/ejecutorias/{identificador}.json',methods=['GET'])
+async def documento_ejecutoria(request):
+    identificador=request.path_params['identificador']
+    if not identificador.startswith('gaceta-ejec-'):
+        return JSONResponse({'error':'Se requiere un identificador local'},status_code=404)
+    docs=ejecutorias_local.obtener(identificador)
+    if len(docs)!=1:return JSONResponse({'error':'No consta en el acervo local'},status_code=404)
+    return JSONResponse(docs[0],headers={'Cache-Control':'no-cache',
+                                       'ETag':'"'+docs[0]['sha256_texto']+'"'})
 
 
 @mcp.custom_route("/datos/sjf_gaceta_nuevos.jsonl", methods=["GET"])

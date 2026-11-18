@@ -28,6 +28,9 @@ import sys
 from pathlib import Path
 
 import kriterius_mx as k
+
+# Esta suite ejercita las fuentes oficiales cuando no hay correspondencia local.
+k._hay_respaldo = lambda: False
 import repositorio_scjn as rs
 
 fallos = 0
@@ -214,17 +217,17 @@ comprobar("la clave sin época también la encuentra", "Registro digital: 201259
 
 print("\n— ver_ejecutoria con sjf2 bloqueado —")
 _preparar()
-re_ = corre(k.ver_ejecutoria(201074, parte=1))
+re_ = corre(k.ver_ejecutoria(fuente="oficial", registro_digital=201074, parte=1))
 comprobar("entrega la sentencia", "CONTROVERSIA CONSTITUCIONAL 267/2024" in re_, re_[:200])
 comprobar("con su órgano", "Órgano: Primera Sala" in re_, re_[:300])
 comprobar("por partes", "TEXTO — parte 1 de" in re_)
 comprobar("con huella y origen",
           "Huella digital (SHA-256): 2c0ab48a" in re_ and "Repositorio de la SCJN" in re_)
 _preparar()
-rb = corre(k.ver_ejecutoria(201074, buscar_en_texto="Fiscalía"))
+rb = corre(k.ver_ejecutoria(fuente="oficial", registro_digital=201074, buscar_en_texto="Fiscalía"))
 comprobar("la búsqueda dentro del texto funciona igual", "COINCIDENCIAS DE 'Fiscalía'" in rb, rb[:300])
 _preparar(repo_bloqueado=True)
-rbb = corre(k.ver_ejecutoria(201074))
+rbb = corre(k.ver_ejecutoria(fuente="oficial", registro_digital=201074))
 comprobar("si el Repositorio también bloquea, vuelve el mensaje del WAF",
           "cortafuegos" in rbb and "TEXTO" not in rbb, rbb[:200])
 
@@ -257,7 +260,7 @@ comprobar("investigar_criterio sin resultados también dice de dónde salió",
 
 print("\n— buscar_ejecutorias con sjf2 bloqueado —")
 _preparar()
-rj = corre(k.buscar_ejecutorias('"interés legítimo"', por_pagina=3))
+rj = corre(k.buscar_ejecutorias(fuente="oficial", consulta='"interés legítimo"', por_pagina=3))
 comprobar("conmuta al Repositorio", "Repositorio de la SCJN" in rj and "201074" in rj, rj[:300])
 comprobar("el fragmento muestra dónde cayó la consulta",
           "Coincidencia: …" in rj and "interés legítimo" in rj.lower(), rj[:900])
@@ -266,7 +269,7 @@ pesados = [v for v, _ in k._CACHE._datos.values() if isinstance(v, dict)
 comprobar("la caché no guarda el texto íntegro de las sentencias", not pesados)
 _preparar()
 BUSQUEDAS[("ejecutoria", "zzqxjvw")] = "busqueda_ejecutoria_interes_legitimo.json"
-rjn = corre(k.buscar_ejecutorias("zzqxjvw", por_pagina=3))
+rjn = corre(k.buscar_ejecutorias(fuente="oficial", consulta="zzqxjvw", por_pagina=3))
 comprobar("sin fragmento hallado, los criterios no se presentan como 'Coincidencia'",
           "Coincidencia:" not in rjn and "201074" in rjn, rjn[:900])
 
