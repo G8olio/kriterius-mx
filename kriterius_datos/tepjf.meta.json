@@ -15,7 +15,7 @@
     "compilacion": "https://www.te.gob.mx/iuse_old2025/media/compilacion/compilacion2.htm",
     "fecha_compilacion_observada": "2026-09-03",
     "resultado": "El portal actual cargó 1502 criterios vigentes y la jurisprudencia 10/2026 como primera ficha; las consultas Todas y año 2026 terminaron con error de conexión. La compilación oficial con corte al 3 de septiembre fue contrastada: coinciden las 1502 claves vigentes y los 26 textos de 2026. No se confirmó exhaustivamente el catálogo posterior al corte. Se conservan los 2078 criterios y sus fechas originales.",
-    "fecha_hora": "2026-11-18T19:09:33.075158+00:00",
+    "fecha_hora": "2026-11-18T19:25:54.283222+00:00",
     "contraste_compilacion": {
       "corte_compilacion": "2026-09-03",
       "vigentes_oficiales": 1502,
@@ -99,6 +99,16 @@
       "textos_2026_coincidentes": 26,
       "metodo": "Claves: años de dos dígitos y sufijos de sala normalizados. Texto y rubro: comparación sin espacios, puntuación ni acentos; no sustituye revisión de discrepancias."
     },
-    "sha256_texto_visible_compilacion": "56c626ff95f04e98cc7c1b44564e7a6e75a0785509e80991b3f13e0dc2d69cf0"
+    "sha256_texto_visible_compilacion": "56c626ff95f04e98cc7c1b44564e7a6e75a0785509e80991b3f13e0dc2d69cf0",
+    "recomprobacion": {
+      "api_catalogo": {
+        "fecha": "2026-11-18T19:20:01.320229+00:00",
+        "estado_http": 503,
+        "respuesta_bytes": 0
+      },
+      "portal_actual": "Portada con 1502 vigentes; filtros Vigentes + 2026 y Tesis terminaron con error de conexión del servidor.",
+      "semanario_electoral": "La sección JurisElectoral permaneció cargando sin entregar resultados.",
+      "efecto": "No se importaron novedades sin verificar ni se modificó la fecha del snapshot."
+    }
   }
 }

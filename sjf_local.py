@@ -106,6 +106,7 @@ SOLO_LECTURA = os.environ.get("KRITERIUS_SJF_SOLO_LECTURA", "") == "1"
 
 _db: sqlite3.Connection | None = None
 _por_clave: dict[str, list[int]] = {}
+_por_registro: dict[int, list[int]] = {}
 _registros: dict[str, int] = {}
 _meta: dict = {}
 _n: int = 0
@@ -326,7 +327,7 @@ def cargar(ruta: Path | str = RUTA_DATOS, ruta_meta: Path | str = RUTA_META,
     Si el directorio no es escribible (imagen de solo lectura, permisos), cae a un
     índice en memoria, que funciona igual pero cuesta RAM y unos segundos de
     arranque."""
-    global _db, _por_clave, _meta, _n, _registros
+    global _db, _por_clave, _por_registro, _meta, _n, _registros
     ruta = Path(ruta)
     rutas = [ruta]
     if ruta_nuevos is not None and Path(ruta_nuevos).exists():
@@ -378,6 +379,7 @@ def cargar(ruta: Path | str = RUTA_DATOS, ruta_meta: Path | str = RUTA_META,
             pass
         with _candado:
             _db, _por_clave, _meta, _n, _registros = None, {}, {}, 0, {}
+            _por_registro = {}
         return 0
 
     # Índice de claves en Python, no en SQL: SQLite no normaliza acentos y las
@@ -400,6 +402,20 @@ def cargar(ruta: Path | str = RUTA_DATOS, ruta_meta: Path | str = RUTA_META,
                      json.loads(RUTA_REGISTROS.read_text(encoding="utf-8")).items()}
     except Exception:
         registros = {}
+    # Solo números documentados en la captura o en el mapa de correspondencias;
+    # nunca se deduce un IUS a partir de una clave o de la posición de la tesis.
+    por_registro: dict[int, list[int]] = {}
+    try:
+        for rid, ius, identificador in db.execute(
+                "SELECT rowid, json_extract(json,'$.registro_digital'), "
+                "json_extract(json,'$.id') FROM docs"):
+            ius = ius or registros.get(identificador)
+            if ius and re.fullmatch(r'[1-9][0-9]{5,7}', str(ius)):
+                por_registro.setdefault(int(ius), []).append(rid)
+    except (sqlite3.Error, ValueError, TypeError):
+        # Una instalación antigua sin JSON1 puede seguir consultando por clave;
+        # no publicar un mapa parcial que dé por ausentes registros del acervo.
+        por_registro = {}
     info = dict(db.execute("SELECT k,v FROM info"))
     meta['por_epoca'] = json.loads(info.get('por_epoca', '{}'))
     meta["capturas_permanentes"] = int(info.get("semanales", 0))
@@ -417,6 +433,7 @@ def cargar(ruta: Path | str = RUTA_DATOS, ruta_meta: Path | str = RUTA_META,
             inicio += timedelta(days=1)
     with _candado:
         _db, _por_clave, _meta, _n, _registros = db, por_clave, meta, n, registros
+        _por_registro = por_registro
     return n
 
 
@@ -574,6 +591,21 @@ def obtener(clave: str) -> list[dict]:
     return [json.loads(por_id[i]) for i in ids if i in por_id]
 
 
+def obtener_registro(registro_digital: int | str) -> list[dict]:
+    """Devuelve solo correspondencias IUS documentadas en el acervo propio."""
+    if not disponible() or not re.fullmatch(r'[1-9][0-9]{5,7}', str(registro_digital)):
+        return []
+    ids = list(_por_registro.get(int(registro_digital)) or [])
+    if not ids:
+        return []
+    with _candado:
+        filas = _db.execute(
+            "SELECT rowid, json FROM docs WHERE rowid IN (%s)" % ','.join('?' * len(ids)),
+            ids).fetchall()
+    por_id = dict(filas)
+    return [json.loads(por_id[i]) for i in ids if i in por_id]
+
+
 # ---- Presentación ----
 
 AVISO = (
@@ -718,9 +750,14 @@ def formatear_busqueda(resultados: list[dict], consulta: str, motivo: str,
     return "\n".join(L)
 
 
-def formatear_tesis(r: dict, motivo: str) -> str:
+def formatear_tesis(r: dict, motivo: str | None = None) -> str:
     g = r.get("gaceta") or {}
-    L = [aviso(motivo), "", r.get("rubro") or "", "",
+    origen = aviso(motivo) if motivo else (
+        "ACERVO DE KRITERIUS — texto completo consultado directamente en el repositorio "
+        "permanente del servidor, sin consultar portales externos. Procede de la Gaceta "
+        f"oficial y las fichas semanales conservadas ({cobertura()}). "
+        "Se conserva la fecha de la fuente; no certifica cambios posteriores de vigencia jurídica.")
+    L = [origen, "", r.get("rubro") or "", "",
          r.get("organo") or "",
          f"{_tipo_largo(r)} {r.get('clave')} · {_epoca_larga(r.get('epoca'))}",
          _localizacion(r)]

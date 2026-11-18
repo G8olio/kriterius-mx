@@ -25,8 +25,12 @@ Desde el 3 de septiembre de 2026 Imperva rechaza a los clientes automatizados en
 `sjf2.scjn.gob.mx`. La Corte publica los mismos documentos en su programa de datos
 abiertos, el [Repositorio de la SCJN](https://bicentenario.scjn.gob.mx/repositorio-scjn),
 con manual para programadores, el mismo registro digital y una huella SHA-256 por
-documento. Cuando sjf2 no contesta, las tools del Semanario lo consultan antes de caer al
-acervo de la Gaceta, y la respuesta dice de dónde salió. El conector se presenta ahí con
+documento. Las búsquedas consultan ese repositorio cuando sjf2 no contesta y, después,
+el acervo de Kriterius. Para entregar textos completos, `ver_tesis` consulta primero
+el **acervo permanente propio**, por clave o registro digital documentado. Una tesis
+presente en Kriterius se sirve sin peticiones externas. Solo una tesis ausente requiere
+consultar las fuentes oficiales. La respuesta conserva procedencia, fecha y texto
+íntegro; la Gaceta no permite inventar registros digitales. El conector se presenta con
 su propio User-Agent. El Repositorio también es la fuente de las sentencias del SIJ:
 expediente, ponente, fecha, resolutivos y votación de los 106 mil asuntos resueltos por la
 SCJN, publicados o no en el Semanario. Detalle del contrato en `repositorio_scjn.py`.
@@ -63,16 +67,22 @@ no levantan el bloqueo por sí solos.
 
 ### El TEPJF no se consulta: se sirve
 
-Es la única fuente que no sale a la red. Su API ignora el parámetro de búsqueda y devuelve
+Las consultas electorales se resuelven desde el acervo propio, sin salir a la red.
+Su API ignora el parámetro de búsqueda y devuelve
 siempre el corpus entero —11.7 MB entre jurisprudencias y tesis—, y su host está detrás de
 un bot manager, así que consultarla en vivo sería bajar todo en cada búsqueda y ganarse un
 bloqueo por IP. En vez de eso, el corpus completo (2 078 criterios, 1997 a la fecha) vive
-en `kriterius_datos/tepjf.jsonl`, versionado en el repo, y se indexa en **SQLite FTS5 en memoria** al
+en `kriterius_datos/tepjf.jsonl`, con corte documentado al **3 de septiembre de 2026**,
+versionado en el repo, y se indexa en **SQLite FTS5 en memoria** al
 arrancar: búsqueda con BM25 —pesando el rubro diez veces más que el texto— e insensible a
 acentos, en milisegundos y sin depender de que el portal esté vivo.
 
-`sincronizar_tepjf.py` lo regenera cada lunes desde GitHub Actions y abre un PR con el
-diff. Ahí es donde se ven, uno por uno, los criterios que dejaron de estar vigentes: de los
+`sincronizar_tepjf.py` intenta actualizarlo cada lunes desde GitHub Actions y abre un PR
+si obtiene datos completos. Un error de la fuente conserva el contenido y la fecha anteriores.
+La revisión del 18 de noviembre no pudo confirmar novedades posteriores al corte: API 503,
+filtros del portal sin conexión y sección del Semanario sin resultados. La compilación
+oficial consultada mantiene el corte de septiembre. El manifiesto `/datos/tepjf.json`
+expone esta limitación. En el acervo se ven los criterios que dejaron de estar vigentes: de los
 2 078, **576 ya no lo están**, y el conector los muestra en un bloque aparte con el motivo
 —sentencia, acuerdo general o reiteración— y el link al documento que los tumbó.
 

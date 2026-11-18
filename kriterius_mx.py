@@ -37,7 +37,8 @@ import tepjf
 
 # Única fuente del número de versión. server_http.py la importa de aquí para que
 # /salud y estado_conector no puedan volver a discrepar.
-VERSION = "2.15.1"
+VERSION = "2.16.0"
+POLITICA_TEXTOS_COMPLETOS = "acervo_propio_primero"
 
 BASE = "https://sjf2.scjn.gob.mx/services/sjftesismicroservice/api/public"
 BASE_EJEC = "https://sjf2.scjn.gob.mx/services/sjfejecutoriamicroservice/api/public"
@@ -560,12 +561,13 @@ async def _sjf_fetch(path: str, method: str = "GET", json_body: dict | None = No
 #
 # Desde el 3 de septiembre de 2026 sjf2.scjn.gob.mx está detrás de Imperva y
 # rechaza al servidor remoto. Antes que devolver "no se pudo", buscar_tesis,
-# ver_tesis e investigar_criterio caen al acervo construido de la Gaceta oficial
+# e investigar_criterio caen al acervo construido de la Gaceta oficial
 # (sjf_local.py) y lo dicen con todas sus letras.
 #
 # Reglas de la conmutación, en orden de importancia:
-#   1. El dato vivo SIEMPRE gana. Sin fallo del API, el acervo no se toca.
-#   2. Nunca se sirve el respaldo en silencio: toda salida empieza con el aviso
+#   1. Las búsquedas consultan el dato vivo. El texto completo de ver_tesis usa
+#      primero el acervo permanente propio, por clave o IUS documentado.
+#   2. Nunca se sirve el respaldo de búsqueda en silencio: empieza con el aviso
 #      "⚠ ACERVO LOCAL" y dice el motivo y hasta dónde llega el acervo.
 #   3. Si el acervo tampoco está, se devuelve el mensaje original del API. Un
 #      respaldo ausente no puede tapar el diagnóstico real.
@@ -1130,22 +1132,24 @@ async def ver_tesis(registro_digital: int | str) -> str:
     Args:
         registro_digital: Número de registro digital (IUS), p. ej. 2032415. También
             acepta la clave de la tesis —p. ej. "1a./J. 45/2026 (12a.)" o
-            "(IV Región)1o. J/1 A (12a.)"—; con la clave se resuelve también el
-            registro digital.
+            "(IV Región)1o. J/1 A (12a.)"—; el registro digital se incluye solo
+            cuando consta en la fuente conservada.
 
     Returns:
         Rubro, localización, clave, materias, texto completo, precedentes y huella
-        digital. Por registro se consulta primero una captura validada del portal
-        semanal, si existe, indicando su fecha y procedencia. Si el API del
-        Semanario no respondió, la tesis sale del Repositorio de
-        la SCJN (datos abiertos oficiales, mismo registro) y la respuesta lo dice; si
-        tampoco, del acervo local de la Gaceta, con aviso al principio.
+        digital cuando consta. Consulta primero el acervo permanente propio de
+        Kriterius, por clave o IUS documentado, sin peticiones externas y conservando
+        fuente y fecha. Solo si la tesis no está en el acervo consulta los servicios
+        oficiales de la SCJN. No inventa registros digitales ausentes en la Gaceta.
     """
     crudo = str(registro_digital).strip()
     if not crudo.isdigit():
-        # El API de sjf2 solo resuelve por registro digital. El Repositorio sí busca
-        # por clave, y de paso devuelve el registro, que la Gaceta no imprime: va
-        # antes que el acervo porque es dato vivo.
+        if _hay_respaldo():
+            hallazgos = sjf_local.obtener(crudo)
+            if hallazgos:
+                return ("\n\n" + "=" * 60 + "\n\n").join(
+                    sjf_local.formatear_tesis(h) for h in hallazgos[:3])
+        # Fuera del acervo, el Repositorio oficial permite resolver una clave.
         hallazgos_repo = await _repo_tesis_por_clave(crudo)
         if hallazgos_repo:
             origen = (f"Fuente de esta respuesta: Repositorio de la SCJN, datos abiertos "
@@ -1158,20 +1162,9 @@ async def ver_tesis(registro_digital: int | str) -> str:
                     f"encontró esa clave y el acervo local de la Gaceta no está disponible "
                     f"en este despliegue. Usa buscar_tesis para localizar la tesis y su "
                     f"registro digital.")
-        hallazgos = sjf_local.obtener(crudo)
-        if not hallazgos:
-            return (f"No se encontró la clave '{crudo}' en el acervo local de la "
-                    f"Gaceta ({sjf_local.cobertura()}). Revisa la clave —van con "
-                    f"su época entre paréntesis, p. ej. '1a./J. 45/2026 (12a.)'— o "
-                    f"usa buscar_tesis.")
-        motivo = ("la búsqueda fue por clave, el API del SJF solo resuelve por "
-                  "registro digital y el Repositorio de la SCJN no la entregó")
-        if len(hallazgos) == 1:
-            return sjf_local.formatear_tesis(hallazgos[0], motivo)
-        # La misma clave en dos libros: reimpresión o corrección de rubro. Se
-        # muestran las dos; quedarse con una sería decidir por el usuario.
-        partes = [sjf_local.formatear_tesis(h, motivo) for h in hallazgos[:3]]
-        return ("\n\n" + "=" * 60 + "\n\n").join(partes)
+        return (f"No se encontró la clave '{crudo}' en el acervo de Kriterius "
+                f"({sjf_local.cobertura()}) y el Repositorio de la SCJN no la entregó. "
+                "Revisa la clave con su época entre paréntesis o usa buscar_tesis.")
 
     # Capturas verificadas del portal semanal: no abren navegador ni hacen red
     # durante una consulta. Conservan la fecha de captura y el texto sin resumir.
@@ -1179,11 +1172,18 @@ async def ver_tesis(registro_digital: int | str) -> str:
     if capturada:
         p = capturada["_procedencia"]
         return _formatear_tesis_sjf(capturada,
+            f"ACERVO DE KRITERIUS — consulta directa, sin peticiones externas. "
             f"Fuente de esta respuesta: captura permanente del texto visible del portal semanal "
             f"oficial ({p['url']}), obtenida el {p['capturado_utc']}. "
             "El apartado TEXTO conserva también los precedentes y notas de la ficha. "
             "Es una copia fechada; revisa la fuente para modificaciones posteriores. "
             f"SHA-256 local del texto capturado (no firma de la SCJN): {p['sha256_texto_visible']}")
+
+    if _hay_respaldo():
+        hallazgos = sjf_local.obtener_registro(crudo)
+        if hallazgos:
+            return ("\n\n" + "=" * 60 + "\n\n").join(
+                sjf_local.formatear_tesis(h) for h in hallazgos[:3])
 
     # El API exige isSemanal=true para tesis del Semanario en curso y isSemanal=false
     # para las históricas; el valor equivocado devuelve 404. Se prueban ambos.
@@ -1220,9 +1220,9 @@ async def ver_tesis(registro_digital: int | str) -> str:
         # ofrecer el camino que sí existe, la clave.
         if _hay_respaldo():
             return (f"{bloqueo}\n\nEl Repositorio de la SCJN tampoco la entregó. Hay un "
-                    f"acervo local de la Gaceta oficial ({sjf_local.cobertura()}), pero no "
-                    f"se puede consultar por registro digital: la Gaceta impresa no lo "
-                    f"publica, solo la clave. Usa buscar_tesis con el tema —cae al acervo "
+                    f"acervo local de la Gaceta oficial ({sjf_local.cobertura()}), pero "
+                    f"no consta en él una correspondencia para este registro digital. "
+                    f"La Gaceta impresa no lo publica, solo la clave. Usa buscar_tesis con el tema —cae al acervo "
                     f"local automáticamente— y luego ver_tesis con la clave que aparezca, "
                     f"p. ej. ver_tesis(\"1a./J. 45/2026 (12a.)\").")
         return f"{bloqueo}\n\nEl Repositorio de la SCJN tampoco la entregó."
@@ -3687,7 +3687,8 @@ async def ver_tesis_tepjf(clave: str, tipo: str = "J") -> str:
         if parecidos:
             pista = "\n¿Alguno de estos?\n" + "\n".join(
                 f"- {p['tipo']} {p['clave']}: {p['rubro'][:100]}" for p in parecidos[:5])
-        return (f"No hay ningún criterio con la clave {clave} en el IUS Electoral. "
+        return (f"No hay ningún criterio con la clave {clave} en el acervo de Kriterius "
+                f"del IUS Electoral (corte {tepjf.meta().get('fecha_snapshot') or 'no documentado'}). "
                 f"Revisa el número (las tesis se numeran con romanos) y el año."
                 + pista)
     return tepjf.formatear_criterio(r)
@@ -3730,18 +3731,15 @@ _ARRANQUE = datetime.now()
 
 
 def _linea_estado_sjf_local() -> str:
-    """Qué respaldo hay para el SJF y hasta dónde llega. Con el API vivo esto es
-    informativo; con el API bloqueado es lo que el usuario necesita saber antes de
-    citar nada."""
+    """Cobertura y prioridad del acervo propio en este despliegue."""
     if not _hay_respaldo():
-        return ("SJF respaldo local: sin acervo (falta kriterius_datos/"
+        return ("SJF acervo propio: sin índice de Gacetas (falta kriterius_datos/"
                 "sjf_gaceta.jsonl.gz) — si el API se bloquea, buscar_tesis y "
-                "ver_tesis se quedan sin fuente")
+                "ver_tesis dependen de las capturas semanales disponibles")
     m = sjf_local.meta()
-    return (f"SJF respaldo local: {m.get('tesis', 0)} tesis de la Gaceta oficial "
-            f"(hasta {m.get('hasta', 'agosto de 2026')}), cobertura "
-            f"{m.get('cobertura_global_vs_indice', '?')} % contra el índice de cada "
-            f"libro — se usa SOLO si el API del SJF falla, y siempre avisando")
+    return (f"SJF acervo propio: {m.get('tesis', 0)} tesis; {sjf_local.cobertura()}. "
+            "Primera fuente de ver_tesis, sin red cuando consta la clave o el IUS. "
+            "Las búsquedas lo usan como respaldo si falla la fuente oficial.")
 
 
 def _linea_estado_tepjf() -> str:

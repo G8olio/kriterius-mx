@@ -12,7 +12,8 @@ Lo que se comprueba, en orden de importancia:
      "⚠ ACERVO LOCAL", dice el motivo y advierte de la vigencia. Si esta prueba
      se cae, el usuario está citando derecho de respaldo creyendo que consultó el
      SJF, que es el daño más caro que puede hacer este módulo.
-  3. El respaldo NO se usa con el API vivo: el dato vivo siempre gana.
+  3. Las búsquedas conservan la preferencia por el API vivo; ver_tesis usa primero
+     el acervo propio, indica la procedencia y no hace peticiones externas.
   4. Un registro digital no se resuelve desde el respaldo —la Gaceta no lo
      imprime— y en vez de inventarlo se explica el camino por clave.
   5. Sin acervo, la conmutación no tapa el diagnóstico: vuelve el mensaje del WAF.
@@ -137,14 +138,15 @@ comprobar("respeta el límite pedido", ri.count("PDF oficial:") <= 5, str(ri.cou
 print("\n— ver_tesis por clave —")
 _preparar(302)
 rc = corre(k.ver_tesis("(IV Región)1o. J/1 A (12a.)"))
-comprobar("resuelve la clave y avisa", rc.startswith("⚠ ACERVO LOCAL"), rc[:120])
+comprobar("resuelve la clave desde el acervo propio", rc.startswith("ACERVO DE KRITERIUS"), rc[:120])
+comprobar("no hizo peticiones externas para el texto propio", not VISITAS, str(VISITAS))
 comprobar("trae el rubro completo", "DERECHOS POR REVALIDACIÓN ANUAL" in rc)
 comprobar("trae texto, precedentes y cita",
           "TEXTO" in rc and "PRECEDENTES" in rc and "CITA" in rc)
 comprobar("la cita dice que el registro digital está pendiente",
           "Registro digital: pendiente" in rc)
 comprobar("la clave se acepta aunque venga con otro espaciado",
-          corre(k.ver_tesis("(IV Region)1o.J/1 A (12a.)")).startswith("⚠ ACERVO LOCAL"))
+          corre(k.ver_tesis("(IV Region)1o.J/1 A (12a.)")).startswith("ACERVO DE KRITERIUS"))
 rx = corre(k.ver_tesis("XX.9o.Z.999 Z (12a.)"))
 comprobar("una clave inexistente lo dice sin inventar",
           "No se encontró la clave" in rx, rx[:140])
@@ -186,8 +188,9 @@ comprobar("y recargar deja el respaldo listo otra vez",
 
 print("\n— Estado y diagnóstico —")
 e = corre(k.estado_conector())
-comprobar("estado_conector reporta el respaldo local", "SJF respaldo local:" in e, e[:400])
-comprobar("y dice hasta cuándo llega", "hasta" in e.split("SJF respaldo local:")[1][:200])
+comprobar("estado_conector reporta el acervo propio", "SJF acervo propio:" in e, e[:400])
+comprobar("y dice hasta cuándo llega", "hasta" in e.split("SJF acervo propio:")[1][:300])
+comprobar("declara la consulta directa de textos", "Primera fuente de ver_tesis" in e)
 
 print(f"\n{'TODO BIEN' if not fallos else f'{fallos} FALLA(S)'}")
 sys.exit(1 if fallos else 0)
