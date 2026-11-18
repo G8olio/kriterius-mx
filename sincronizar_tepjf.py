@@ -13,12 +13,9 @@ dos colecciones). "Buscar en vivo" sería bajar eso en cada consulta.
 
 Lo que hay que saber del API antes de tocar este archivo:
 
-  1. `elecciones2021.te.gob.mx` está detrás de Radware Bot Manager. Un cliente HTTP
-     pelón recibe un 302 a validate.perfdrive.com, o un JSON `{"_event_transid": …}`
-     que parece una respuesta pero no lo es; `_bloqueado()` distingue las tres
-     formas. Hacen falta dos cosas para que no bloquee: cabeceras de navegador
-     completas (User-Agent, Origin, Referer y las Sec-Fetch-*) y, sobre todo,
-     RITMO. Lo que lo enciende es la cadencia, no el volumen: ver `Fuente`.
+  1. La fuente puede responder con bloqueo o mantenimiento. Se usa identificación
+     estable de Kriterius; ante rechazo o contenido inesperado se detiene la corrida
+     y se conserva el acervo. No se reintentan retos ni se imita otro cliente.
 
   2. La vigencia no es un campo: viene como sufijo de la clave, y hay TRES motivos
      —Sentencia, Acuerdo General y Reiteración—, no dos. El motivo y el link al
@@ -57,20 +54,9 @@ import httpx
 
 API = "https://elecciones2021.te.gob.mx/APIIUS/api/"
 
-# Cabeceras de navegador completas. No es cosmética: sin Origin, Referer y las
-# Sec-Fetch-*, el bot manager contesta 302 a TODO. Con ellas, la mayoría pasa.
-HEADERS = {
-    "User-Agent": ("Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) "
-                   "AppleWebKit/537.36 (KHTML, like Gecko) "
-                   "Chrome/126.0.0.0 Safari/537.36"),
-    "Accept": "application/json, text/plain, */*",
-    "Accept-Language": "es-MX,es;q=0.9",
-    "Origin": "https://www.te.gob.mx",
-    "Referer": "https://www.te.gob.mx/ius2021/",
-    "Sec-Fetch-Mode": "cors",
-    "Sec-Fetch-Site": "same-site",
-    "Sec-Fetch-Dest": "empty",
-}
+# Identificación consistente; no declara ser Chrome ni simula su navegación.
+HEADERS = {"User-Agent": "KriteriusMX/2.15 (+https://kriterius.mx)",
+           "Accept": "application/json", "Accept-Language": "es-MX,es;q=0.9"}
 
 # Tope de seguridad: si el volcado trae menos de este porcentaje de lo que ya había
 # en el snapshot anterior, no se escribe nada. Un JSON truncado con HTTP 200 no
@@ -197,22 +183,12 @@ def _bloqueado(r: httpx.Response) -> bool:
     return False
 
 
+class FuenteNoDisponible(RuntimeError):
+    """Rechazo, formato inesperado o caída: no escribir un snapshot parcial."""
+
+
 class Fuente:
-    """Un solo proceso hablándole al TEPJF una vez por semana. No hace falta el
-    semáforo del servidor: hace falta ritmo.
-
-    Lo que dispara al bot manager no es el volumen, es la cadencia. Medido: tres
-    peticiones simultáneas sin pausa lo encienden en pocos minutos y a partir de
-    ahí bloquea casi todo (una corrida completa acumuló 9 223 bloqueos y solo
-    enriqueció 472 de 2 078 criterios); las mismas peticiones espaciadas pasan sin
-    una sola falla. De ahí las dos piezas de esta clase:
-
-      - una puerta que garantiza un intervalo mínimo ENTRE peticiones, compartida
-        por todas las tareas;
-      - un enfriamiento global cuando aparece un bloqueo: no reintenta solo quien
-        se topó con él, se frena todo el proceso. Sin eso, las demás tareas siguen
-        golpeando mientras una espera, y el bloqueo nunca se suelta.
-    """
+    """Consulta secuencial, limitada y con interrupción ante rechazo del portal."""
 
     def __init__(self, client: httpx.AsyncClient, intentos: int = 6,
                  pausa: float = 1.0, intervalo: float = 2.5):
@@ -239,23 +215,20 @@ class Fuente:
                             asyncio.get_running_loop().time() + segundos)
 
     async def traer(self, ruta: str, params: dict) -> object | None:
-        """Devuelve el JSON, o None si se agotaron los intentos. Nunca lanza: un
-        criterio que no se pudo enriquecer no debe tumbar la sincronización."""
-        espera = self.pausa
-        for intento in range(self.intentos):
-            await self._turno()
-            try:
-                r = await self.client.get(API + ruta, params=params)
-                if r.status_code == 500:
-                    return None          # el API dice "no existe", no "no puedo"
-                if not _bloqueado(r) and r.status_code == 200:
-                    return r.json()
-                self.bloqueos += 1
-                self._enfriar(espera)
-            except Exception:
-                self._enfriar(espera)
-            espera = min(espera * 2, 60)
-        return None
+        await self._turno()
+        try:
+            r = await self.client.get(API + ruta, params=params)
+        except httpx.HTTPError as exc:
+            raise FuenteNoDisponible("TEPJF no respondió; se conserva el acervo") from exc
+        if r.status_code != 200 or _bloqueado(r):
+            self.bloqueos += 1
+            raise FuenteNoDisponible(
+                f"TEPJF respondió HTTP {r.status_code} o contenido inesperado; "
+                "se detiene la corrida sin modificar el acervo")
+        try:
+            return r.json()
+        except ValueError as exc:
+            raise FuenteNoDisponible("TEPJF no devolvió JSON válido") from exc
 
 
 # ---- Los tres pasos de la descarga ----
@@ -543,8 +516,27 @@ async def sincronizar(args) -> int:
                   f"{int(UMBRAL_MERMA * 100)} %). No se escribe nada.", file=sys.stderr)
             return 2
 
+        previos = {(r['tipo'], r['clave']): r for r in anteriores}
+        actuales = {(r['tipo'], r['clave']) for r in registros}
+        ausentes = set(previos) - actuales
+        if ausentes:
+            print(f"ABORTA: {len(ausentes)} criterios anteriores no aparecen. "
+                  "Una ausencia del catálogo no autoriza borrar el acervo histórico.", file=sys.stderr)
+            return 2
+        pendientes = []
+        campos_catalogo = ('clave_cruda', 'rubro', 'texto', 'vigente', 'url_relacionada')
+        campos_detalle = ('precedentes', 'sentencias', 'aprobacion', 'publicacion',
+                          'notas', 'articulos', 'detalle_ok')
+        for r in registros:
+            previo = previos.get((r['tipo'], r['clave']))
+            if previo and previo.get('detalle_ok') and all(
+                    r.get(k) == previo.get(k) for k in campos_catalogo):
+                for k in campos_detalle:
+                    r[k] = previo.get(k)
+            else:
+                pendientes.append(r)
         if not args.sin_detalle:
-            pendientes = registros[:args.limite] if args.limite else registros
+            pendientes = pendientes[:args.limite] if args.limite else pendientes
             semaforo = asyncio.Semaphore(args.concurrencia)
             hechos = 0
 
@@ -576,6 +568,9 @@ async def sincronizar(args) -> int:
             for r in registros:
                 r["temas"] = previos.get(f"{r['tipo']}:{r['clave']}", [])
 
+    if not args.sin_detalle and any(not r.get('detalle_ok') for r in registros):
+        print("ABORTA: faltan detalles completos; se conserva el acervo anterior.", file=sys.stderr)
+        return 2
     registros.sort(key=_orden)
     escribir(registros, salida)
 
@@ -588,6 +583,8 @@ async def sincronizar(args) -> int:
         "no_vigentes": sum(1 for r in registros if not r["vigente"]),
         "sin_detalle": sum(1 for r in registros if not r["detalle_ok"]),
         "fuente": API,
+        "conservacion": "permanente",
+        "ultima_revision": {"fecha": date.today().isoformat(), "estado": "catalogo_sincronizado"},
     }
     Path(args.meta).write_text(
         json.dumps(meta, ensure_ascii=False, indent=2, sort_keys=True) + "\n",
@@ -614,14 +611,16 @@ def main() -> int:
     p.add_argument("--sin-detalle", action="store_true",
                    help="solo los volcados y los temas: 17 peticiones en vez de ~2 100")
     p.add_argument("--limite", type=int, default=0, help="enriquecer solo los primeros N (pruebas)")
-    p.add_argument("--concurrencia", type=int, default=2)
+    p.add_argument("--concurrencia", type=int, default=1)
     p.add_argument("--intervalo", type=float, default=2.5,
-                   help="segundos mínimos entre peticiones. Medido: a 1.2 s el bot "
-                        "manager bloquea ~40 %% de los detalles; a 2.5-3 s pasa todo. "
-                        "Bajarlo hace la corrida más lenta, no más rápida.")
-    p.add_argument("--intentos", type=int, default=8)
+                   help="segundos mínimos entre peticiones secuenciales")
+    p.add_argument("--intentos", type=int, default=1, help="compatibilidad; no se reintenta un rechazo")
     args = p.parse_args()
-    return asyncio.run(sincronizar(args))
+    try:
+        return asyncio.run(sincronizar(args))
+    except FuenteNoDisponible as exc:
+        print(str(exc), file=sys.stderr)
+        return 2
 
 
 if __name__ == "__main__":

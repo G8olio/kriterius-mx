@@ -41,6 +41,7 @@ Por eso el manifiesto es la verdad y la llave es la URL completa.
 from __future__ import annotations
 
 import argparse
+from collections import Counter
 import gzip
 import html
 import json
@@ -284,6 +285,8 @@ def procesar_libro(libro: dict, trabajo: Path, manifest_tmp: Path) -> dict:
         raise RuntimeError(f"extraer_tesis_gaceta falló: {ext.stdout[-800:]}\n{ext.stderr[-800:]}")
 
     meta = json.loads((salida / "sjf_gaceta.meta.json").read_text(encoding="utf-8"))
+    if not meta.get("tesis") or meta.get("rubros_discrepantes") or meta.get("libros_bajo_95"):
+        raise RuntimeError("Extracción incompleta o rubros discrepantes: revisar el PDF antes de publicar")
     meta["kb_pdf"] = kb
     meta["jsonl"] = salida / "sjf_gaceta.jsonl"
     return meta
@@ -333,15 +336,44 @@ def actualizar_meta(nuevos: list[dict], metas: list[dict], total_incremental: in
     # sobre el total de la semana pasada lo inflaría corrida tras corrida.
     base = int(m.get("tesis_base") or m.get("tesis") or 0)
     m["tesis_base"] = base
-    m["tesis"] = base + total_incremental
+    # El incremental reemplaza libros enteros del base, no se suma a ciegas.
+    import sjf_local
+    reemplazados = sjf_local._libros_en(NUEVOS)
+    por_epoca, libros, fechas = Counter(), set(), []
+    for path in (BASE, NUEVOS):
+        if not path.exists():
+            continue
+        with sjf_local._abrir_lineas(path) as stream:
+            for line in stream:
+                if not line.strip():
+                    continue
+                r = json.loads(line)
+                libro = sjf_local._libro_de(r)
+                if path == BASE and libro in reemplazados:
+                    continue
+                por_epoca[r.get("epoca", "")] += 1
+                libros.add((libro[1], libro[2], libro[3], libro[4]))
+                if r.get("publicacion_sjf"):
+                    fechas.append(r["publicacion_sjf"])
+    m["tesis"] = sum(por_epoca.values())
+    m["por_epoca"] = dict(sorted(por_epoca.items()))
+    m["libros"] = len(libros)
+    m["archivos_pdf"] = len(leer_manifest()[1])
+    if fechas:
+        m["publicacion_sjf_desde"], m["publicacion_sjf_hasta"] = min(fechas), max(fechas)
+    m["actualizado"] = time.strftime("%Y-%m-%d")
     m["incremental"] = {
         "archivo": NUEVOS.name,
         "tesis": total_incremental,
         "actualizado": time.strftime("%Y-%m-%d"),
         "libros": [f"{l['carpeta'].replace('-epoca', '')} Libro {l['libro']} "
                    f"({l['mes']} {l['anio']})" for l in nuevos],
-        "nota": "tesis = base + incremental. Si la Corte republicó un libro, el "
-                "total real es menor: el conteo bueno lo da el índice al cargar.",
+        "nota": "Los libros del incremental reemplazan a los del base; las capturas "
+                "semanales se incorporan además al índice permanente.",
+        "calidad_ultima_extraccion": [
+            {k: x[k] for k in ("archivo", "extraidas", "indice_entradas",
+                                "cobertura_archivo", "rubros_discrepantes") if k in x}
+            for meta in metas for x in meta.get("archivos_detalle", [])],
     }
     ultimo = max(nuevos, key=lambda l: (l["anio"], MESES.get(l["mes"], 0)))
     epoca = {"12a": "Duodécima", "11a": "Undécima"}.get(

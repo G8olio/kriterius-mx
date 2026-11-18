@@ -37,7 +37,7 @@ import tepjf
 
 # Única fuente del número de versión. server_http.py la importa de aquí para que
 # /salud y estado_conector no puedan volver a discrepar.
-VERSION = "2.14.0"
+VERSION = "2.15.0"
 
 BASE = "https://sjf2.scjn.gob.mx/services/sjftesismicroservice/api/public"
 BASE_EJEC = "https://sjf2.scjn.gob.mx/services/sjfejecutoriamicroservice/api/public"
@@ -1179,7 +1179,7 @@ async def ver_tesis(registro_digital: int | str) -> str:
     if capturada:
         p = capturada["_procedencia"]
         return _formatear_tesis_sjf(capturada,
-            f"Fuente de esta respuesta: captura del texto visible del portal semanal "
+            f"Fuente de esta respuesta: captura permanente del texto visible del portal semanal "
             f"oficial ({p['url']}), obtenida el {p['capturado_utc']}. "
             "El apartado TEXTO conserva también los precedentes y notas de la ficha. "
             "Es una copia fechada; revisa la fuente para modificaciones posteriores. "

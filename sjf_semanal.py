@@ -13,7 +13,6 @@ from pathlib import Path
 
 BASE = "https://sjfsemanal.scjn.gob.mx"
 MAX_BYTES = 2 * 1024 * 1024
-VIGENCIA = timedelta(days=30)
 DIRECTORIO_DISTRIBUIDO = Path(__file__).parent / "kriterius_datos" / "sjf_semanal"
 
 
@@ -111,8 +110,10 @@ def leer_captura(captura, registro, *, ahora=None):
         raise ValueError("Huella local incorrecta")
     captured = datetime.fromisoformat(p["capturado_utc"])
     now = ahora or datetime.now(timezone.utc)
-    if captured.tzinfo is None or not -timedelta(minutes=5) <= now - captured <= VIGENCIA:
-        raise ValueError("Captura vencida o fecha inválida")
+    # La antigüedad no invalida una fuente histórica. Conservar la fecha original
+    # permite distinguir la permanencia del documento de su vigencia jurídica.
+    if captured.tzinfo is None or captured > now + timedelta(minutes=5):
+        raise ValueError("Fecha de captura inválida")
     doc = interpretar(visible, registro)
     if captura["documento"] != doc:
         raise ValueError("Los campos no corresponden al texto conservado")
@@ -151,4 +152,32 @@ def manifiesto():
         if doc:
             p = doc['_procedencia']
             registros[registro] = {k: p[k] for k in ('url', 'capturado_utc', 'sha256_texto_visible')}
-    return {'schema': 1, 'total': len(registros), 'registros': registros}
+    return {'schema': 1, 'conservacion': 'permanente',
+            'total': len(registros), 'registros': registros}
+
+
+def para_acervo(doc):
+    """Adapta una ficha íntegra al índice común, sin inventar datos de Gaceta."""
+    meses = ('enero febrero marzo abril mayo junio julio agosto septiembre '
+             'octubre noviembre diciembre').split()
+    fecha = re.search(r'(\d{1,2}) de ([a-z]+) de (\d{4})', doc['fechaPublicacion'], re.I)
+    if not fecha or fecha[2].lower() not in meses:
+        raise ValueError('Fecha de publicación no reconocida')
+    dia, mes, anio = int(fecha[1]), meses.index(fecha[2].lower()) + 1, int(fecha[3])
+    iso = datetime(anio, mes, dia).date().isoformat()
+    epocas = {'Novena Época': '9a', 'Décima Época': '10a',
+              'Undécima Época': '11a', 'Duodécima Época': '12a'}
+    if doc['epoca'] not in epocas:
+        raise ValueError('Época de captura no reconocida')
+    instancia = doc['instancia']
+    nivel = {'Plenos Regionales': 'PLENO_REGIONAL',
+             'Plenos de Circuito': 'PLENO_CIRCUITO'}.get(instancia, instancia)
+    return {'id': f"sjf-semanal-{doc['ius']}", 'registro_digital': doc['ius'],
+            'clave': doc['claveTesis'], 'rubro': doc['rubro'], 'texto': doc['texto'],
+            'tipo': 'J' if doc['tipoTesis'].lower() == 'jurisprudencia' else 'TA',
+            'epoca': epocas[doc['epoca']], 'organo': instancia, 'nivel': nivel,
+            'materias': doc['materias'], 'publicacion_sjf': iso,
+            'precedentes': [], 'notas': [doc['textoPublicacion']],
+            'gaceta': {'anio': anio}, 'fuente': 'portal_semanal',
+            'localizacion_oficial': doc['localizacion'],
+            'procedencia': doc['_procedencia']}

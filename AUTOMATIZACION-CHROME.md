@@ -59,7 +59,7 @@ No modificar `kriterius-mx-clon`: puede contener trabajo del usuario.
    incorporar` con los mismos catálogo, origen y datos. Ante una ficha inválida,
    no publicar el lote. Repetir `planificar`: debe devolver cero pendientes. Un
    segundo `incorporar` debe devolver `sin_cambios` y conservar las fechas.
-10. Ejecutar las pruebas de importación y consultar todos los documentos vigentes
+10. Ejecutar las pruebas de importación y consultar todos los documentos permanentes
     con `validar_semanal_distribuido.py`, que bloquea HTTP durante esas consultas.
     En el checkout exclusivo de main, ejecutar `publicar_semanal.py --repositorio
     <checkout>`. Solo permite fichas JSON validadas y no admite cambios de código,
@@ -95,10 +95,10 @@ descubrir otra publicación.
 
 El descubrimiento toma la última semana seleccionada por el portal. Si la Mac no
 ejecuta una semana, hay que detectar y registrar el hueco; la recuperación de
-semanas anteriores no está implementada en este helper. Las copias tienen vigencia
-de 30 días y el servicio deja de preferirlas al vencer; esto no es un acervo
-histórico perpetuo. Los tests históricos usan fechas controladas y la validación
-operativa excluye las copias caducadas, sin renovar sus fechas.
+semanas anteriores no está implementada en este helper. Las copias se conservan permanentemente y el índice común las incorpora a la búsqueda
+por rubro y texto, sin cambiar su fecha original. Conservación permanente no equivale
+a vigencia jurídica: las respuestas muestran la procedencia fechada y no garantizan
+que no haya modificaciones posteriores.
 
 El módulo existente `capturar_semanal.py` es la alternativa separada de Playwright
 headless, cuyos intentos remotos fueron bloqueados. No forma parte de esta
