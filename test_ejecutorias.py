@@ -270,7 +270,7 @@ _original = k._ejec_fetch
 # Caso histórico: isSemanal=true revienta con 500 y solo funciona con false
 _llamadas.clear()
 _simular({"isSemanal=true": RuntimeError("respondió 500"), "isSemanal=false": DETALLE})
-salida = asyncio.run(k.ver_ejecutoria(201074))
+salida = asyncio.run(k.ver_ejecutoria(fuente="oficial", registro_digital=201074))
 comprobar("prueba isSemanal=true antes que false", "isSemanal=true" in _llamadas[0], str(_llamadas[:2]))
 comprobar("un 500 no lo da por perdido, prueba el otro valor", len(_llamadas) == 2, str(len(_llamadas)))
 comprobar("identifica el asunto con su número",
@@ -282,7 +282,7 @@ comprobar("separa los criterios del cuerpo", "CRITERIOS QUE DEJÓ ESTA SENTENCIA
 comprobar("limpia el HTML de los criterios", "<p>" not in salida and "<br>" not in salida)
 comprobar("entrega el texto por partes", "TEXTO — parte 1 de" in salida, salida[:200])
 comprobar("dice cómo pedir la siguiente parte",
-          "ver_ejecutoria(201074, parte=2)" in salida)
+          "ver_ejecutoria(201074, fuente='oficial', parte=2)" in salida)
 comprobar("cierra con el link oficial",
           salida.rstrip().endswith("https://sjf2.scjn.gob.mx/detalle/ejecutoria/201074"))
 comprobar("no vuelca la sentencia entera", len(salida) < 25000, f"{len(salida)} caracteres")
@@ -290,7 +290,7 @@ comprobar("no vuelca la sentencia entera", len(salida) < 25000, f"{len(salida)} 
 # Caso del Semanario en curso: funciona a la primera y trae tesis derivadas
 _llamadas.clear()
 _simular({"isSemanal=true": DETALLE_SEMANAL})
-salida2 = asyncio.run(k.ver_ejecutoria(34143))
+salida2 = asyncio.run(k.ver_ejecutoria(fuente="oficial", registro_digital=34143))
 comprobar("si el primer intento sirve, no hace el segundo", len(_llamadas) == 1, str(_llamadas))
 comprobar("traduce el id de sala cuando no hay instancia", "Órgano: Pleno" in salida2)
 comprobar("enlaza las tesis derivadas",
@@ -298,19 +298,19 @@ comprobar("enlaza las tesis derivadas",
 
 # Búsqueda de un término dentro de la sentencia
 _simular({"isSemanal=false": DETALLE, "isSemanal=true": RuntimeError("respondió 500")})
-salida3 = asyncio.run(k.ver_ejecutoria(201074, buscar_en_texto="interes legitimo"))
+salida3 = asyncio.run(k.ver_ejecutoria(fuente="oficial", registro_digital=201074, buscar_en_texto="interes legitimo"))
 comprobar("devuelve coincidencias en vez de una parte",
           "COINCIDENCIAS DE 'interes legitimo'" in salida3 and "TEXTO — parte" not in salida3)
 comprobar("las coincidencias conservan los acentos del original",
           "interés legítimo" in salida3)
 
-salida4 = asyncio.run(k.ver_ejecutoria(201074, buscar_en_texto="usucapión"))
+salida4 = asyncio.run(k.ver_ejecutoria(fuente="oficial", registro_digital=201074, buscar_en_texto="usucapión"))
 comprobar("avisa cuando el término no aparece",
           "no aparece en el cuerpo" in salida4 and "parte=1" in salida4)
 
 # Registro que no existe en ninguna de las dos colecciones
 _simular({})
-salida5 = asyncio.run(k.ver_ejecutoria(999999999))
+salida5 = asyncio.run(k.ver_ejecutoria(fuente="oficial", registro_digital=999999999))
 comprobar("explica el fallo con los dos intentos",
           "No se encontró la ejecutoria" in salida5 and "isSemanal=true" in salida5
           and "isSemanal=false" in salida5, salida5[:200])

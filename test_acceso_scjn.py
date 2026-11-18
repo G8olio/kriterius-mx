@@ -109,7 +109,7 @@ class AccesoSCJN(unittest.IsolatedAsyncioTestCase):
         with patch.object(k, "_repo_documento", return_value=None), \
              patch.object(k, "_hay_respaldo", return_value=False), \
              patch.object(k.httpx, "AsyncClient", side_effect=AssertionError("red inesperada")):
-            for resultado in (await k.ver_tesis(2012594), await k.ver_ejecutoria(201074)):
+            for resultado in (await k.ver_tesis(2012594), await k.ver_ejecutoria(fuente="oficial", registro_digital=201074)):
                 self.assertIn("Consulta en pausa", resultado)
                 self.assertNotIn("No se encontró", resultado)
         self.assertEqual(len(k._PETICIONES), 0)
@@ -118,7 +118,7 @@ class AccesoSCJN(unittest.IsolatedAsyncioTestCase):
         k._poner_pausa("sjf:ejecutorias:POST", 300, 403, "verificación pendiente")
         with patch.object(k, "_repo_ejecutorias_busqueda", return_value=None), \
              patch.object(k.httpx, "AsyncClient", side_effect=AssertionError("red inesperada")):
-            resultado = await k.buscar_ejecutorias("amparo")
+            resultado = await k.buscar_ejecutorias(fuente="oficial", consulta="amparo")
         self.assertIn("Consulta en pausa", resultado)
         self.assertEqual(len(k._PETICIONES), 0)
 

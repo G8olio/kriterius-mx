@@ -8,7 +8,7 @@ RUN pip install --no-cache-dir -r requirements.txt
 
 # Los archivos del servidor. Si se agrega otro módulo, va aquí también: lo que no
 # se copia no existe dentro del contenedor y el arranque truena en el import.
-COPY kriterius_mx.py server_http.py uso.py tepjf.py sjf_local.py sjf_semanal.py repositorio_scjn.py ./
+COPY kriterius_mx.py server_http.py uso.py tepjf.py sjf_local.py sjf_semanal.py repositorio_scjn.py ejecutorias_local.py ./
 
 # Los datos locales: el snapshot del IUS Electoral (la fuente TEPJF entera) y el
 # acervo de la Gaceta del SJF (primera fuente de ver_tesis y respaldo de las búsquedas
@@ -26,6 +26,7 @@ COPY kriterius_datos/ kriterius_datos/
 # si sirve, y si no se declara sin respaldo, pero nunca intenta reconstruirlo.
 ENV KRITERIUS_CACHE_DIR=/app/cache
 RUN python -c "import sjf_local, sys; n = sjf_local.cargar(); print(f'índice FTS del SJF: {n} tesis'); sys.exit(0 if n > 30000 else 1)"
+RUN python -m ejecutorias_local
 
 # El cinturón va DESPUÉS de construir, no antes. Puesto arriba del RUN —como estaba
 # en la 2.11.1— el propio build se rehusaba a construir el índice, devolvía 0 tesis
