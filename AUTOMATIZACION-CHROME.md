@@ -110,15 +110,24 @@ Las capturas importadas no caducan. Validar su procedencia e integridad al impor
 conservar su fecha real y comprobar que el índice común las encuentre. El manifiesto
 `/datos/sjf_gaceta.json` expone `capturas_permanentes`, `publicaciones_semanales` y
 `semanas_pendientes`; no confundir la última fecha disponible con cobertura continua.
-Al 18 de noviembre de 2026 falta comprobar el 6 de noviembre; las Gacetas llegan al
-30 de octubre y el lote del 13 de noviembre contiene 30 fichas.
+Al 18 de noviembre de 2026 se recuperaron las 28 fichas del 6 de noviembre usando
+el selector visible de semanas. Las Gacetas llegan al 30 de octubre y el lote del
+13 de noviembre contiene 30 fichas: 58 capturas permanentes en total. El importador
+compara fechas reales, por lo que acepta el mismo día escrito como 6 o 06.
 
 Revisar además el resultado de Sincronizar TEPJF y su manifiesto `/datos/tepjf.json`.
 Los criterios electorales, incluidos los no vigentes, se conservan permanentemente.
 La API anterior devolvió 503 el 18 de noviembre y el portal actual
 https://sicje.te.gob.mx/IUSE/ mostró error de conexión. La compilación oficial
 https://www.te.gob.mx/iuse_old2025/media/compilacion/compilacion2.htm indicaba corte
-al 3 de septiembre. No cambiar `fecha_snapshot` por la fecha del intento fallido.
+al 3 de septiembre. En la segunda revisión con Chrome se contrastaron sus 1502
+claves vigentes con el acervo: ninguna faltante ni extra; los 26 textos de 2026
+coincidieron completos. Hay 12 diferencias de texto y 2 de rubro en criterios
+antiguos, registradas en `tepjf.meta.json`, que requieren contraste antes de
+sustituir contenido. El portal actual cargó 1502 vigentes, pero las consultas de
+Todas y de 2026 terminaron en error de conexión. No se ha confirmado de manera
+exhaustiva el catálogo posterior al corte.
+No cambiar `fecha_snapshot` por la fecha del intento fallido.
 Ante rechazo, conservar los datos y registrar la actualización pendiente. No inferir
 bajas por ausencia del catálogo ni declarar que no hubo publicaciones nuevas.
 

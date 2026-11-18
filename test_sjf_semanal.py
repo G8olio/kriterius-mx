@@ -42,6 +42,20 @@ class Fichas(unittest.TestCase):
         with self.assertRaises(ValueError):
             s.interpretar(VISIBLE.replace("Publicación: Viernes 13", "Publicación: Viernes 20"), 2032910)
 
+    def test_dia_con_cero_inicial_conserva_fecha_original(self):
+        raw = VISIBLE.replace('Publicación: Viernes 13', 'Publicación: Viernes 6').replace(
+            'Esta tesis se publicó el viernes 13', 'Esta tesis se publicó el viernes 06')
+        doc = s.leer_captura(s.empaquetar(raw, 2032910), 2032910)
+        self.assertIn('Viernes 6 de noviembre', doc['fechaPublicacion'])
+        self.assertIn('viernes 06 de noviembre', doc['textoPublicacion'])
+        self.assertEqual(s.para_acervo(doc)['publicacion_sjf'], '2026-11-06')
+        with self.assertRaises(ValueError):
+            s.interpretar(raw.replace('viernes 06', 'viernes 07'), 2032910)
+
+    def test_rechaza_fecha_imposible_aunque_coincida(self):
+        with self.assertRaises(ValueError):
+            s.interpretar(VISIBLE.replace('13 de noviembre', '31 de noviembre'), 2032910)
+
     def test_rechaza_falta_metadata(self):
         with self.assertRaises(ValueError):
             s.interpretar(VISIBLE.replace("Instancia: Pleno", ""), 2032910)

@@ -1,8 +1,10 @@
 name: Validar capturas asistidas sin consultas judiciales
 on:
   workflow_dispatch:
+  pull_request:
+    branches: [main]
   push:
-    branches: [main, feat/acervo-permanente-20261118]
+    branches: [main]
     paths:
       - 'sjf_semanal.py'
       - 'sjf_local.py'

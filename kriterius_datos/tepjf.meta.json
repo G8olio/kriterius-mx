@@ -14,6 +14,91 @@
     "catalogo_actual": "https://sicje.te.gob.mx/IUSE/",
     "compilacion": "https://www.te.gob.mx/iuse_old2025/media/compilacion/compilacion2.htm",
     "fecha_compilacion_observada": "2026-09-03",
-    "resultado": "El API anterior devolvió HTTP 503. El portal actual mostró error de conexión. La compilación oficial visible indica 3 de septiembre de 2026; no se confirmó el catálogo completo posterior al corte. Se conservan los 2078 criterios y su vigencia documentada, sin actualizar artificialmente la fecha del contenido."
+    "resultado": "El portal actual cargó 1502 criterios vigentes y la jurisprudencia 10/2026 como primera ficha; las consultas Todas y año 2026 terminaron con error de conexión. La compilación oficial con corte al 3 de septiembre fue contrastada: coinciden las 1502 claves vigentes y los 26 textos de 2026. No se confirmó exhaustivamente el catálogo posterior al corte. Se conservan los 2078 criterios y sus fechas originales.",
+    "fecha_hora": "2026-11-18T19:09:33.075158+00:00",
+    "contraste_compilacion": {
+      "corte_compilacion": "2026-09-03",
+      "vigentes_oficiales": 1502,
+      "vigentes_locales": 1502,
+      "faltantes": [],
+      "extras": [],
+      "rubros_distintos": [
+        [
+          "T",
+          "XXV/2014"
+        ],
+        [
+          "T",
+          "XIII/2002"
+        ]
+      ],
+      "textos_completos_coincidentes": 1490,
+      "textos_por_revisar": [
+        {
+          "tipo": "J",
+          "clave": "11/2016",
+          "longitud": 1220
+        },
+        {
+          "tipo": "J",
+          "clave": "10/2016",
+          "longitud": 1602
+        },
+        {
+          "tipo": "J",
+          "clave": "25/2015",
+          "longitud": 1319
+        },
+        {
+          "tipo": "J",
+          "clave": "17/2015",
+          "longitud": 1077
+        },
+        {
+          "tipo": "J",
+          "clave": "7/2015",
+          "longitud": 1548
+        },
+        {
+          "tipo": "J",
+          "clave": "9/2014",
+          "longitud": 1448
+        },
+        {
+          "tipo": "J",
+          "clave": "1/2014",
+          "longitud": 1753
+        },
+        {
+          "tipo": "J",
+          "clave": "32/2012",
+          "longitud": 952
+        },
+        {
+          "tipo": "T",
+          "clave": "LVII/2016",
+          "longitud": 1313
+        },
+        {
+          "tipo": "T",
+          "clave": "XVII/2016",
+          "longitud": 1155
+        },
+        {
+          "tipo": "T",
+          "clave": "LXXV/2002",
+          "longitud": 5109
+        },
+        {
+          "tipo": "T",
+          "clave": "XLI/1998",
+          "longitud": 1805
+        }
+      ],
+      "criterios_2026": 26,
+      "textos_2026_coincidentes": 26,
+      "metodo": "Claves: años de dos dígitos y sufijos de sala normalizados. Texto y rubro: comparación sin espacios, puntuación ni acentos; no sustituye revisión de discrepancias."
+    },
+    "sha256_texto_visible_compilacion": "56c626ff95f04e98cc7c1b44564e7a6e75a0785509e80991b3f13e0dc2d69cf0"
   }
 }

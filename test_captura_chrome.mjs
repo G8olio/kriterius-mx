@@ -33,3 +33,25 @@ test('sin permiso VPN no llega a goto',async()=>{
   await assert.rejects(capturarFicha(tab,{href:'/detalle/tesis/2032910',texto:'Registro digital: 2032910'},tmpdir(),'/permiso-inexistente'));
   assert.equal(navegaciones,0);
 });
+
+test('carga tardía se lee sin volver a navegar y conserva controles de integridad',async()=>{
+  const fixture=JSON.parse(await readFile(new URL('./kriterius_datos/sjf_semanal/2032910.json',import.meta.url)));
+  for(const visible of [fixture.texto_visible,'Request unsuccessful',fixture.texto_visible.replaceAll('2032910','2032921'),fixture.texto_visible.split('Esta tesis se publicó')[0]]) {
+    const dir=await mkdtemp(join(tmpdir(),'chrome-carga-'));
+    let navegaciones=0;
+    try {
+      const now=Date.now(),file=join(dir,'permiso.json');
+      await writeFile(file,JSON.stringify({verificado:true,paso:'2032910',emitido_utc:new Date(now).toISOString(),vence_utc:new Date(now+30000).toISOString()}));
+      const tab={goto:async()=>{navegaciones++;},url:async()=>fixture.procedencia.url,playwright:{
+        domSnapshot:async()=>'',
+        getByText:()=>({filter:()=>({waitFor:async()=>{throw new Error('Playwright selector deadline exceeded');}})}),
+        locator:()=>({innerText:async()=>visible})}};
+      const run=capturarFicha(tab,{href:'/detalle/tesis/2032910',texto:'Registro digital: 2032910'},dir,file);
+      if(visible===fixture.texto_visible) {
+        await run;
+        assert.equal(await readFile(join(dir,'2032910.txt'),'utf8'),visible);
+      } else await assert.rejects(run);
+      assert.equal(navegaciones,1);
+    } finally {await rm(dir,{recursive:true,force:true});}
+  }
+});
