@@ -84,13 +84,14 @@ class Importacion(unittest.TestCase):
         with self.assertRaises(ValueError):
             i.tabla_repositorio(path)
 
-    def test_no_renueva_capturas_vencidas(self):
+    def test_importa_capturas_antiguas_sin_renovar_fecha(self):
         p = self.origen / "2032910.meta.json"
         meta = json.loads(p.read_text())
         meta["capturado_utc"] = "2026-10-01T00:00:00+00:00"
         p.write_text(json.dumps(meta))
-        with self.assertRaisesRegex(ValueError, "vencida"):
-            self.importar()
+        self.importar()
+        guardada = json.loads((self.salida / "2032910.json").read_text())
+        self.assertEqual(guardada['procedencia']['capturado_utc'], meta['capturado_utc'])
 
 
 if __name__ == "__main__":

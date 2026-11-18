@@ -6,5 +6,14 @@
   "jurisprudencias": 766,
   "no_vigentes": 576,
   "sin_detalle": 0,
-  "tesis": 1312
+  "tesis": 1312,
+  "conservacion": "permanente",
+  "ultima_revision": {
+    "fecha": "2026-11-18",
+    "estado": "actualizacion_no_confirmada",
+    "catalogo_actual": "https://sicje.te.gob.mx/IUSE/",
+    "compilacion": "https://www.te.gob.mx/iuse_old2025/media/compilacion/compilacion2.htm",
+    "fecha_compilacion_observada": "2026-09-03",
+    "resultado": "El API anterior devolvió HTTP 503. El portal actual mostró error de conexión. La compilación oficial visible indica 3 de septiembre de 2026; no se confirmó el catálogo completo posterior al corte. Se conservan los 2078 criterios y su vigencia documentada, sin actualizar artificialmente la fecha del contenido."
+  }
 }

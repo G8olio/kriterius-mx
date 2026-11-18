@@ -36,7 +36,7 @@ from pathlib import Path
 RUTA_DATOS = Path(__file__).parent / "kriterius_datos" / "tepjf.jsonl"
 RUTA_META = Path(__file__).parent / "kriterius_datos" / "tepjf.meta.json"
 
-IUS_URL = "https://www.te.gob.mx/ius2021/#/"
+IUS_URL = "https://sicje.te.gob.mx/IUSE/"
 TRIBUNAL = "Tribunal Electoral del Poder Judicial de la Federación"
 
 # Cuántos resultados se toman por relevancia BM25 antes de aplicar la prelación.
@@ -271,11 +271,9 @@ def _sala(r: dict) -> str:
 
 
 def liga(r: dict) -> str:
-    """El IUS Electoral no publica un permalink por criterio en su documentación,
-    pero sus propias notas de vigencia enlazan así (`…/ius2021/#/7-2026`), que es
-    lo más cercano a un link verificable. Si la aplicación abriera en su pantalla
-    inicial, la clave que va junto al link es lo que hay que buscar ahí."""
-    return IUS_URL + r["clave"].replace("/", "-")
+    """Portal observado actualmente. Buscar la clave indicada junto al enlace;
+    no reutilizar rutas internas del portal anterior en la aplicación nueva."""
+    return IUS_URL
 
 
 def estado(r: dict) -> str:
@@ -317,12 +315,20 @@ def linea(r: dict, n: int, extracto: str = "") -> list[str]:
     return L
 
 
+def cobertura() -> str:
+    asegurar()
+    fecha = _meta.get('fecha_snapshot') or 'no documentada'
+    return (f"Acervo permanente TEPJF. Fecha del catálogo: {fecha}. "
+            "El estado de vigencia corresponde a ese corte; conservar el documento "
+            "no confirma su vigencia actual ni la ausencia de publicaciones posteriores.")
+
+
 def formatear_busqueda(resultados: list[dict], encabezado: str,
                        pagina: int = 1, por_pagina: int = 10) -> str:
     """Los resultados de una página, con los no vigentes en un bloque aparte al
     final: mezclarlos con los vigentes es cómo se acaba citando derecho muerto."""
     if not resultados:
-        return (f"{encabezado}\nSin resultados. Prueba con menos palabras, con "
+        return (f"{encabezado}\n{cobertura()}\nSin resultados. Prueba con menos palabras, con "
                 f"sinónimos, o usa temas_tepjf para ver por dónde entrar.")
     total = len(resultados)
     paginas = max(1, (total + por_pagina - 1) // por_pagina)
@@ -331,7 +337,7 @@ def formatear_busqueda(resultados: list[dict], encabezado: str,
     vigentes = [r for r in trozo if r["vigente"]]
     caidos = [r for r in trozo if not r["vigente"]]
 
-    L = [f"{encabezado} — {total} resultado(s), página {pagina} de {paginas}", ""]
+    L = [f"{encabezado} — {total} resultado(s), página {pagina} de {paginas}", cobertura(), ""]
     # La numeración sigue de página en página: en la 2 el primero es el 11, no el 1.
     # Así "el número 15" quiere decir lo mismo en toda la conversación.
     n = (pagina - 1) * por_pagina
@@ -394,5 +400,5 @@ def formatear_criterio(r: dict) -> str:
         L += ["", "(El detalle de este criterio —precedentes, aprobación, publicación "
               "y artículos— no se pudo bajar en la última sincronización. El texto y "
               "la vigencia sí están completos.)"]
-    L += ["", "CITA", cita(r)]
+    L += ["", "CITA", cita(r), "", cobertura()]
     return "\n".join(L)

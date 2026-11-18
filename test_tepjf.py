@@ -137,7 +137,7 @@ comprobar("11/2018 existe", r is not None)
 if r:
     texto = tepjf.formatear_criterio(r)
     for esperado in ["PARIDAD", "Jurisprudencia 11/2018", "Época", "TEXTO", "CITA",
-                     "te.gob.mx/ius2021"]:
+                     "sicje.te.gob.mx/IUSE/"]:
         comprobar(f"la ficha incluye {esperado!r}", esperado in texto)
 comprobar("obtener encuentra aunque el tipo venga equivocado",
           tepjf.obtener("11/2018", "T") is not None)

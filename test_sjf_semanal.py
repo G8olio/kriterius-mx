@@ -60,10 +60,13 @@ class Fichas(unittest.TestCase):
             with self.subTest(alteracion=alteracion), self.assertRaises(ValueError):
                 s.leer_captura(c, 2032910)
 
-    def test_vencida_y_fecha_futura(self):
+    def test_conserva_capturas_antiguas_y_rechaza_futuras(self):
         now = datetime.now(timezone.utc)
-        for offset in [timedelta(days=-31), timedelta(hours=1)]:
-            c = s.empaquetar(VISIBLE, 2032910, capturado=(now + offset).isoformat())
+        old = (now - timedelta(days=3650)).isoformat()
+        c = s.empaquetar(VISIBLE, 2032910, capturado=old)
+        self.assertEqual(s.leer_captura(c, 2032910, ahora=now)['_procedencia']['capturado_utc'], old)
+        for fecha in [(now + timedelta(hours=1)).isoformat(), now.replace(tzinfo=None).isoformat()]:
+            c = s.empaquetar(VISIBLE, 2032910, capturado=fecha)
             with self.assertRaises(ValueError):
                 s.leer_captura(c, 2032910, ahora=now)
 

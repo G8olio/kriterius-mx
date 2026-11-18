@@ -236,7 +236,7 @@ def es_encabezado(linea: str) -> bool:
 # 11a temprana) el rubro y el texto van en el MISMO parrafo. El corte que sirve
 # para las dos: el rubro es el prefijo en versalitas y termina en el ultimo
 # punto antes de la primera minuscula real del bloque.
-_RE_MASCARA = re.compile(r"\(\d{1,2}a\.\)|\b\d{1,3}[oa]\.|\b[a-z]\)|\bJ/")
+_RE_MASCARA = re.compile(r"\(\d{1,2}a\.\)|\b\d{1,3}[oa]\.|\b[a-z]\)|\bJ/|\bSARS-CoV-2\b")
 
 def arranca_versalitas(linea: str) -> bool:
     cabeza = _RE_MASCARA.sub("", linea.strip())[:20]
@@ -393,7 +393,7 @@ def formatear_texto(t: str) -> str:
         t = t.replace(" " + etq, "\n" + etq)
     return t.strip()
 
-def _bloque(lineas, paginas, i_clave, datos_clave, limite, i_fin):
+def _bloque(lineas, paginas, i_clave, datos_clave, limite, i_fin, rubro_indice=""):
     """Arma una tesis alrededor de su clave. i_fin es la linea del marcador de
     cierre cuando existe (>=2013); None en la maqueta antigua."""
     # organo: versalitas inmediatamente arriba de la clave. Pleno y Salas no lo
@@ -406,6 +406,11 @@ def _bloque(lineas, paginas, i_clave, datos_clave, limite, i_fin):
         j -= 1
     ini_organo = j + 1
     organo = unir(lineas[ini_organo:fin_organo + 1]) if ini_organo <= fin_organo else ""
+    # Las versalitas de este encabezado salen espaciadas en los PDF de 2026.
+    # Reconocer la secuencia exacta de letras, sin inferir el órgano por la clave.
+    prefijo = "PLENO REGIONAL EN MATERIAS PENAL Y DE TRABAJO DE LA REGIÓN"
+    patron = r"\s*".join(re.escape(c) for c in prefijo if c != " ")
+    organo = re.sub(r"^" + patron + r"(?=\s|$)", prefijo, organo)
     organo_inferido = False
     if not organo or not RE_ORGANO.search(organo):
         organo = organo_por_clave(datos_clave["clave"]) or ""
@@ -435,6 +440,7 @@ def _bloque(lineas, paginas, i_clave, datos_clave, limite, i_fin):
     # rubro: se prueban los candidatos en orden; el primero con corte valido gana,
     # asi los encabezados de seccion se descartan solos.
     ini_rubro = rubro = texto = None
+    candidato = None
     j = frontera
     while j < ini_organo:
         l = lineas[j].strip()
@@ -442,11 +448,17 @@ def _bloque(lineas, paginas, i_clave, datos_clave, limite, i_fin):
             r_, t_ = partir_rubro(unir(lineas[j:ini_organo]))
             t_ = t_.lstrip("-–— ")
             if 20 <= len(r_) <= 900 and r_.endswith(".") and len(t_) >= 100:
-                ini_rubro, rubro, texto = j, r_, t_
-                break
+                if candidato is None:
+                    candidato = (j, r_, t_)
+                if not rubro_indice or plegar(rubro_indice) in plegar(r_):
+                    ini_rubro, rubro, texto = j, r_, t_
+                    break
             if ini_rubro is None and r_:
                 ini_rubro, rubro, texto = j, r_, t_
         j += 1
+    else:
+        if candidato is not None:
+            ini_rubro, rubro, texto = candidato
     if ini_rubro is None:
         return None, "sin_rubro", None
 
@@ -571,7 +583,8 @@ def extraer_de_libro(ruta: Path, epoca_dir: str):
         if i_clave is None:
             rechazos.append(rechazo(ruta, lineas, i_fin, "sin_clave"))
             continue
-        t, motivo, rubro = _bloque(lineas, paginas, i_clave, datos, limite, i_fin)
+        t, motivo, rubro = _bloque(lineas, paginas, i_clave, datos, limite, i_fin,
+                                  indice.get(datos['clave'], (None, ''))[1])
         if t is None:
             r = rechazo(ruta, lineas, i_clave, motivo, datos["clave"])
             r["rubro_parcial"] = (rubro or "")[:200]
@@ -610,7 +623,8 @@ def extraer_de_libro(ruta: Path, epoca_dir: str):
             if b < i:
                 limite = max(limite, b)
         anterior = i
-        t, motivo, rubro = _bloque(lineas, paginas, i, datos, limite, None)
+        t, motivo, rubro = _bloque(lineas, paginas, i, datos, limite, None,
+                                  indice.get(datos['clave'], (None, ''))[1])
         if t is None:
             if motivo not in ("sin_rubro", "texto_corto"):
                 r = rechazo(ruta, lineas, i, motivo, datos["clave"])

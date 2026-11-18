@@ -1,7 +1,6 @@
-"""Comprueba las capturas vigentes instaladas y guarda sus respuestas, sin red.
+"""Comprueba las capturas permanentes instaladas y guarda sus respuestas, sin red.
 
-Ejecutar desde fuera del checkout tras instalar la rueda. No modifica el reloj:
-si las capturas vencen, esta comprobación operativa falla y pide renovarlas.
+Ejecutar desde fuera del checkout tras instalar la rueda. No modifica el reloj ni renueva las fechas originales de captura.
 """
 import asyncio
 import hashlib
@@ -19,21 +18,17 @@ import sjf_semanal as s
 async def validar(destino):
     destino.mkdir(parents=True, exist_ok=True)
     fichas = []
-    registros, caducadas = [], []
+    registros = []
     for path in sorted(s.DIRECTORIO_DISTRIBUIDO.glob('*.json')):
         captura = json.loads(path.read_text(encoding='utf-8'))
-        fecha = datetime.fromisoformat(captura['procedencia']['capturado_utc'])
-        if fecha.tzinfo and datetime.now(timezone.utc) - fecha > s.VIGENCIA:
-            caducadas.append(path.stem)
-            continue
         s.leer_captura(captura, path.stem)
         registros.append(int(path.stem))
-    assert registros, 'No hay capturas vigentes en la distribución'
+    assert registros, 'No hay capturas permanentes en la distribución'
     # Bloquea cualquier petición HTTP saliente durante las consultas del core.
     with patch.object(httpx.AsyncClient, "send", side_effect=AssertionError("Red no permitida")) as red:
         for ius in registros:
             doc = s.obtener(ius)
-            assert doc, f"Captura ausente, inválida o vencida: {ius}"
+            assert doc, f"Captura ausente o inválida: {ius}"
             respuesta = await k.ver_tesis(ius)
             for campo in ("rubro", "texto", "textoPublicacion"):
                 assert doc[campo] in respuesta, f"Falta {campo} completo: {ius}"
@@ -43,7 +38,7 @@ async def validar(destino):
                           "caracteres_texto": len(doc["texto"]),
                           "sha256_respuesta": hashlib.sha256(respuesta.encode()).hexdigest()})
         red.assert_not_called()
-    report = {"version": k.VERSION, "consultas_http": 0, "fichas": fichas, "caducadas": caducadas,
+    report = {"version": k.VERSION, "consultas_http": 0, "fichas": fichas, "conservacion": "permanente",
               "alcance": "Consulta de ver_tesis sin red; no prueba adquisición ni despliegue en producción"}
     (destino / "informe.json").write_text(json.dumps(report, ensure_ascii=False, indent=2) + "\n")
     print(json.dumps(report, ensure_ascii=False, indent=2))

@@ -171,8 +171,11 @@ def _libro_de(r: dict) -> tuple:
     """La identidad del libro del que salió una tesis. La Décima Época tiene dos
     series con la misma numeración, así que la serie va en la llave."""
     g = r.get("gaceta") or {}
+    # Un libro de una época nueva puede republicar criterios de la anterior.
+    # Año y mes evitan confundir, por ejemplo, Libro 12 de 2026 con el de 2022.
     return (r.get("epoca") or "", g.get("serie") or "",
-            str(g.get("libro_cita") or g.get("libro") or ""))
+            str(g.get("libro_cita") or g.get("libro") or ""),
+            str(g.get("anio") or ""), (g.get("mes") or "").lower())
 
 
 def _libros_en(ruta: Path) -> set[tuple]:
@@ -188,23 +191,33 @@ def _libros_en(ruta: Path) -> set[tuple]:
     return libros
 
 
-def _construir(db: sqlite3.Connection, rutas: Path | list[Path]) -> int:
-    """Arma el índice con el acervo base y, si existe, el incremental de la
-    sincronización semanal. Un libro que venga en el incremental se toma SOLO de
-    ahí: es la versión corregida que publicó la Corte."""
+def _identidad(r):
+    # Una clave puede tener correcciones/reimpresiones. Solo fusionar cuando
+    # coinciden época, clave y rubro; nunca borrar una versión de rubro distinto.
+    return (r.get("epoca"), _plegar(r.get("clave")), _plegar(r.get("rubro")))
+
+
+def _construir(db: sqlite3.Connection, rutas: Path | list[Path], capturas=()) -> int:
+    """Índice permanente de Gacetas y fichas semanales con procedencia íntegra."""
+    import sjf_semanal
     if isinstance(rutas, (str, Path)):
         rutas = [Path(rutas)]
     rutas = [Path(x) for x in rutas]
-    # Los libros que reemplaza el incremental. Se calcula sobre todo lo que no es
-    # el primer archivo, o sea sobre los incrementales.
-    reemplazados: set[tuple] = set()
+    reemplazados = set()
     for extra in rutas[1:]:
         reemplazados |= _libros_en(extra)
-
+    semanales = {}
+    for path in capturas:
+        raw = json.loads(path.read_text(encoding="utf-8"))
+        doc = sjf_semanal.para_acervo(sjf_semanal.leer_captura(raw, path.stem))
+        key = _identidad(doc)
+        if key in semanales:
+            raise ValueError("Dos registros semanales comparten identidad bibliográfica")
+        semanales[key] = doc
     db.executescript(_ESQUEMA)
-    n = 0
-    omitidas = 0
-    lote_f, lote_d = [], []
+    n, omitidas = 0, 0
+    lote_f, lote_d, incorporadas = [], [], set()
+    por_epoca = {}
 
     def vaciar():
         if lote_f:
@@ -215,52 +228,73 @@ def _construir(db: sqlite3.Connection, rutas: Path | list[Path]) -> int:
             lote_f.clear()
             lote_d.clear()
 
+    def agregar(r):
+        nonlocal n
+        n += 1
+        epoca = r.get('epoca') or ''
+        por_epoca[epoca] = por_epoca.get(epoca, 0) + 1
+        lote_f.append((n, r.get("rubro") or "", r.get("texto") or "",
+            " ".join(r.get("precedentes") or []), r.get("clave") or "",
+            r.get("tipo") or "TA", rango_organo(r.get("clave") or "", r.get("nivel") or ""),
+            _epoca_n(r.get("epoca") or ""), int((r.get("gaceta") or {}).get("anio") or 0)))
+        lote_d.append((n, json.dumps(r, ensure_ascii=False)))
+        if len(lote_f) >= 2000:
+            vaciar()
+
     for i, ruta in enumerate(rutas):
         if not ruta.exists():
             continue
-        es_base = i == 0
         with _abrir_lineas(ruta) as f:
             for linea in f:
-                linea = linea.strip()
-                if not linea:
+                if not linea.strip():
                     continue
                 r = json.loads(linea)
-                if es_base and reemplazados and _libro_de(r) in reemplazados:
+                if i == 0 and _libro_de(r) in reemplazados:
                     omitidas += 1
                     continue
-                n += 1
-                lote_f.append((
-                    n, r.get("rubro") or "", r.get("texto") or "",
-                    " ".join(r.get("precedentes") or []),
-                    r.get("clave") or "", r.get("tipo") or "TA",
-                    rango_organo(r.get("clave") or "", r.get("nivel") or ""),
-                    _epoca_n(r.get("epoca") or ""),
-                    int((r.get("gaceta") or {}).get("anio") or 0),
-                ))
-                lote_d.append((n, linea))
-                if len(lote_f) >= 2000:
-                    vaciar()
+                key = _identidad(r)
+                if key in semanales:
+                    if key in incorporadas:
+                        continue
+                    # Conservar la localización de Gaceta junto a la ficha íntegra.
+                    r = {**r, **semanales[key], "gaceta": r.get("gaceta", {}),
+                         "fuente_pdf": r.get("fuente_pdf"),
+                         "organo": r.get("organo") or semanales[key].get("organo")}
+                    incorporadas.add(key)
+                agregar(r)
+    for key, doc in semanales.items():
+        if key not in incorporadas:
+            agregar(doc)
     vaciar()
     db.execute("INSERT INTO info(k,v) VALUES('tesis',?)", (str(n),))
-    db.execute("INSERT INTO info(k,v) VALUES('origen',?)", (_huella(rutas),))
+    db.execute("INSERT INTO info(k,v) VALUES('origen',?)", (_huella(rutas + list(capturas)),))
     db.execute("INSERT INTO info(k,v) VALUES('reemplazadas',?)", (str(omitidas),))
+    db.execute("INSERT INTO info(k,v) VALUES('semanales',?)", (str(len(semanales)),))
+    fechas = sorted({d['publicacion_sjf'] for d in semanales.values()})
+    db.execute("INSERT INTO info(k,v) VALUES('semanal_fechas',?)", (json.dumps(fechas),))
+    db.execute("INSERT INTO info(k,v) VALUES('por_epoca',?)", (json.dumps(por_epoca),))
     db.commit()
     return n
 
 
 def _huella(rutas: Path | list[Path]) -> str:
-    """Nombre, tamaño y fecha de cada JSONL de origen. Los tres, no solo la fecha: al
-    copiar un repo todos los archivos quedan con la misma marca de tiempo, y un
-    índice construido de otro archivo pasaría por bueno. Y todos los archivos, no
-    solo el base: si llega un incremental nuevo el índice tiene que reconstruirse."""
+    """Huella del contenido, estable entre build y runtime de Docker.
+
+    Las capas de una imagen pueden redondear mtimes al exportarse. El contenido
+    detecta además correcciones del mismo tamaño hechas dentro del mismo segundo.
+    """
+    import hashlib
     if isinstance(rutas, (str, Path)):
         rutas = [Path(rutas)]
-    partes = []
+    partes = ["esquema-acervo-3"]
     for ruta in (Path(x) for x in rutas):
         if not ruta.exists():
             continue
-        st = ruta.stat()
-        partes.append(f"{ruta.name}|{st.st_size}|{int(st.st_mtime)}")
+        digest = hashlib.sha256()
+        with ruta.open('rb') as stream:
+            for bloque in iter(lambda: stream.read(1 << 20), b''):
+                digest.update(bloque)
+        partes.append(f"{ruta.name}|{digest.hexdigest()}")
     return "+".join(partes)
 
 
@@ -283,7 +317,8 @@ def _indice_sirve(ruta_indice: Path, rutas_datos: Path | list[Path]) -> bool:
 
 def cargar(ruta: Path | str = RUTA_DATOS, ruta_meta: Path | str = RUTA_META,
            ruta_indice: Path | str | None = RUTA_INDICE,
-           ruta_nuevos: Path | str | None = RUTA_NUEVOS) -> int:
+           ruta_nuevos: Path | str | None = RUTA_NUEVOS,
+           ruta_semanal: Path | str | None = None) -> int:
     """Deja el acervo listo para consultar. Devuelve cuántas tesis hay, o 0 si no
     se pudo: nunca lanza.
 
@@ -296,9 +331,13 @@ def cargar(ruta: Path | str = RUTA_DATOS, ruta_meta: Path | str = RUTA_META,
     rutas = [ruta]
     if ruta_nuevos is not None and Path(ruta_nuevos).exists():
         rutas.append(Path(ruta_nuevos))
+    if ruta_semanal is None and ruta.resolve() == RUTA_DATOS.resolve():
+        ruta_semanal = _DIR / "sjf_semanal"
+    capturas = sorted(Path(ruta_semanal).glob("*.json")) if ruta_semanal else []
+    origenes = rutas + capturas
     db = None
     try:
-        if ruta_indice is not None and _indice_sirve(Path(ruta_indice), rutas):
+        if ruta_indice is not None and _indice_sirve(Path(ruta_indice), origenes):
             db = sqlite3.connect(f"file:{Path(ruta_indice)}?mode=ro", uri=True,
                                  check_same_thread=False)
             n = int(db.execute("SELECT v FROM info WHERE k='tesis'").fetchone()[0])
@@ -316,7 +355,7 @@ def cargar(ruta: Path | str = RUTA_DATOS, ruta_meta: Path | str = RUTA_META,
                     Path(ruta_indice).parent.mkdir(parents=True, exist_ok=True)
                     tmp.unlink(missing_ok=True)
                     constructor = sqlite3.connect(tmp)
-                    n = _construir(constructor, rutas)
+                    n = _construir(constructor, rutas, capturas)
                     constructor.close()
                     # Publicación atómica: nadie ve un índice a medio construir.
                     tmp.replace(Path(ruta_indice))
@@ -330,7 +369,7 @@ def cargar(ruta: Path | str = RUTA_DATOS, ruta_meta: Path | str = RUTA_META,
                     db, n = None, 0
             if db is None:
                 db = sqlite3.connect(":memory:", check_same_thread=False)
-                n = _construir(db, rutas)
+                n = _construir(db, rutas, capturas)
     except Exception:
         try:
             if db is not None:
@@ -361,6 +400,21 @@ def cargar(ruta: Path | str = RUTA_DATOS, ruta_meta: Path | str = RUTA_META,
                      json.loads(RUTA_REGISTROS.read_text(encoding="utf-8")).items()}
     except Exception:
         registros = {}
+    info = dict(db.execute("SELECT k,v FROM info"))
+    meta['por_epoca'] = json.loads(info.get('por_epoca', '{}'))
+    meta["capturas_permanentes"] = int(info.get("semanales", 0))
+    meta["publicaciones_semanales"] = json.loads(info.get("semanal_fechas", "[]"))
+    meta["conservacion_capturas"] = "permanente"
+    from datetime import date, timedelta
+    semanas = set(meta["publicaciones_semanales"])
+    meta["semanas_pendientes"] = []
+    if semanas and meta.get('publicacion_sjf_hasta'):
+        inicio = date.fromisoformat(meta['publicacion_sjf_hasta']) + timedelta(days=1)
+        fin = date.fromisoformat(max(semanas))
+        while inicio < fin:
+            if inicio.weekday() == 4 and inicio.isoformat() not in semanas:
+                meta['semanas_pendientes'].append(inicio.isoformat())
+            inicio += timedelta(days=1)
     with _candado:
         _db, _por_clave, _meta, _n, _registros = db, por_clave, meta, n, registros
     return n
@@ -396,7 +450,12 @@ def cobertura() -> str:
     """Una línea con hasta dónde llega el acervo, para los avisos."""
     m = meta()
     return (f"{m.get('tesis', 0)} tesis, de {m.get('desde', 'la Novena Época')} "
-            f"a {m.get('hasta', 'agosto de 2026')}")
+            f"a {m.get('hasta', 'fecha no disponible')}"
+            + (f"; {m['capturas_permanentes']} fichas semanales permanentes, "
+               f"publicaciones: {', '.join(m['publicaciones_semanales'])}"
+               if m.get('capturas_permanentes') else "")
+            + (f"; semanas pendientes de comprobar: {', '.join(m['semanas_pendientes'])}"
+               if m.get('semanas_pendientes') else ""))
 
 
 # ---- Búsqueda ----
@@ -519,10 +578,10 @@ def obtener(clave: str) -> list[dict]:
 
 AVISO = (
     "⚠ ACERVO LOCAL — el API del SJF no respondió: {motivo}. Estos resultados salen "
-    "de la Gaceta oficial del Semanario que publica la propia Corte ({cobertura}). "
-    "NO incluyen tesis publicadas después ni cambios de vigencia posteriores, y no "
-    "traen registro digital porque la Gaceta no lo imprime. Verifícalos en {host} "
-    "cuando el API vuelva."
+    "de la Gaceta oficial y las fichas semanales conservadas ({cobertura}). "
+    "La conservación es permanente; no certifica cambios posteriores de vigencia jurídica. "
+    "Las fichas semanales incluyen registro digital; las extraídas solo de Gaceta "
+    "no traen registro digital porque la Gaceta no lo imprime. Fuente oficial: {host}."
 )
 
 
@@ -542,6 +601,8 @@ def _publicacion(r: dict) -> str:
 
 
 def _localizacion(r: dict) -> str:
+    if r.get("fuente") == "portal_semanal" and not (r.get("gaceta") or {}).get("libro"):
+        return r["localizacion_oficial"]
     g = r.get("gaceta") or {}
     unidad = "Tomo" if (r.get("epoca") or "").startswith("9") else "Libro"
     partes = [_publicacion(r)]
@@ -590,7 +651,7 @@ def cita(r: dict) -> str:
               f"{_tipo_largo(r)} {r.get('clave')}",
               _epoca_larga(r.get("epoca")), _localizacion(r)]
     L = [", ".join(p for p in partes if p) + "."]
-    pdf = r.get("fuente_pdf") or GACETA_URL
+    pdf = r.get("fuente_pdf") or (r.get("procedencia") or {}).get("url") or GACETA_URL
     pag = (r.get("gaceta") or {}).get("pagina")
     linea = f"Fuente: {pdf}" + (f" (p. {pag})" if pag else "")
     if r.get("publicacion_sjf"):
@@ -602,6 +663,10 @@ def cita(r: dict) -> str:
     else:
         L.append(f"Registro digital: pendiente (la Gaceta impresa no lo publica); "
                  f"verificar en {SJF_HOST}")
+    if r.get("procedencia"):
+        p = r["procedencia"]
+        L.append(f"Captura permanente: {p['url']} — obtenida el {p['capturado_utc']}. "
+                 f"SHA-256 local: {p['sha256_texto_visible']}. No certifica vigencia actual.")
     return "\n".join(L)
 
 
@@ -631,7 +696,7 @@ def formatear_busqueda(resultados: list[dict], consulta: str, motivo: str,
     if not resultados:
         return (f"{encabezado}\n\nSin resultados en el acervo local para "
                 f"'{consulta}'. Prueba con menos palabras o con sinónimos. "
-                f"Recuerda que el acervo llega hasta agosto de 2026 y no trae "
+                f"Cobertura: {cobertura()}; no trae "
                 f"tesis anteriores a octubre de 2011.")
     total = len(resultados)
     paginas = max(1, (total + por_pagina - 1) // por_pagina)

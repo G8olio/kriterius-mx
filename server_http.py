@@ -138,6 +138,15 @@ async def manifiesto_semanal(request):
     return JSONResponse(sjf_semanal.manifiesto(), headers={"Cache-Control": "no-store"})
 
 
+@mcp.custom_route("/datos/tepjf.json", methods=["GET"])
+async def manifiesto_tepjf(request):
+    """Cobertura y huella del acervo electoral servido por este despliegue."""
+    return JSONResponse({"meta": tepjf.meta(),
+                         "sha256": _sha256_archivo(tepjf.RUTA_DATOS),
+                         "conservacion": "permanente"},
+                        headers={"Cache-Control": "no-store"})
+
+
 @mcp.custom_route("/datos/sjf_gaceta_nuevos.jsonl", methods=["GET"])
 async def acervo_sjf_nuevos(request):
     """Las Gacetas que la sincronización semanal le agregó al acervo. Mismo trato que

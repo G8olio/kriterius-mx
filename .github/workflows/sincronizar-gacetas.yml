@@ -52,7 +52,7 @@ jobs:
         run: |
           sudo apt-get update -qq
           sudo apt-get install -y -qq poppler-utils
-          pip install httpx==0.28.1
+          pip install -r requirements.txt
           pdftotext -v
 
       # Se prueba el parseo del portal ANTES de salir a la red: si el fixture ya no

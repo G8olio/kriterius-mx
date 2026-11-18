@@ -2,9 +2,18 @@ name: Validar capturas asistidas sin consultas judiciales
 on:
   workflow_dispatch:
   push:
-    branches: [main, feat/scjn-semanal-captura-20261113]
+    branches: [main, feat/acervo-permanente-20261118]
     paths:
       - 'sjf_semanal.py'
+      - 'sjf_local.py'
+      - 'tepjf.py'
+      - 'server_http.py'
+      - 'sincronizar_*.py'
+      - 'gacetas/**'
+      - 'test_actualizacion_acervo.py'
+      - 'test_acervo_permanente.py'
+      - 'pyproject.toml'
+      - 'kriterius_datos/**'
       - 'importar_semanal.py'
       - 'flujo_semanal.py'
       - 'guardia_vpn.py'
@@ -28,7 +37,14 @@ jobs:
           python-version: '3.12'
       - run: pip install -r requirements.txt
       - name: Integridad e importación sin red
-        run: python -m unittest test_sjf_semanal test_capturar_semanal test_importar_semanal test_flujo_semanal test_publicar_semanal
+        run: python -m unittest test_sjf_semanal test_capturar_semanal test_importar_semanal test_flujo_semanal test_publicar_semanal test_acervo_permanente test_actualizacion_acervo
+      - name: Regresiones del acervo SCJN y TEPJF
+        run: |
+          python test_sjf_incremental.py
+          python test_sjf_respaldo.py
+          python test_sincronizar_gacetas.py
+          python test_tepjf.py
+          python test_sincronizar_tepjf.py
       - name: Control de Chrome y permisos de VPN sin red
         run: node --test test_captura_chrome.mjs
       - name: Construir e instalar distribución
@@ -36,9 +52,13 @@ jobs:
           python -m pip wheel --no-deps . -w "$RUNNER_TEMP/ruedas"
           python -m pip install --no-deps "$RUNNER_TEMP"/ruedas/*.whl
           cp validar_semanal_distribuido.py "$RUNNER_TEMP/validar_semanal_distribuido.py"
-      - name: Consultar las fichas vigentes desde el core instalado
+      - name: Consultar las fichas permanentes desde el core instalado
         working-directory: ${{ runner.temp }}
         run: python validar_semanal_distribuido.py respuestas
+      - name: Verificar la imagen de producción sin red judicial
+        run: |
+          docker build -t kriterius-acervo .
+          docker run --rm --network none kriterius-acervo python -c "import sjf_local, tepjf; n=sjf_local.cargar(); m=sjf_local.meta(); assert n > 34000; assert m['capturas_permanentes'] >= 30; assert tepjf.cargar() >= 2078; print(n, m['publicacion_sjf_hasta'])"
       - uses: actions/upload-artifact@v4
         with:
           name: respuestas-semanal-sin-red
