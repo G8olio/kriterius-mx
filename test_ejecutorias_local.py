@@ -123,6 +123,21 @@ class Consulta(unittest.TestCase):
             self.assertIn(d['id'],r)
             self.assertIn(self.docs[0]['id'],r)
 
+    def test_lectura_acotada_y_busqueda_con_acentos_entre_ventanas(self):
+        d=dict(self.docs[0])
+        d['texto']='á'*15994+' protección jurídica singular '+'ñ'*18000
+        d['sha256_texto']=hashlib.sha256(d['texto'].encode()).hexdigest()
+        self.repo.cerrar();corpus(self.data,[d])
+        with patch.object(e,'_repo',self.repo), \
+             patch.object(self.repo,'obtener',wraps=self.repo.obtener) as obtener, \
+             patch.object(self.repo,'leer_tramo',wraps=self.repo.leer_tramo) as leer:
+            for i,parte in enumerate(k._ejec_partir(d['texto']),1):
+                self.assertIn(parte,asyncio.run(k.ver_ejecutoria(d['id'],parte=i)))
+            r=asyncio.run(k.ver_ejecutoria(d['id'],buscar_en_texto='proteccion juridica singular'))
+            self.assertIn('protección jurídica singular',r)
+            self.assertTrue(all(c.kwargs.get('texto') is False for c in obtener.call_args_list))
+            self.assertTrue(all(c.args[2]-c.args[1]<=18400 for c in leer.call_args_list))
+
     def test_datos_alterados_no_se_sirven_y_runtime_no_reconstruye(self):
         self.repo.cerrar()
         p=self.data/'parte-001.jsonl.gz';p.write_bytes(p.read_bytes()+b'alterado')

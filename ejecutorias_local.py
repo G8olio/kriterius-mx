@@ -19,7 +19,18 @@ from pathlib import Path
 DATOS = Path(__file__).parent/'kriterius_datos'/'sjf_ejecutorias'
 INDICE = Path(os.environ.get('KRITERIUS_CACHE_DIR') or
               os.environ.get('XDG_CACHE_HOME') or Path.home()/'.cache')/'kriteriusmx'/'ejecutorias.fts.sqlite'
-ESQUEMA = 1
+ESQUEMA = 2
+
+
+def tramos(texto,tamano=12000):
+    limites=[];i=0
+    while i<len(texto):
+        fin=min(i+tamano,len(texto))
+        if fin<len(texto):
+            corte=texto.rfind('\n',i+int(tamano*.7),fin)
+            if corte>i:fin=corte
+        limites.append((i,fin));i=fin
+    return limites or [(0,0)]
 
 
 def sha256(path):
@@ -84,6 +95,8 @@ class Repositorio:
                             raise ValueError('Texto alterado: '+d['id'])
                         if not re.fullmatch(r'gaceta-ejec-[0-9a-f]{20}',d['id']):
                             raise ValueError('Identificador local inválido')
+                        d['_tramos']=tramos(texto)
+                        d['_caracteres']=len(texto)
                         cur=db.execute('INSERT INTO docs VALUES (?,?,?,?,?,?,?,?,?,?,?)',
                             (d['id'],d['asunto'],d['expediente'],d.get('organo') or '',d['epoca'],
                              d.get('publicacion_sjf') or '',int(d['gaceta']['anio']),
@@ -164,7 +177,7 @@ class Repositorio:
                 args+[por_pagina,(pagina-1)*por_pagina]).fetchall()
         return [{**json.loads(r['datos']),'extracto':r['extracto']} for r in rows],total
 
-    def obtener(self,identificador):
+    def obtener(self,identificador,texto=True):
         if not self.cargar():return []
         s=str(identificador).strip()
         if s.startswith('gaceta-ejec-'):campo,valor='id',s
@@ -179,8 +192,15 @@ class Repositorio:
             campo,valor='asunto_busqueda',plegar(s)
         with self.candado:
             # Un expediente puede corresponder a órganos o versiones diferentes.
-            rows=self.db.execute('SELECT datos,texto FROM docs WHERE '+campo+'=? ORDER BY fecha DESC,id',(valor,)).fetchall()
-        return [{**json.loads(r['datos']),'texto':r['texto']} for r in rows]
+            rows=self.db.execute('SELECT datos'+(',texto' if texto else '')+' FROM docs WHERE '+campo+'=? ORDER BY fecha DESC,id',(valor,)).fetchall()
+        return [{**json.loads(r['datos']),**({'texto':r['texto']} if texto else {})} for r in rows]
+
+    def leer_tramo(self,identificador,inicio,fin):
+        if not self.cargar():return ''
+        with self.candado:
+            row=self.db.execute('SELECT substr(texto,?,?) FROM docs WHERE id=?',
+                                (inicio+1,fin-inicio,identificador)).fetchone()
+        return row[0] if row else ''
 
 
 _repo=Repositorio()
@@ -189,7 +209,7 @@ _repo=Repositorio()
 def cargar():return _repo.cargar()
 def meta():return _repo.meta()
 def buscar(*args,**kwargs):return _repo.buscar(*args,**kwargs)
-def obtener(identificador):return _repo.obtener(identificador)
+def obtener(identificador,texto=True):return _repo.obtener(identificador,texto=texto)
 
 
 def cobertura():
@@ -226,17 +246,28 @@ def formatear_busqueda(rows,total,consulta,pagina):
 
 def formatear_detalle(d,parte=1,buscar_en_texto=None):
     # Reutilizar la paginación que ya conocen los clientes del conector.
-    from kriterius_mx import _ejec_partir,_ejec_coincidencias
-    partes=_ejec_partir(d['texto'])
-    n=min(max(1,int(parte)),len(partes))
+    from kriterius_mx import _ejec_coincidencias
+    limites=d['_tramos']
+    n=min(max(1,int(parte)),len(limites))
     out=['EJECUTORIA — ACERVO PERMANENTE DE KRITERIUS (sin consultas externas).',referencia(d),
          'SHA-256 del texto conservado: '+d['sha256_texto']]
     if buscar_en_texto:
-        extractos=_ejec_coincidencias(d['texto'],buscar_en_texto)
+        # Ventanas acotadas: el mapa de acentos de una resolución de millones de
+        # caracteres no debe consumir la RAM del contenedor para una coincidencia.
+        extractos=[]
+        for inicio in range(0,d['_caracteres'],16000):
+            bloque=_repo.leer_tramo(d['id'],max(0,inicio-1200),min(d['_caracteres'],inicio+17200))
+            for x in _ejec_coincidencias(bloque,buscar_en_texto):
+                if x not in extractos:extractos.append(x)
+            if len(extractos)>=8:break
+        extractos=extractos[:8]
         out.append(f"Coincidencias de {buscar_en_texto!r}: {len(extractos)}.")
         out.extend(extractos)
-    else:out.extend([f'TEXTO — parte {n} de {len(partes)} ({len(d["texto"])} caracteres en total):',partes[n-1]])
-    out.append(f"Lectura por partes: ver_ejecutoria('{d['id']}', parte=N), de 1 a {len(partes)}. No hay caducidad.")
+    else:
+        ini,fin=limites[n-1]
+        out.extend([f'TEXTO — parte {n} de {len(limites)} ({d["_caracteres"]} caracteres en total):',
+                    _repo.leer_tramo(d['id'],ini,fin).strip()])
+    out.append(f"Lectura por partes: ver_ejecutoria('{d['id']}', parte=N), de 1 a {len(limites)}. No hay caducidad.")
     out.append('Se conserva la versión publicada; no certifica modificaciones posteriores ni sustituye el expediente original.')
     return '\n\n'.join(out)
 

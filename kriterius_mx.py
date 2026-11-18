@@ -1586,7 +1586,7 @@ async def ver_ejecutoria(
     if fuente not in ('local','oficial'):
         return 'fuente debe ser local u oficial.'
     if fuente=='local':
-        rows=ejecutorias_local.obtener(registro_digital)
+        rows=ejecutorias_local.obtener(registro_digital,texto=False)
         if len(rows)==1:
             return ejecutorias_local.formatear_detalle(rows[0],parte,buscar_en_texto)
         if len(rows)>1:
