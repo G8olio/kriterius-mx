@@ -32,11 +32,12 @@ from mcp.server.transport_security import TransportSecuritySettings
 # tumbar el arranque aunque el archivo falte: `tepjf.cargar()` no lanza.
 import repositorio_scjn
 import sjf_local
+import sjf_semanal
 import tepjf
 
 # Única fuente del número de versión. server_http.py la importa de aquí para que
 # /salud y estado_conector no puedan volver a discrepar.
-VERSION = "2.13.2"
+VERSION = "2.14.0"
 
 BASE = "https://sjf2.scjn.gob.mx/services/sjftesismicroservice/api/public"
 BASE_EJEC = "https://sjf2.scjn.gob.mx/services/sjfejecutoriamicroservice/api/public"
@@ -1090,6 +1091,8 @@ def _formatear_tesis_sjf(d: dict, origen: str = "") -> str:
         partes += ["", "PRECEDENTES:", _strip_html(d.get("precedentes"))]
     if d.get("notasGenericas"):
         partes += ["", "NOTAS:", _strip_html(str(d.get("notasGenericas")))]
+    if d.get("textoPublicacion"):
+        partes += ["", "NOTA DE PUBLICACIÓN:", _strip_html(d["textoPublicacion"])]
     partes += ["", f"Fuente: {HOST}/detalle/tesis/{d.get('ius')}"]
     if d.get("huellaDigital"):
         partes.append(f"Huella digital (SHA-256): {d['huellaDigital']}")
@@ -1132,7 +1135,9 @@ async def ver_tesis(registro_digital: int | str) -> str:
 
     Returns:
         Rubro, localización, clave, materias, texto completo, precedentes y huella
-        digital. Si el API del Semanario no respondió, la tesis sale del Repositorio de
+        digital. Por registro se consulta primero una captura validada del portal
+        semanal, si existe, indicando su fecha y procedencia. Si el API del
+        Semanario no respondió, la tesis sale del Repositorio de
         la SCJN (datos abiertos oficiales, mismo registro) y la respuesta lo dice; si
         tampoco, del acervo local de la Gaceta, con aviso al principio.
     """
@@ -1167,6 +1172,18 @@ async def ver_tesis(registro_digital: int | str) -> str:
         # muestran las dos; quedarse con una sería decidir por el usuario.
         partes = [sjf_local.formatear_tesis(h, motivo) for h in hallazgos[:3]]
         return ("\n\n" + "=" * 60 + "\n\n").join(partes)
+
+    # Capturas verificadas del portal semanal: no abren navegador ni hacen red
+    # durante una consulta. Conservan la fecha de captura y el texto sin resumir.
+    capturada = sjf_semanal.obtener(crudo)
+    if capturada:
+        p = capturada["_procedencia"]
+        return _formatear_tesis_sjf(capturada,
+            f"Fuente de esta respuesta: captura del texto visible del portal semanal "
+            f"oficial ({p['url']}), obtenida el {p['capturado_utc']}. "
+            "El apartado TEXTO conserva también los precedentes y notas de la ficha. "
+            "Es una copia fechada; revisa la fuente para modificaciones posteriores. "
+            f"SHA-256 local del texto capturado (no firma de la SCJN): {p['sha256_texto_visible']}")
 
     # El API exige isSemanal=true para tesis del Semanario en curso y isSemanal=false
     # para las históricas; el valor equivocado devuelve 404. Se prueban ambos.

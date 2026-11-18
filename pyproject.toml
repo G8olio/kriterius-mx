@@ -38,7 +38,7 @@ Homepage = "https://kriterius.mx"
 [tool.setuptools]
 # Solo el core. `server_http.py` y `uso.py` son del servidor MCP y no tienen
 # por qué viajar a la app web.
-py-modules = ["kriterius_mx", "tepjf", "sjf_local", "repositorio_scjn"]
+py-modules = ["kriterius_mx", "tepjf", "sjf_local", "sjf_semanal", "repositorio_scjn"]
 # `kriterius_datos` es un paquete de verdad (con __init__.py) porque un proyecto de
 # py-modules no tiene dónde colgar datos: con la carpeta suelta, la rueda salía sin
 # el JSONL y el TEPJF quedaba apagado en la app web. Comprobado con `pip wheel`.
@@ -49,7 +49,7 @@ packages = ["kriterius_datos"]
 # nuevo le llega solo cuando ese SHA se actualiza.
 [tool.setuptools.package-data]
 kriterius_datos = ["tepjf.jsonl", "tepjf.meta.json",
-                   "sjf_gaceta.jsonl.gz", "sjf_gaceta.meta.json"]
+                   "sjf_gaceta.jsonl.gz", "sjf_gaceta.meta.json", "sjf_semanal/*.json"]
 
 [tool.setuptools.dynamic]
 version = { attr = "kriterius_mx.VERSION" }
