@@ -45,6 +45,8 @@ jobs:
         run: python -m unittest test_sjf_semanal test_capturar_semanal test_importar_semanal test_flujo_semanal test_publicar_semanal test_acervo_permanente test_actualizacion_acervo test_ejecutorias_local test_acceso_scjn test_tesis_local
       - name: Regresiones del acervo SCJN y TEPJF
         run: |
+          python test_sjf_local.py
+          python test_waf.py
           python test_sjf_incremental.py
           python test_sjf_respaldo.py
           python test_sincronizar_gacetas.py

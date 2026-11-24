@@ -105,8 +105,8 @@ if dorada:
     comprobar("la cita trae el PDF oficial con la página", ".pdf" in c and "(p. 682)" in c)
     comprobar("la fecha va en español, no en ISO",
               "14 de agosto de 2026" in c and "2026-08-14" not in c)
-    comprobar("declara el registro digital como pendiente, no lo inventa",
-              "Registro digital: pendiente" in c and "sjf2.scjn.gob.mx" in c)
+    comprobar("declara el IUS no documentado y ofrece la identidad local",
+              "Registro digital: no documentado" in c and dorada[0]["id"] in c)
     # Y en cuanto resolver_registros.py lo averigüe, la cita lleva el link canónico.
     S._registros[dorada[0]["id"]] = 2032415
     c2 = S.cita(dorada[0])
