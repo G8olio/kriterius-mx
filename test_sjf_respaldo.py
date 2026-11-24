@@ -102,7 +102,7 @@ comprobar("hay acervo local para respaldar", n > 30000, str(n))
 
 print("\n— buscar_tesis con el API bloqueado —")
 _preparar(302)
-r = corre(k.buscar_tesis("interés legítimo ambiental"))
+r = corre(k.buscar_tesis(fuente="oficial", incluir_texto=False, consulta="interés legítimo ambiental"))
 comprobar("responde con el aviso de acervo local", r.startswith("⚠ ACERVO LOCAL"), r[:120])
 comprobar("dice que fue el cortafuegos y con qué código",
           "cortafuegos" in r and "302" in r, r[:200])
@@ -118,11 +118,11 @@ comprobar("no reintentó la petición bloqueada",
           len([u for u in VISITAS if "/api/public" in u or "/tesis" in u]) <= 1, str(VISITAS))
 
 _preparar(403)
-r403 = corre(k.buscar_tesis("prisión preventiva oficiosa"))
+r403 = corre(k.buscar_tesis(fuente="oficial", incluir_texto=False, consulta="prisión preventiva oficiosa"))
 comprobar("también conmuta con 403", r403.startswith("⚠ ACERVO LOCAL") and "403" in r403)
 
 _preparar(302)
-rf = corre(k.buscar_tesis("expropiación", epocas=["12a"], tipo="jurisprudencia"))
+rf = corre(k.buscar_tesis(fuente="oficial", incluir_texto=False, consulta="expropiación", epocas=["12a"], tipo="jurisprudencia"))
 comprobar("respeta los filtros de época y tipo al conmutar",
           rf.startswith("⚠ ACERVO LOCAL")
           and ("Duodécima Época" in rf or "Sin resultados" in rf), rf[:160])
@@ -130,7 +130,7 @@ comprobar("respeta los filtros de época y tipo al conmutar",
 
 print("\n— investigar_criterio con el API bloqueado —")
 _preparar(302)
-ri = corre(k.investigar_criterio("interés legítimo", limite=5))
+ri = corre(k.investigar_criterio(fuente="oficial", incluir_texto=False, tema="interés legítimo", limite=5))
 comprobar("conmuta y avisa", ri.startswith("⚠ ACERVO LOCAL"), ri[:120])
 comprobar("respeta el límite pedido", ri.count("PDF oficial:") <= 5, str(ri.count("PDF oficial:")))
 
@@ -143,8 +143,8 @@ comprobar("no hizo peticiones externas para el texto propio", not VISITAS, str(V
 comprobar("trae el rubro completo", "DERECHOS POR REVALIDACIÓN ANUAL" in rc)
 comprobar("trae texto, precedentes y cita",
           "TEXTO" in rc and "PRECEDENTES" in rc and "CITA" in rc)
-comprobar("la cita dice que el registro digital está pendiente",
-          "Registro digital: pendiente" in rc)
+comprobar("la cita distingue IUS no documentado de texto disponible",
+          "Registro digital: no documentado" in rc and "ID local:" in rc)
 comprobar("la clave se acepta aunque venga con otro espaciado",
           corre(k.ver_tesis("(IV Region)1o.J/1 A (12a.)")).startswith("ACERVO DE KRITERIUS"))
 rx = corre(k.ver_tesis("XX.9o.Z.999 Z (12a.)"))
@@ -168,7 +168,7 @@ comprobar("dice que el Repositorio tampoco la entregó", "Repositorio" in rr, rr
 
 print("\n— Con el API vivo el respaldo no se toca —")
 _preparar(200, RESPUESTA_VIVA)
-rv = corre(k.buscar_tesis("interés legítimo"))
+rv = corre(k.buscar_tesis(fuente="oficial", incluir_texto=False, consulta="interés legítimo"))
 comprobar("responde el API, no el acervo", not rv.startswith("⚠ ACERVO LOCAL"), rv[:120])
 comprobar("y el contenido es el del API",
           "RUBRO QUE SOLO EXISTE EN EL API VIVO" in rv, rv[:200])
@@ -178,7 +178,7 @@ print("\n— Sin acervo, la conmutación no tapa el diagnóstico —")
 sjf_local.cargar("no_existe.jsonl.gz", "tampoco.json", None)
 sjf_local._INTENTADO = True   # que `asegurar` no lo vuelva a cargar solo
 _preparar(302)
-rs = corre(k.buscar_tesis("amparo"))
+rs = corre(k.buscar_tesis(fuente="oficial", incluir_texto=False, consulta="amparo"))
 comprobar("vuelve el mensaje del bloqueo, no un aviso vacío",
           not rs.startswith("⚠ ACERVO LOCAL") and "cortafuegos" in rs.lower(), rs[:180])
 sjf_local._INTENTADO = False

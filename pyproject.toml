@@ -49,7 +49,7 @@ packages = ["kriterius_datos"]
 # nuevo le llega solo cuando ese SHA se actualiza.
 [tool.setuptools.package-data]
 kriterius_datos = ["tepjf.jsonl", "tepjf.meta.json",
-                   "sjf_gaceta.jsonl.gz", "sjf_gaceta.meta.json", "sjf_gaceta_nuevos.jsonl", "sjf_semanal/*.json",
+                   "sjf_gaceta.jsonl.gz", "sjf_gaceta.meta.json", "sjf_gaceta.registros*.json", "sjf_gaceta_nuevos.jsonl", "sjf_semanal/*.json",
                    "sjf_ejecutorias/*.json", "sjf_ejecutorias/*.jsonl.gz"]
 
 [tool.setuptools.dynamic]

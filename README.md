@@ -25,12 +25,19 @@ Desde el 3 de septiembre de 2026 Imperva rechaza a los clientes automatizados en
 `sjf2.scjn.gob.mx`. La Corte publica los mismos documentos en su programa de datos
 abiertos, el [Repositorio de la SCJN](https://bicentenario.scjn.gob.mx/repositorio-scjn),
 con manual para programadores, el mismo registro digital y una huella SHA-256 por
-documento. Las búsquedas consultan ese repositorio cuando sjf2 no contesta y, después,
-el acervo de Kriterius. Para entregar textos completos, `ver_tesis` consulta primero
+documento. Desde 2.18.0, `buscar_tesis` e `investigar_criterio` consultan por defecto
+el acervo propio y devuelven clave, ID local, IUS documentado y texto íntegro con
+precedentes y procedencia. `incluir_texto=False` permite pedir resúmenes; las búsquedas
+externas se solicitan con `fuente="oficial"`. Para entregar textos completos, `ver_tesis` consulta primero
 el **acervo permanente propio**, por clave o registro digital documentado. Una tesis
 presente en Kriterius se sirve sin peticiones externas. Solo una tesis ausente requiere
 consultar las fuentes oficiales. La respuesta conserva procedencia, fecha y texto
-íntegro; la Gaceta no permite inventar registros digitales. El conector se presenta con
+íntegro; la Gaceta no permite inventar registros digitales. El ID local permite leer
+una ficha aunque todavía no tenga IUS documentado. El mapa `sjf_gaceta.registros.json`
+viaja en la distribución y sus nuevas correspondencias verificadas tienen evidencia
+en `sjf_gaceta.registros.meta.json`. El enlace de resultados oficiales con el acervo
+exige coincidencia exacta y única; no asocia rubros similares ni elige reimpresiones
+ambiguas. El conector se presenta con
 su propio User-Agent. El Repositorio también es la fuente de las sentencias del SIJ:
 expediente, ponente, fecha, resolutivos y votación de los 106 mil asuntos resueltos por la
 SCJN, publicados o no en el Semanario. Detalle del contrato en `repositorio_scjn.py`.

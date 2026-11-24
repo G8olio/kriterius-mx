@@ -173,16 +173,16 @@ comprobar("un timeout sigue siendo pasajero",
 print("\n— Las tools —")
 
 _preparar(302)
-salida = asyncio.run(k.buscar_tesis("interés legítimo"))
+salida = asyncio.run(k.buscar_tesis(fuente="oficial", incluir_texto=False, consulta="interés legítimo"))
 comprobar("buscar_tesis devuelve el aviso como contenido, no una excepción",
           "Imperva" in salida and "respondió 302" not in salida, salida[:160])
 
 _preparar(403)
-salida = asyncio.run(k.investigar_criterio("interés legítimo"))
+salida = asyncio.run(k.investigar_criterio(fuente="oficial", incluir_texto=False, tema="interés legítimo"))
 comprobar("investigar_criterio también", "Imperva" in salida, salida[:160])
 
 _preparar(302)
-salida = asyncio.run(k.buscar_ejecutorias("interés legítimo"))
+salida = asyncio.run(k.buscar_ejecutorias("interés legítimo", fuente="oficial"))
 comprobar("buscar_ejecutorias también", "Imperva" in salida, salida[:160])
 comprobar("y menciona la colección de ejecutorias", "ejecutorias" in salida, salida[:160])
 
@@ -194,14 +194,14 @@ comprobar("ver_tesis no gasta el segundo isSemanal contra el WAF",
           len(_api()) == 1, str(VISITAS))
 
 _preparar(403)
-salida = asyncio.run(k.ver_ejecutoria(201074))
+salida = asyncio.run(k.ver_ejecutoria(201074, fuente="oficial"))
 comprobar("ver_ejecutoria NO dice 'No se encontró' ante un bloqueo",
           "No se encontró" not in salida and "Imperva" in salida, salida[:160])
 comprobar("ver_ejecutoria tampoco gasta el segundo isSemanal", len(_api()) == 1, str(VISITAS))
 
 # Con el API sano todo sigue igual
 _preparar(200, RESPUESTA_BUSQUEDA)
-salida = asyncio.run(k.buscar_tesis("interés legítimo"))
+salida = asyncio.run(k.buscar_tesis(fuente="oficial", incluir_texto=False, consulta="interés legítimo"))
 comprobar("con el API sano buscar_tesis sigue devolviendo resultados",
           "2032523" in salida and "Imperva" not in salida, salida[:160])
 

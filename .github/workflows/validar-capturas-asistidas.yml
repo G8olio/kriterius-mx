@@ -42,7 +42,7 @@ jobs:
           python-version: '3.12'
       - run: pip install -r requirements.txt
       - name: Integridad e importación sin red
-        run: python -m unittest test_sjf_semanal test_capturar_semanal test_importar_semanal test_flujo_semanal test_publicar_semanal test_acervo_permanente test_actualizacion_acervo test_ejecutorias_local test_acceso_scjn
+        run: python -m unittest test_sjf_semanal test_capturar_semanal test_importar_semanal test_flujo_semanal test_publicar_semanal test_acervo_permanente test_actualizacion_acervo test_ejecutorias_local test_acceso_scjn test_tesis_local
       - name: Regresiones del acervo SCJN y TEPJF
         run: |
           python test_sjf_incremental.py
@@ -58,16 +58,19 @@ jobs:
         run: |
           python -m pip wheel --no-deps . -w "$RUNNER_TEMP/ruedas"
           python -m pip install --no-deps "$RUNNER_TEMP"/ruedas/*.whl
+          cp test_tesis_local.py "$RUNNER_TEMP/test_tesis_local.py"
           cp validar_semanal_distribuido.py "$RUNNER_TEMP/validar_semanal_distribuido.py"
           cp validar_ejecutorias_distribuidas.py "$RUNNER_TEMP/validar_ejecutorias_distribuidas.py"
       - name: Consultar las fichas permanentes desde el core instalado
         working-directory: ${{ runner.temp }}
         run: |
+          python -m unittest test_tesis_local
           python validar_semanal_distribuido.py respuestas
           python validar_ejecutorias_distribuidas.py respuestas
       - name: Verificar la imagen de producción sin red judicial
         run: |
           docker build -t kriterius-acervo .
+          docker run --rm --memory=512m --network none -e PYTHONPATH=/app -v "$PWD/test_tesis_local.py:/tmp/test_tesis_local.py:ro" kriterius-acervo python /tmp/test_tesis_local.py
           docker run --rm --network none kriterius-acervo python -c "import sjf_local, tepjf; n=sjf_local.cargar(); m=sjf_local.meta(); assert n > 34000; assert m['capturas_permanentes'] >= 30; assert tepjf.cargar() >= 2078; print(n, m['publicacion_sjf_hasta'])"
           docker run --rm --network none -e PYTHONPATH=/app -v "$PWD/validar_semanal_distribuido.py:/tmp/validar.py:ro" kriterius-acervo python /tmp/validar.py /tmp/respuestas
           docker run --rm --memory=512m --network none -e PYTHONPATH=/app -v "$PWD/validar_ejecutorias_distribuidas.py:/tmp/validar.py:ro" kriterius-acervo python /tmp/validar.py /tmp/respuestas
