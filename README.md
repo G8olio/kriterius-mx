@@ -34,13 +34,48 @@ presente en Kriterius se sirve sin peticiones externas. Solo una tesis ausente r
 consultar las fuentes oficiales. La respuesta conserva procedencia, fecha y texto
 íntegro; la Gaceta no permite inventar registros digitales. El ID local permite leer
 una ficha aunque todavía no tenga IUS documentado. El mapa `sjf_gaceta.registros.json`
-viaja en la distribución y sus nuevas correspondencias verificadas tienen evidencia
-en `sjf_gaceta.registros.meta.json`. El enlace de resultados oficiales con el acervo
+viaja en la distribución con la evidencia de cada identidad (formato versión 2).
+La correspondencia incluye época, clave y rubro completo: un mismo ID antiguo puede
+tener reimpresiones con rubros diferentes. El enlace de resultados oficiales con el acervo
 exige coincidencia exacta y única; no asocia rubros similares ni elige reimpresiones
 ambiguas. El conector se presenta con
 su propio User-Agent. El Repositorio también es la fuente de las sentencias del SIJ:
 expediente, ponente, fecha, resolutivos y votación de los 106 mil asuntos resueltos por la
 SCJN, publicados o no en el Semanario. Detalle del contrato en `repositorio_scjn.py`.
+
+### Enlace de todos los registros digitales (pendiente de completar)
+
+El cambio de consulta local y la cobertura de IUS son comprobaciones distintas.
+Al 24 de noviembre de 2026, la auditoría de esta rama encuentra **34,414 fichas**,
+**61 enlazadas** y **34,353 pendientes**. No se ha publicado esta corrección ni se
+afirma que los tres ejemplos resuelvan el catálogo entero. Hay 104 claves con
+rubros distintos que requieren cotejo; no se resuelven comparando solo prefijos.
+
+`resolver_registros.py` reemplaza el antiguo enlazador HTTP parcial por un importador
+sin red. Lee el índice real completo (base, incrementales y capturas permanentes),
+acepta CSV/JSON/JSONL oficiales, conserva fecha y procedencia y rechaza lotes con
+identidades contradictorias. El catálogo original y la auditoría se guardan fuera
+del checkout. Ejemplos:
+
+```sh
+python resolver_registros.py --verificar --informe /ruta/evidencia/auditoria
+python resolver_registros.py --catalogo /ruta/evidencia/tesis.csv \
+  --fuente https://bicentenario.scjn.gob.mx/repositorio-scjn/sjf \
+  --fecha AAAA-MM-DD --informe /ruta/evidencia/importacion
+python resolver_registros.py --verificar --exigir-completo
+```
+
+El último comando debe terminar con código **0** antes de declarar enlazado todo
+el acervo; devuelve **2** mientras falten registros. CI conserva el inventario de
+pendientes y prueba todas las correspondencias disponibles sin red. El manifiesto
+de Gacetas expone `fichas_con_registro_digital`, `fichas_sin_registro_digital` y
+`enlace_registros_completo` calculados sobre lo realmente cargado.
+
+La obtención masiva está pendiente: la API oficial respondió 403 y la exportación
+ZIP en Chrome no entregó archivo. La SCJN documenta la entrega de más de 100
+registros mediante su [procedimiento de cita](https://bicentenario.scjn.gob.mx/requisitos-pasos-solicitar-informacion).
+No se eluden rechazos ni se exportan sesiones. Una vez recibido el catálogo, las
+incidencias de identidad se cotejan antes de incorporarlo y desplegar core y web.
 
 ### Control de tráfico SCJN (2.13.1)
 

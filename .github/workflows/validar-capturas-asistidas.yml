@@ -8,6 +8,10 @@ on:
     paths:
       - 'sjf_semanal.py'
       - 'sjf_local.py'
+      - 'enlazar_registros.py'
+      - 'resolver_registros.py'
+      - 'test_enlazar_registros.py'
+      - 'test_tesis_local.py'
       - 'tepjf.py'
       - 'server_http.py'
       - 'kriterius_mx.py'
@@ -42,7 +46,9 @@ jobs:
           python-version: '3.12'
       - run: pip install -r requirements.txt
       - name: Integridad e importación sin red
-        run: python -m unittest test_sjf_semanal test_capturar_semanal test_importar_semanal test_flujo_semanal test_publicar_semanal test_acervo_permanente test_actualizacion_acervo test_ejecutorias_local test_acceso_scjn test_tesis_local
+        run: python -m unittest test_sjf_semanal test_capturar_semanal test_importar_semanal test_flujo_semanal test_publicar_semanal test_acervo_permanente test_actualizacion_acervo test_ejecutorias_local test_acceso_scjn test_tesis_local test_enlazar_registros
+      - name: Auditar cobertura completa de registros sin consultas judiciales
+        run: python resolver_registros.py --verificar --informe "$RUNNER_TEMP/cobertura-registros"
       - name: Regresiones del acervo SCJN y TEPJF
         run: |
           python test_sjf_local.py
@@ -79,5 +85,7 @@ jobs:
       - uses: actions/upload-artifact@v4
         with:
           name: respuestas-semanal-sin-red
-          path: ${{ runner.temp }}/respuestas/
+          path: |
+            ${{ runner.temp }}/respuestas/
+            ${{ runner.temp }}/cobertura-registros/
           retention-days: 30

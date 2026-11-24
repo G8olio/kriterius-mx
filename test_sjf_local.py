@@ -108,7 +108,7 @@ if dorada:
     comprobar("declara el IUS no documentado y ofrece la identidad local",
               "Registro digital: no documentado" in c and dorada[0]["id"] in c)
     # Y en cuanto resolver_registros.py lo averigüe, la cita lleva el link canónico.
-    S._registros[dorada[0]["id"]] = 2032415
+    S._registros[S._identidad(dorada[0])] = 2032415
     c2 = S.cita(dorada[0])
     comprobar("con el registro resuelto, la cita trae el link canónico",
               "Registro digital: 2032415" in c2

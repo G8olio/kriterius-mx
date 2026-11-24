@@ -55,6 +55,22 @@ class TesisLocales(unittest.IsolatedAsyncioTestCase):
             self.assertNotIn('cortafuegos', r)
             red.assert_not_called()
 
+    async def test_todos_los_ius_enlazados_devuelven_su_cuerpo_sin_red(self):
+        # Recorre el mapa real completo, no una muestra fija de tres registros.
+        with patch.object(httpx.AsyncClient, 'send', side_effect=AssertionError('sin red')) as red:
+            for ius in s._por_registro:
+                documentos=s.obtener_registro(ius)
+                self.assertTrue(documentos)
+                r=await k.ver_tesis(ius)
+                for d in documentos:
+                    self.assertEqual(s.registro(d),ius)
+                    self.assertIn(d['clave'],r)
+                    self.assertIn(d['texto'],r)
+            red.assert_not_called()
+        m=s.meta()
+        self.assertEqual(m['fichas_con_registro_digital']+m['fichas_sin_registro_digital'],m['tesis'])
+        self.assertEqual(m['enlace_registros_completo'],m['fichas_sin_registro_digital']==0)
+
     async def test_resultados_oficiales_recuperan_clave_y_texto_local(self):
         d, = s.obtener_registro(2023937)
         for metadatos in ({'ius':2023937, 'rubro':d['rubro']},
@@ -76,7 +92,7 @@ class TesisLocales(unittest.IsolatedAsyncioTestCase):
         self.assertEqual(s.obtener_registro(9999999), [])
 
     def test_identidades_empacadas_tienen_evidencia_y_coinciden(self):
-        pruebas = json.loads((s._DIR/'sjf_gaceta.registros.meta.json').read_text())['correspondencias']
+        pruebas = json.loads((s._DIR/'sjf_gaceta.registros.json').read_text())['correspondencias']
         for p in pruebas:
             d, = s.obtener_id(p['id'])
             self.assertEqual(s.registro(d), p['registro_digital'])
