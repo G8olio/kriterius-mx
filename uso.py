@@ -26,6 +26,7 @@ datos por ~600 filas al mes no se paga.
 """
 
 import base64
+import html
 import json
 import os
 import secrets
@@ -309,7 +310,7 @@ async def pagina_uso(request, version: str = ""):
 
 
 def _fila(k, v):
-    return f"<tr><td>{k}</td><td class='n'>{v}</td></tr>"
+    return f"<tr><td>{html.escape(str(k))}</td><td class='n'>{html.escape(str(v))}</td></tr>"
 
 
 def _html(d: dict) -> str:
