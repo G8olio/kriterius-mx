@@ -25,11 +25,13 @@ class AcervoPermanente(unittest.TestCase):
                  'rubro':'ORIGINAL', 'texto':'Texto íntegro original.',
                  'registro_digital':2032001},
                 {'id':'corregido', 'clave':'1a./J. 1/2026 (12a.)',
-                 'rubro':'CORRECCIÓN', 'texto':'Texto íntegro corregido.'},
+                 'epoca':'12a', 'rubro':'CORRECCIÓN', 'texto':'Texto íntegro corregido.'},
                 {'id':'sin-ius', 'clave':'1a./J. 3/2026 (12a.)',
                  'rubro':'SIN REGISTRO', 'texto':'Solo consta la clave.'}]
             base.write_text('\n'.join(json.dumps(d) for d in documentos)+'\n')
-            mapa.write_text(json.dumps({'corregido':2032002}))
+            mapa.write_text(json.dumps({'version':2, 'correspondencias':[{**documentos[1],
+                'registro_digital':2032002, 'fuente':'https://sjf2.scjn.gob.mx/detalle/tesis/2032002',
+                'verificado':'2026-11-24', 'metodo':'Fixture oficial simulada'}]}))
             with patch.object(local, 'RUTA_REGISTROS', mapa):
                 self.assertEqual(local.cargar(base, root/'meta.json', indice, None, root/'capturas'),3)
                 with patch.object(local, 'SOLO_LECTURA', True):

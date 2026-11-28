@@ -1,6 +1,6 @@
 """
 SJF local — tesis y jurisprudencias del Semanario Judicial de la Federación
-servidas desde la Gaceta oficial, como respaldo cuando el API del SJF no responde.
+servidas por defecto desde el acervo permanente propio, sin consultas externas.
 
 Este módulo NO toca la red. Lee `kriterius_datos/sjf_gaceta.jsonl.gz` —34 041 tesis
 extraídas de los 448 PDF de la Gaceta que publica la propia Corte en
@@ -11,17 +11,16 @@ Imperva Incapsula y rechaza a cualquier cliente que no pase su reto de JavaScrip
 (302/403). Las dos tools centrales del producto, buscar_tesis y ver_tesis, se
 quedaron sin fuente desde el servidor remoto. La decisión tomada y que no se
 reabre es que NO se elude el cortafuegos: ni navegador headless ni resolución de
-retos. El respaldo es un acervo propio, construido de documentos públicos
-oficiales, que se usa SOLO cuando el API falla. Con el API vivo, el dato vivo gana
-siempre.
+retos. El acervo propio, construido de documentos públicos oficiales, permite
+consultar los textos sin depender de la disponibilidad del portal judicial.
 
 Lo que este acervo NO tiene, y por eso cada respuesta lo dice:
 
   - **El registro digital.** La Gaceta no lo imprime junto a sus tesis, solo la
     clave. Por eso no se puede construir el link canónico
     `sjf2.scjn.gob.mx/detalle/tesis/{registro}`. Se cita con clave + libro, tomo y
-    página + la URL del PDF oficial. `resolver_registros.py` llenará el campo
-    cuando el API vuelva.
+    página + la URL del PDF oficial. `resolver_registros.py` importa un catálogo
+    oficial y audita todos los documentos, incluidos los incrementales.
   - **Los cambios de vigencia posteriores** a la publicación de cada libro. Una
     tesis interrumpida o sustituida después sigue impresa igual en su Gaceta.
   - **Lo publicado después del último libro** del acervo. Hasta dónde llega lo dice
@@ -60,10 +59,8 @@ RUTA_META = _DIR / "sjf_gaceta.meta.json"
 # —la Corte republica libros corregidos— manda el incremental y el base se ignora
 # para ESE libro, no tesis por tesis: un libro corregido se reemplaza entero.
 RUTA_NUEVOS = _DIR / "sjf_gaceta_nuevos.jsonl"
-# Mapa id -> registro digital que produce resolver_registros.py cuando el API del
-# SJF vuelve a estar accesible. Va aparte del JSONL a propósito: así el JSONL
-# sigue siendo la salida exacta y determinista del parser, y el enriquecimiento se
-# puede rehacer o tirar sin tocarlo.
+# Correspondencias con evidencia por época, clave y rubro completos. No basta el
+# ID antiguo: existen claves repetidas con rubros distintos en las Gacetas.
 RUTA_REGISTROS = _DIR / "sjf_gaceta.registros.json"
 
 
@@ -107,7 +104,9 @@ SOLO_LECTURA = os.environ.get("KRITERIUS_SJF_SOLO_LECTURA", "") == "1"
 _db: sqlite3.Connection | None = None
 _por_clave: dict[str, list[int]] = {}
 _por_registro: dict[int, list[int]] = {}
-_registros: dict[str, int] = {}
+_por_id: dict[str, list[int]] = {}
+_por_rubro: dict[str, list[int]] = {}
+_registros: dict[tuple, int] = {}
 _meta: dict = {}
 _n: int = 0
 _candado = threading.Lock()
@@ -196,6 +195,44 @@ def _identidad(r):
     # Una clave puede tener correcciones/reimpresiones. Solo fusionar cuando
     # coinciden época, clave y rubro; nunca borrar una versión de rubro distinto.
     return (r.get("epoca"), _plegar(r.get("clave")), _plegar(r.get("rubro")))
+
+
+def validar_correspondencias(datos: dict) -> dict[tuple, int]:
+    """Rechaza mapas incompletos, sin procedencia o con identidades en conflicto.
+
+    Una clave repetida no autoriza asignar el mismo IUS a todos sus rubros.
+    La versión anterior (id -> IUS) no permite comprobarlo y debe migrarse con
+    evidencia explícita; no se confía silenciosamente en ella.
+    """
+    from datetime import date
+    from urllib.parse import urlparse
+    if datos == {}:
+        return {}
+    if datos.get('version') != 2 or not isinstance(datos.get('correspondencias'), list):
+        raise ValueError('Se requiere catálogo de identidades versión 2 con evidencia')
+    por_identidad, por_ius = {}, {}
+    for r in datos['correspondencias']:
+        if not all(isinstance(r.get(k), str) and r[k].strip()
+                   for k in ('id', 'epoca', 'clave', 'rubro', 'fuente', 'verificado', 'metodo')):
+            raise ValueError('Correspondencia sin identidad o evidencia completa')
+        ius = r.get('registro_digital')
+        if not re.fullmatch(r'(?:[1-9]|1[0-2])a', r['epoca']):
+            raise ValueError('Época inválida')
+        if not isinstance(ius, int) or not re.fullmatch(r'[1-9][0-9]{5,7}', str(ius)):
+            raise ValueError('Registro digital inválido')
+        fuente = urlparse(r['fuente'])
+        host = fuente.hostname or ''
+        if fuente.scheme != 'https' or not (host == 'scjn.gob.mx' or host.endswith('.scjn.gob.mx')):
+            raise ValueError('La correspondencia debe conservar su fuente oficial SCJN')
+        date.fromisoformat(r['verificado'])
+        identidad = _identidad(r)
+        if identidad in por_identidad and por_identidad[identidad] != ius:
+            raise ValueError('Una identidad tiene dos registros digitales')
+        if ius in por_ius and por_ius[ius] != identidad:
+            raise ValueError('Un registro digital tiene identidades distintas; requiere cotejo')
+        por_identidad[identidad] = ius
+        por_ius[ius] = identidad
+    return por_identidad
 
 
 def _construir(db: sqlite3.Connection, rutas: Path | list[Path], capturas=()) -> int:
@@ -327,7 +364,7 @@ def cargar(ruta: Path | str = RUTA_DATOS, ruta_meta: Path | str = RUTA_META,
     Si el directorio no es escribible (imagen de solo lectura, permisos), cae a un
     índice en memoria, que funciona igual pero cuesta RAM y unos segundos de
     arranque."""
-    global _db, _por_clave, _por_registro, _meta, _n, _registros
+    global _db, _por_clave, _por_registro, _por_id, _por_rubro, _meta, _n, _registros
     ruta = Path(ruta)
     rutas = [ruta]
     if ruta_nuevos is not None and Path(ruta_nuevos).exists():
@@ -380,6 +417,7 @@ def cargar(ruta: Path | str = RUTA_DATOS, ruta_meta: Path | str = RUTA_META,
         with _candado:
             _db, _por_clave, _meta, _n, _registros = None, {}, {}, 0, {}
             _por_registro = {}
+            _por_id, _por_rubro = {}, {}
         return 0
 
     # Índice de claves en Python, no en SQL: SQLite no normaliza acentos y las
@@ -398,24 +436,32 @@ def cargar(ruta: Path | str = RUTA_DATOS, ruta_meta: Path | str = RUTA_META,
         meta = {}
     registros = {}
     try:
-        registros = {k: int(v) for k, v in
-                     json.loads(RUTA_REGISTROS.read_text(encoding="utf-8")).items()}
-    except Exception:
-        registros = {}
+        registros = validar_correspondencias(json.loads(RUTA_REGISTROS.read_text(encoding="utf-8")))
+    except FileNotFoundError:
+        pass
+    except (OSError, ValueError, TypeError, AttributeError, KeyError) as exc:
+        meta['error_correspondencias'] = str(exc)
     # Solo números documentados en la captura o en el mapa de correspondencias;
     # nunca se deduce un IUS a partir de una clave o de la posición de la tesis.
     por_registro: dict[int, list[int]] = {}
+    por_id, por_rubro = {}, {}
     try:
-        for rid, ius, identificador in db.execute(
+        for rid, ius, identificador, rubro, clave, epoca in db.execute(
                 "SELECT rowid, json_extract(json,'$.registro_digital'), "
-                "json_extract(json,'$.id') FROM docs"):
-            ius = ius or registros.get(identificador)
+                "json_extract(json,'$.id'), json_extract(json,'$.rubro'), "
+                "json_extract(json,'$.clave'), json_extract(json,'$.epoca') FROM docs"):
+            if identificador:
+                por_id.setdefault(identificador, []).append(rid)
+            if rubro:
+                por_rubro.setdefault(_plegar(rubro), []).append(rid)
+            ius = ius or registros.get((epoca, _plegar(clave), _plegar(rubro)))
             if ius and re.fullmatch(r'[1-9][0-9]{5,7}', str(ius)):
                 por_registro.setdefault(int(ius), []).append(rid)
     except (sqlite3.Error, ValueError, TypeError):
         # Una instalación antigua sin JSON1 puede seguir consultando por clave;
         # no publicar un mapa parcial que dé por ausentes registros del acervo.
         por_registro = {}
+        por_id, por_rubro = {}, {}
     info = dict(db.execute("SELECT k,v FROM info"))
     meta['por_epoca'] = json.loads(info.get('por_epoca', '{}'))
     meta["capturas_permanentes"] = int(info.get("semanales", 0))
@@ -434,6 +480,7 @@ def cargar(ruta: Path | str = RUTA_DATOS, ruta_meta: Path | str = RUTA_META,
     with _candado:
         _db, _por_clave, _meta, _n, _registros = db, por_clave, meta, n, registros
         _por_registro = por_registro
+        _por_id, _por_rubro = por_id, por_rubro
     return n
 
 
@@ -460,6 +507,12 @@ def meta() -> dict:
     # la sincronización semanal ya no coinciden, y el número que el usuario ve al
     # citar tiene que ser el de lo que de veras se está consultando.
     d["tesis"] = _n
+    d["registros_digitales_documentados"] = len(_por_registro)
+    enlazadas = len({rid for filas in _por_registro.values() for rid in filas})
+    d['fichas_con_registro_digital'] = enlazadas
+    d['fichas_sin_registro_digital'] = max(0, _n - enlazadas)
+    d['enlace_registros_completo'] = _n > 0 and enlazadas == _n and not d.get('error_correspondencias')
+    d["busqueda_predeterminada"] = "acervo_propio_con_texto_integro"
     return d
 
 
@@ -507,6 +560,13 @@ def buscar(consulta: str, *, epocas: list[str] | None = None,
     y, al final, BM25."""
     if not disponible():
         return []
+    # Un identificador debe resolver la ficha, no las tesis que lo citan.
+    exactas = (obtener_registro(consulta.strip()) or obtener_id(consulta.strip())
+               or obtener(consulta.strip(), exacta=True))
+    if exactas or re.fullmatch(r'[1-9][0-9]{5,7}', consulta.strip()):
+        return [r for r in exactas
+                if (not epocas or r.get('epoca') in epocas)
+                and (not tipo or r.get('tipo') == ('J' if tipo.lower().startswith('j') else 'TA'))]
     q = _consulta_fts(consulta)
     if not q:
         return []
@@ -556,7 +616,7 @@ def buscar(consulta: str, *, epocas: list[str] | None = None,
 def registro(r: dict) -> int | None:
     """El registro digital de una tesis, si resolver_registros.py ya lo averiguó.
     Mientras no exista, la cita lo declara pendiente en vez de inventarlo."""
-    return r.get("registro_digital") or _registros.get(r.get("id") or "")
+    return r.get("registro_digital") or _registros.get(_identidad(r))
 
 
 def _plegar(s: str) -> str:
@@ -565,7 +625,7 @@ def _plegar(s: str) -> str:
     return re.sub(r"[^A-Z0-9]", "", s)
 
 
-def obtener(clave: str) -> list[dict]:
+def obtener(clave: str, *, exacta: bool = False) -> list[dict]:
     """Las tesis con esa clave. Devuelve lista porque una clave puede aparecer en
     dos libros (reimpresión o corrección de rubro) y ocultarlo sería mentir.
 
@@ -578,7 +638,7 @@ def obtener(clave: str) -> list[dict]:
     if not objetivo:
         return []
     ids = list(_por_clave.get(objetivo) or [])
-    if not ids:
+    if not ids and not exacta:
         ids = [i for k, v in _por_clave.items() if k.startswith(objetivo) for i in v]
     if not ids:
         return []
@@ -589,6 +649,41 @@ def obtener(clave: str) -> list[dict]:
             ids).fetchall()
     por_id = {r: j for r, j in filas}
     return [json.loads(por_id[i]) for i in ids if i in por_id]
+
+
+def _documentos(ids: list[int]) -> list[dict]:
+    if not disponible() or not ids:
+        return []
+    with _candado:
+        filas = _db.execute('SELECT json FROM docs WHERE rowid IN (' +
+                            ','.join('?' * len(ids)) + ')', ids).fetchall()
+    return [json.loads(f[0]) for f in filas]
+
+
+def obtener_id(identificador: str) -> list[dict]:
+    """Identidad propia estable, incluso cuando no consta un IUS en la fuente."""
+    return _documentos(_por_id.get(identificador) or [])
+
+
+def corresponder(*, ius=None, clave: str = '', rubro: str = '') -> dict | None:
+    """Enlaza metadatos oficiales con una única ficha local; nunca por similitud.
+
+    Clave y rubro, si vienen, deben coincidir exactamente tras normalizar signos.
+    Con solo rubro también se exige identidad única. No persiste inferencias ni
+    selecciona arbitrariamente una corrección/reimpresión.
+    """
+    candidatos = obtener_registro(ius) if ius else []
+    if not candidatos and clave:
+        candidatos = obtener(clave, exacta=True)
+    if not candidatos and rubro:
+        # Consultar TODO el índice de identidades, sin límite BM25: una segunda
+        # ficha con el mismo rubro fuera del top de búsqueda sigue siendo ambigua.
+        candidatos = _documentos(_por_rubro.get(_plegar(rubro)) or [])
+    candidatos = [r for r in candidatos
+                  if (not clave or _plegar(r.get('clave')) == _plegar(clave))
+                  and (not rubro or _plegar(r.get('rubro')) == _plegar(rubro))
+                  and (not ius or not registro(r) or str(registro(r)) == str(ius))]
+    return candidatos[0] if len(candidatos) == 1 else None
 
 
 def obtener_registro(registro_digital: int | str) -> list[dict]:
@@ -693,8 +788,8 @@ def cita(r: dict) -> str:
     if ius:
         L.append(f"Registro digital: {ius} — {SJF_HOST}/detalle/tesis/{ius}")
     else:
-        L.append(f"Registro digital: pendiente (la Gaceta impresa no lo publica); "
-                 f"verificar en {SJF_HOST}")
+        L.append("Registro digital: no documentado en esta copia. "
+                 f"El texto está disponible por clave o ID local: {r.get('id')}.")
     if r.get("procedencia"):
         p = r["procedencia"]
         L.append(f"Captura permanente: {p['url']} — obtenida el {p['capturado_utc']}. "
@@ -705,6 +800,7 @@ def cita(r: dict) -> str:
 def linea(r: dict, n: int) -> list[str]:
     g = r.get("gaceta") or {}
     L = [f"{n}. {r.get('rubro')}",
+         f"   ID local: {r.get('id')} · Clave: {r.get('clave')}",
          f"   {r.get('organo')}",
          f"   {_tipo_largo(r)} {r.get('clave')} · {_epoca_larga(r.get('epoca'))} · "
          f"{_localizacion(r)}"]
@@ -715,16 +811,19 @@ def linea(r: dict, n: int) -> list[str]:
         L.append(f"   «{cuerpo[:280].strip()}…»")
     ius = registro(r)
     if ius:
-        L.append(f"   {SJF_HOST}/detalle/tesis/{ius}")
+        L.append(f"   Registro digital: {ius} · {SJF_HOST}/detalle/tesis/{ius}")
     if r.get("fuente_pdf"):
         L.append(f"   PDF oficial: {r['fuente_pdf']}"
                  + (f" (p. {g['pagina']})" if g.get("pagina") else ""))
     return L
 
 
-def formatear_busqueda(resultados: list[dict], consulta: str, motivo: str,
-                       pagina: int = 1, por_pagina: int = 20) -> str:
-    encabezado = aviso(motivo)
+def formatear_busqueda(resultados: list[dict], consulta: str, motivo: str | None = None,
+                       pagina: int = 1, por_pagina: int = 20,
+                       incluir_texto: bool = False, orden: str = 'jerarquia') -> str:
+    encabezado = aviso(motivo) if motivo else (
+        'ACERVO DE KRITERIUS — consulta directa al repositorio permanente, sin peticiones externas. '
+        f'Cobertura: {cobertura()}. La copia fechada no certifica cambios posteriores de vigencia.')
     if not resultados:
         return (f"{encabezado}\n\nSin resultados en el acervo local para "
                 f"'{consulta}'. Prueba con menos palabras o con sinónimos. "
@@ -737,16 +836,18 @@ def formatear_busqueda(resultados: list[dict], consulta: str, motivo: str,
 
     L = [encabezado, "",
          f"{total} resultado(s) en el acervo local, página {pagina} de {paginas}.",
-         "Orden: jerarquía de obligatoriedad (órgano → jurisprudencia → época "
-         "reciente → coincidencia en rubro).", ""]
+         ("Orden: publicación más reciente." if orden == 'fecha' else
+          "Orden: jerarquía de obligatoriedad (órgano → jurisprudencia → época "
+          "reciente → coincidencia en rubro)."), ""]
     n = (pagina - 1) * por_pagina
     for r in trozo:
         n += 1
-        L += linea(r, n) + [""]
+        L += ([f'Resultado {n}', formatear_tesis(r)] if incluir_texto else linea(r, n)) + [""]
     if pagina < paginas:
         L.append(f"Hay más: pide la página {pagina + 1}.")
-    L.append("Para el texto íntegro: ver_tesis(clave) con la clave de la tesis, "
-             "p. ej. ver_tesis(\"1a./J. 45/2026 (12a.)\").")
+    L.append('Cada ficha puede leerse con ver_tesis(registro_digital=ID local o clave). '
+             'El IUS se muestra solo cuando consta una correspondencia documentada. '
+             'No hace falta consultar la web para leer los textos del acervo.')
     return "\n".join(L)
 
 
@@ -758,6 +859,7 @@ def formatear_tesis(r: dict, motivo: str | None = None) -> str:
         f"oficial y las fichas semanales conservadas ({cobertura()}). "
         "Se conserva la fecha de la fuente; no certifica cambios posteriores de vigencia jurídica.")
     L = [origen, "", r.get("rubro") or "", "",
+         f"ID local: {r.get('id')} · Clave: {r.get('clave')}",
          r.get("organo") or "",
          f"{_tipo_largo(r)} {r.get('clave')} · {_epoca_larga(r.get('epoca'))}",
          _localizacion(r)]

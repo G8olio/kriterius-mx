@@ -234,7 +234,7 @@ comprobar("si el Repositorio también bloquea, vuelve el mensaje del WAF",
 
 print("\n— buscar_tesis e investigar_criterio con sjf2 bloqueado —")
 _preparar()
-rt = corre(k.buscar_tesis('"interés legítimo"', tipo="jurisprudencia", epocas=["11a"]))
+rt = corre(k.buscar_tesis(fuente="oficial", incluir_texto=False, consulta='"interés legítimo"', tipo="jurisprudencia", epocas=["11a"]))
 comprobar("conmuta al Repositorio, no al acervo",
           rt.startswith("Fuente de esta respuesta: Repositorio") and "ACERVO LOCAL" not in rt, rt[:200])
 comprobar("con registros y links del Semanario", "https://sjf2.scjn.gob.mx/detalle/tesis/" in rt)
@@ -245,15 +245,15 @@ comprobar("los filtros van al servidor",
 comprobar("el total topado se dice como piso, no como techo",
           "100 o más resultados" in rt and "página siguiente" in rt, rt[:600])
 _preparar()
-ri = corre(k.investigar_criterio('"interés legítimo"', limite=3))
+ri = corre(k.investigar_criterio(fuente="oficial", incluir_texto=False, tema='"interés legítimo"', limite=3))
 comprobar("investigar_criterio también conmuta y avisa",
           "Repositorio de la SCJN" in ri and "INVESTIGACIÓN" in ri, ri[:300])
 _preparar()
-rf = corre(k.buscar_tesis('"interés legítimo"', pagina=6, por_pagina=20))
+rf = corre(k.buscar_tesis(fuente="oficial", incluir_texto=False, consulta='"interés legítimo"', pagina=6, por_pagina=20))
 comprobar("la página 6 se pide al Repositorio: la paginación sigue después del 100",
           _repo("POST")[0][2]["page"] == 6 and "No hay página" not in rf, rf[:300])
 _preparar()
-rz = corre(k.investigar_criterio("tema que no existe en ningún lado"))
+rz = corre(k.investigar_criterio(fuente="oficial", incluir_texto=False, tema="tema que no existe en ningún lado"))
 comprobar("investigar_criterio sin resultados también dice de dónde salió",
           rz.startswith("Fuente de esta respuesta: Repositorio") and "Sin criterios" in rz, rz[:200])
 
@@ -315,7 +315,7 @@ comprobar("con el Repositorio bloqueado lo explica y da la página oficial",
 
 print("\n— Con sjf2 vivo el Repositorio no se toca —")
 _preparar(sjf_vivo=True)
-rvv = corre(k.buscar_tesis("interés legítimo"))
+rvv = corre(k.buscar_tesis(fuente="oficial", incluir_texto=False, consulta="interés legítimo"))
 comprobar("responde sjf2", "RUBRO QUE SOLO EXISTE EN SJF2" in rvv, rvv[:200])
 comprobar("sin aviso de Repositorio", "Repositorio" not in rvv)
 comprobar("y sin petición al Repositorio", not _repo(), str(_repo()))

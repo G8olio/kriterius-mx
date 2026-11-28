@@ -1,0 +1,35 @@
+{
+  "version": 2,
+  "correspondencias": [
+    {
+      "id": "11a:2a./J. 31/2021 (11a.)",
+      "registro_digital": 2023937,
+      "clave": "2a./J. 31/2021 (11a.)",
+      "rubro": "DESISTIMIENTO DE LA DEMANDA O DE UN RECURSO EN EL JUICIO DE AMPARO. EL ESCRITO POR EL QUE SE RATIFICA EL DESISTIMIENTO, FIRMADO ELECTRÓNICAMENTE CON SU RESPECTIVA EVIDENCIA CRIPTOGRÁFICA, PRODUCE LOS MISMOS EFECTOS QUE EL SIGNADO ANTE LA AUTORIDAD JUDICIAL.",
+      "fuente": "https://sjf2.scjn.gob.mx/listado-resultado-tesis/2023937",
+      "verificado": "2026-11-24",
+      "metodo": "Correspondencia explícita de registro, clave y rubro en fuente oficial de la SCJN; texto conservado en Gaceta local.",
+      "epoca": "11a"
+    },
+    {
+      "id": "11a:PR.A.C.CS. J/19 K (11a.)",
+      "registro_digital": 2029821,
+      "clave": "PR.A.C.CS. J/19 K (11a.)",
+      "rubro": "DESISTIMIENTO DE LA DEMANDA O DE UN RECURSO EN EL JUICIO DE AMPARO. DEBE REQUERIRSE SU RATIFICACIÓN AUN CUANDO SE PRESENTE POR MEDIOS DIGITALES CON FIRMA ELECTRÓNICA Y SE SOLICITE AHÍ MISMO QUE SE TENGA POR RATIFICADO.",
+      "fuente": "https://www.scjn.gob.mx/sites/default/files/comunicacion_digital/2025-01/Tesis_publicacion_semanal_24_1_2025.pdf",
+      "verificado": "2026-11-24",
+      "metodo": "Correspondencia explícita de registro, clave y rubro en fuente oficial de la SCJN; texto conservado en Gaceta local.",
+      "epoca": "11a"
+    },
+    {
+      "id": "10a:I.1o.P.1 K (10a.)",
+      "registro_digital": 2001863,
+      "clave": "I.1o.P.1 K (10a.)",
+      "rubro": "CONSENTIMIENTO DEL ACTO RECLAMADO. NO LO HAY SI EL QUEJOSO DESISTE DE UN JUICIO DE AMPARO Y PRESENTA NUEVA DEMANDA DENTRO DEL PLAZO LEGAL PARA EJERCER ESA ACCIÓN.",
+      "fuente": "https://sjf2.scjn.gob.mx/detalle/tesis/2001863",
+      "verificado": "2026-11-24",
+      "metodo": "Correspondencia explícita de registro, clave y rubro en fuente oficial de la SCJN; texto conservado en Gaceta local.",
+      "epoca": "10a"
+    }
+  ]
+}

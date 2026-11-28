@@ -38,7 +38,7 @@ import ejecutorias_local
 
 # Única fuente del número de versión. server_http.py la importa de aquí para que
 # /salud y estado_conector no puedan volver a discrepar.
-VERSION = "2.17.0"
+VERSION = "2.18.0"
 POLITICA_TEXTOS_COMPLETOS = "acervo_propio_primero"
 
 BASE = "https://sjf2.scjn.gob.mx/services/sjftesismicroservice/api/public"
@@ -820,7 +820,20 @@ def _ordenar_por_jerarquia(docs: list[dict], consulta: str) -> list[dict]:
     return [d for _, d in sorted(enumerate(docs), key=clave)]
 
 
-def _linea_resultado(d: dict) -> list[str]:
+def _tesis_local_desde_metadatos(d: dict) -> dict | None:
+    if not _hay_respaldo():
+        return None
+    r = sjf_local.corresponder(ius=d.get('ius'),
+                               clave=_strip_html(d.get('claveTesis') or ''),
+                               rubro=_strip_html(d.get('rubro') or ''))
+    if r is not None and d.get('ius'):
+        # La identidad se comprobó contra los metadatos oficiales de ESTA respuesta.
+        # No se guarda una asociación difusa ni se modifica el documento conservado.
+        r = {**r, 'registro_digital': d['ius']}
+    return r
+
+
+def _linea_resultado(d: dict, incluir_texto: bool = False) -> list[str]:
     """Formato acordado: [RUBRO], [Órgano], [Tipo], [Integración], [Época], [Registro]
     seguido del link directo, que es obligatorio al citar."""
     loc = _strip_html(d.get("localizacion") or "")
@@ -829,11 +842,19 @@ def _linea_resultado(d: dict) -> list[str]:
     organo = partes[2] if len(partes) >= 3 else ""
     es_j = "[J]" in loc or d.get("ta_tj") == 1
     tipo_int = _strip_html(str(d.get("tipoJurisprudencia") or "")) or "—"
+    local = _tesis_local_desde_metadatos(d)
+    if local and incluir_texto:
+        return [sjf_local.formatear_tesis(local), '']
+    clave = d.get('claveTesis') or (local or {}).get('clave') or 'no informada por la fuente'
     return [
         f"[{_strip_html(d.get('rubro'))}], [{organo}], "
         f"[{'Jurisprudencia' if es_j else 'Tesis Aislada'}], "
         f"[{tipo_int}], [{epoca}], [{d.get('ius')}]",
+        f"Clave: {clave}",
+        *([f"ID local: {local['id']} · Texto íntegro disponible en Kriterius."] if local else []),
         f"{HOST}/detalle/tesis/{d.get('ius')}",
+        *(["TEXTO (fuente oficial):", _strip_html(d['texto'])]
+          if incluir_texto and d.get('texto') else []),
         "",
     ]
 
@@ -874,10 +895,16 @@ async def buscar_tesis(
     tipo: str | None = None,
     incluir_precedentes: bool = False,
     pagina: int = 1,
-    por_pagina: int = 20,
+    por_pagina: int = 5,
     orden: str = "jerarquia",
+    incluir_texto: bool = True,
+    fuente: str = "local",
 ) -> str:
-    """Busca tesis y jurisprudencia en el Semanario Judicial de la Federación (SCJN).
+    """Busca tesis y jurisprudencia en el acervo permanente de Kriterius.
+
+    Por defecto devuelve claves, ID local, IUS documentados y TEXTOS ÍNTEGROS,
+    sin consultar la SCJN ni depender de su cortafuegos. Usa esos textos directamente;
+    no es necesario buscar claves en la web ni pedir instrucciones adicionales.
 
     Args:
         consulta: Expresión de búsqueda. Usa comillas dobles para frases exactas,
@@ -893,13 +920,28 @@ async def buscar_tesis(
             (Pleno > Salas > Plenos Regionales > Plenos de Circuito > TCC),
             jurisprudencia antes que aislada, época más reciente y coincidencia
             en el rubro. "fecha" respeta el orden nativo del SJF.
+        incluir_texto: True por defecto: texto completo, precedentes, notas y fuente.
+            False devuelve fichas resumidas, legibles por clave o ID con ver_tesis.
+        fuente: "local" por defecto, sin red. "oficial" consulta servicios externos
+            de la SCJN y enlaza sus metadatos con textos propios cuando coinciden.
 
     Returns:
-        Lista de resultados con registro digital, tipo, rubro, localización y link
-        directo (https://sjf2.scjn.gob.mx/detalle/tesis/{registro}). Al citar un
-        criterio al usuario incluye SIEMPRE su link, para ir directo al texto oficial.
-        Usa ver_tesis(registro_digital) para leer el texto íntegro.
+        Clave, ID local, texto y procedencia de cada tesis. No inventa IUS ausentes.
+        Si no hay coincidencias locales, informa cobertura; no prueba inexistencia.
     """
+    if fuente not in ('local', 'oficial'):
+        return 'fuente debe ser "local" u "oficial".'
+    if fuente == 'local':
+        if not _hay_respaldo():
+            return sjf_local.NO_DISPONIBLE
+        resultados = sjf_local.buscar(consulta, epocas=epocas, tipo=tipo,
+                                      incluir_precedentes=incluir_precedentes)
+        if orden == 'fecha':
+            resultados.sort(key=lambda r: r.get('publicacion_sjf') or
+                            str((r.get('gaceta') or {}).get('anio') or ''), reverse=True)
+        return sjf_local.formatear_busqueda(resultados, consulta, pagina=max(pagina, 1),
+                                            por_pagina=min(max(por_pagina, 1), 50),
+                                            incluir_texto=incluir_texto, orden=orden)
     body = _search_body(consulta, epocas, incluir_precedentes)
     page, size = max(pagina, 1) - 1, min(max(por_pagina, 1), 50)
     aviso_repo = ""
@@ -920,7 +962,8 @@ async def buscar_tesis(
                                           incluir_precedentes=incluir_precedentes)
             return sjf_local.formatear_busqueda(resultados, consulta, _motivo_respaldo(e),
                                                 pagina=max(pagina, 1),
-                                                por_pagina=min(max(por_pagina, 1), 50))
+                                                por_pagina=min(max(por_pagina, 1), 50),
+                                                incluir_texto=incluir_texto)
 
     if data and "documents" not in data and "total" not in data:
         claves = ", ".join(list(data.keys())[:8])
@@ -956,8 +999,9 @@ async def buscar_tesis(
                if orden == "jerarquia" else "Orden: nativo del SJF por publicación."),
               ""]
     for d in docs:
-        lineas.extend(_linea_resultado(d))
-    lineas.append("Para el texto completo de una tesis: ver_tesis(registro_digital).")
+        lineas.extend(_linea_resultado(d, incluir_texto))
+    lineas.append("Para releer una tesis del acervo usa ver_tesis con su ID local o clave; "
+                  "también acepta los registros digitales documentados.")
     return "\n".join(lineas)
 
 
@@ -966,7 +1010,8 @@ async def investigar_criterio(
     tema: str,
     epocas: list[str] | None = None,
     limite: int = 12,
-    incluir_texto: bool = False,
+    incluir_texto: bool = True,
+    fuente: str = "local",
 ) -> str:
     """Investigación jerárquica en el SJF: consulta el corpus POR ETAPAS siguiendo el
     orden de obligatoriedad y se detiene al reunir suficiente criterio vinculante.
@@ -979,11 +1024,16 @@ async def investigar_criterio(
         tema: Tema o expresión a investigar, p. ej. "interés legítimo ambiental".
         epocas: Filtro opcional de épocas ("5a" a "12a"). Sin filtro, todas.
         limite: Máximo de criterios a devolver.
-        incluir_texto: Si True, agrega un extracto del texto de cada criterio.
+        incluir_texto: True por defecto, incluye el texto íntegro de cada criterio.
+        fuente: "local" por defecto: acervo propio sin red ni cortafuegos. "oficial"
+            consulta la SCJN. Incluye clave e ID local para continuar sin búsquedas web.
 
     Returns:
         Criterios ordenados por obligatoriedad, cada uno con su link directo.
     """
+    if fuente != 'oficial':
+        return await buscar_tesis(tema, epocas=epocas, por_pagina=max(1, int(limite)),
+                                  incluir_texto=incluir_texto, fuente=fuente)
     # Los rangos son los de _rango_organo / NOMBRE_ORGANO: 0 Pleno, 1 Primera Sala,
     # 2 Segunda Sala, 3 Salas históricas, 4 Plenos Regionales, 5 Plenos de Circuito,
     # 6 TCC, 7 TDJ, 8 otros. Antes decía 6 para "Plenos Regionales" y 8 para
@@ -1018,7 +1068,8 @@ async def investigar_criterio(
             # por etapas se reduce a tomar los más vinculantes de esa lista.
             resultados = sjf_local.buscar(tema, epocas=epocas)[:max(1, int(limite))]
             return sjf_local.formatear_busqueda(resultados, tema, _motivo_respaldo(e),
-                                                por_pagina=max(1, int(limite)))
+                                                por_pagina=max(1, int(limite)),
+                                                incluir_texto=incluir_texto)
     docs = data.get("documents") or []
     total = data.get("total", 0)
     if not docs:
@@ -1062,11 +1113,7 @@ async def investigar_criterio(
         "",
     ]
     for d in seleccion:
-        lineas.extend(_linea_resultado(d))
-        if incluir_texto:
-            txt = _strip_html(d.get("texto") or "")
-            if txt:
-                lineas.insert(len(lineas) - 1, txt[:700] + ("…" if len(txt) > 700 else ""))
+        lineas.extend(_linea_resultado(d, incluir_texto))
     lineas.append("Al citar cualquiera de estos criterios incluye SIEMPRE su link.")
     return "\n".join(lineas)
 
@@ -1132,7 +1179,7 @@ async def ver_tesis(registro_digital: int | str) -> str:
 
     Args:
         registro_digital: Número de registro digital (IUS), p. ej. 2032415. También
-            acepta la clave de la tesis —p. ej. "1a./J. 45/2026 (12a.)" o
+            acepta el ID local devuelto por buscar_tesis o la clave —p. ej. "1a./J. 45/2026 (12a.)" o
             "(IV Región)1o. J/1 A (12a.)"—; el registro digital se incluye solo
             cuando consta en la fuente conservada.
 
@@ -1146,7 +1193,7 @@ async def ver_tesis(registro_digital: int | str) -> str:
     crudo = str(registro_digital).strip()
     if not crudo.isdigit():
         if _hay_respaldo():
-            hallazgos = sjf_local.obtener(crudo)
+            hallazgos = sjf_local.obtener_id(crudo) or sjf_local.obtener(crudo)
             if hallazgos:
                 return ("\n\n" + "=" * 60 + "\n\n").join(
                     sjf_local.formatear_tesis(h) for h in hallazgos[:3])
@@ -1203,7 +1250,11 @@ async def ver_tesis(registro_digital: int | str) -> str:
         except Exception as e:
             fallos.append(f"isSemanal={semanal}: {e}")
     if d:
-        return _formatear_tesis_sjf(d)
+        local = _tesis_local_desde_metadatos(d)
+        if local:
+            return sjf_local.formatear_tesis(local)
+        if d.get('texto'):
+            return _formatear_tesis_sjf(d)
 
     # Segunda puerta: el Repositorio usa el mismo registro digital.
     try:
@@ -1212,7 +1263,11 @@ async def ver_tesis(registro_digital: int | str) -> str:
         r = None
         fallos.append(f"Repositorio de la SCJN: {_motivo_respaldo(e)}")
     if r and r.get("rubro"):
-        return _formatear_tesis_sjf(repositorio_scjn.tesis_a_sjf(r),
+        traducida = repositorio_scjn.tesis_a_sjf(r)
+        local = _tesis_local_desde_metadatos(traducida)
+        if local:
+            return sjf_local.formatear_tesis(local)
+        return _formatear_tesis_sjf(traducida,
                                     _aviso_repositorio(_motivo_sjf(bloqueo)))
 
     if bloqueo:
