@@ -1,61 +1,45 @@
 {
   "fuente": "Gaceta del Semanario Judicial de la Federación (SCJN) — https://www.scjn.gob.mx/coordinacion/gaceta",
   "generado": "2026-09-07T02:21:39",
-  "tesis": 34356,
+  "tesis": 34414,
   "por_epoca": {
     "10a": 23168,
-    "11a": 7732,
-    "12a": 1127,
+    "11a": 7734,
+    "12a": 1183,
     "9a": 2329
   },
-  "libros": 185,
-  "archivos_pdf": 451,
+  "libros": 186,
+  "archivos_pdf": 452,
   "desde": "Novena Época (2011)",
-  "hasta": "Duodécima Época, Libro 14, octubre de 2026",
+  "hasta": "Duodécima Época, Libro 15, noviembre de 2026",
   "publicacion_sjf_desde": "2013-12-06",
-  "publicacion_sjf_hasta": "2026-10-30",
+  "publicacion_sjf_hasta": "2026-11-13",
   "registro_digital": "La Gaceta no imprime el registro digital. Las capturas del portal semanal sí lo incluyen.",
   "limitaciones": [
-    "cobertura de Gacetas hasta octubre de 2026; las capturas semanales se reportan por separado",
+    "cobertura de Gacetas hasta noviembre de 2026",
     "no refleja cambios de vigencia posteriores a la publicación de cada libro",
     "faltan tomos de algunos libros de la Undécima Época (29 sin Tomo II, 36 sin Tomo IV)"
   ],
   "tesis_base": 34041,
   "incremental": {
     "archivo": "sjf_gaceta_nuevos.jsonl",
-    "tesis": 420,
-    "actualizado": "2026-11-18",
+    "tesis": 478,
+    "actualizado": "2026-11-28",
     "libros": [
-      "12a Libro 12 (agosto 2026)",
-      "12a Libro 13 (septiembre 2026)",
-      "12a Libro 14 (octubre 2026)"
+      "12a Libro 15 (noviembre 2026)"
     ],
     "nota": "Los libros del incremental reemplazan a los del base; las capturas semanales se incorporan además al índice permanente.",
     "calidad_ultima_extraccion": [
       {
-        "archivo": "12a-epoca/Libro-012_2026-08_agosto_parte-2.md",
-        "extraidas": 134,
-        "indice_entradas": 134,
-        "cobertura_archivo": 100.0,
-        "rubros_discrepantes": 0
-      },
-      {
-        "archivo": "12a-epoca/Libro-013_2026-09_septiembre.md",
-        "extraidas": 110,
-        "indice_entradas": 110,
-        "cobertura_archivo": 100.0,
-        "rubros_discrepantes": 0
-      },
-      {
-        "archivo": "12a-epoca/Libro-014_2026-10_octubre.md",
-        "extraidas": 176,
-        "indice_entradas": 176,
+        "archivo": "12a-epoca/Libro-015_2026-11_noviembre.md",
+        "extraidas": 58,
+        "indice_entradas": 58,
         "cobertura_archivo": 100.0,
         "rubros_discrepantes": 0
       }
     ]
   },
-  "actualizado": "2026-11-18",
+  "actualizado": "2026-11-28",
   "calidad_base": {
     "cobertura_global_vs_indice": 98.43,
     "libros_medibles": 142,
